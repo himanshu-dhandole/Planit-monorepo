@@ -1,0 +1,10 @@
+package com.teamarc.planit.service.serviceImpl;
+
+import com.teamarc.planit.service.ChatMessageService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class ChatMessageServiceImpl implements ChatMessageService {
+}
