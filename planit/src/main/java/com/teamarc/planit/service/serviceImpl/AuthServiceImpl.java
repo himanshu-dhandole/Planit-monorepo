@@ -3,7 +3,7 @@ package com.teamarc.planit.service.serviceImpl;
 import com.teamarc.planit.dto.SignupDTO;
 import com.teamarc.planit.dto.UserDTO;
 import com.teamarc.planit.entity.User;
-import com.teamarc.planit.entity.enums.Role;
+import com.teamarc.planit.entity.enums.UserRole;
 import com.teamarc.planit.exception.RuntimeConflictException;
 import com.teamarc.planit.repository.UserRepository;
 import com.teamarc.planit.security.JWTService;
@@ -22,7 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -54,8 +54,8 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeConflictException("The user already exist with email id: " + signupDto.getEmail());
 
         User mappedUser = modelMapper.map(signupDto, User.class);
-        mappedUser.setRoles(Set.of(Role.User));
-        mappedUser.setPassword(passwordEncoder.encode(mappedUser.getPassword()));
+        mappedUser.setRole(UserRole.CUSTOMER);
+        mappedUser.setPasswordHash(passwordEncoder.encode(signupDto.getPassword()));
         User savedUser = userRepository.save(mappedUser);
         
         // Note: Wallet creation logic has been omitted per user request to separate concerns.
@@ -64,7 +64,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String refreshToken(String refreshToken) {
-        Long userId = jwtService.getUserIdFromToken(refreshToken);
+        UUID userId = jwtService.getUserIdFromToken(refreshToken);
         User user = userService.getUserById(userId);
         return jwtService.generateAccessToken(user);
     }
@@ -79,3 +79,4 @@ public class AuthServiceImpl implements AuthService {
         return null;
     }
 }
+
