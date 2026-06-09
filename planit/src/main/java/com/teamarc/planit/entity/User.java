@@ -1,36 +1,36 @@
 package com.teamarc.planit.entity;
 
-import com.teamarc.planit.entity.enums.*;
+import com.teamarc.planit.entity.enums.AccountStatus;
+import com.teamarc.planit.entity.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
-@Table(name = "users")
-@Data
+@Table(name = "users", indexes = {
+    @Index(name = "idx_email", columnList = "email", unique = true),
+    @Index(name = "idx_phone", columnList = "phone")
+})
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class User extends BaseEntity implements UserDetails {
 
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
     @Column(nullable = false, length = 255)
     private String passwordHash;
-
-    @Column(length = 20)
-    private String phone;
 
     @Column(length = 100)
     private String firstName;
@@ -38,83 +38,44 @@ public class User implements UserDetails {
     @Column(length = 100)
     private String lastName;
 
+    @Column(length = 20)
+    private String phone;
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private UserRole role;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     @Builder.Default
     private AccountStatus accountStatus = AccountStatus.ACTIVE;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean isVerified = false;
+    @Column(length = 500)
+    private String profileImageUrl;
 
-    @Column(length = 255)
-    private String verificationToken;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Customer customer;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
-    // Relationships
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Vendor vendor;
 
-    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Event> organizedEvents = new ArrayList<>();
-
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Booking> bookings = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Notification> notifications = new ArrayList<>();
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private NotificationPreference notificationPreference;
+    private Admin admin;
 
-    @OneToMany(mappedBy = "assignedTo")
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
     @Builder.Default
-    private List<Task> assignedTasks = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "raisedBy")
+    @Column(name = "email_verified")
     @Builder.Default
-    private List<Dispute> raisedDisputes = new ArrayList<>();
+    private Boolean emailVerified = false;
 
-    @OneToMany(mappedBy = "resolvedBy")
+    @Column(name = "phone_verified")
     @Builder.Default
-    private List<Dispute> resolvedDisputes = new ArrayList<>();
+    private Boolean phoneVerified = false;
 
-    @OneToMany(mappedBy = "cancelledBy")
-    @Builder.Default
-    private List<Cancellation> cancelledBookings = new ArrayList<>();
-
-    @OneToMany(mappedBy = "participant1")
-    @Builder.Default
-    private List<Conversation> conversationsAsParticipant1 = new ArrayList<>();
-
-    @OneToMany(mappedBy = "participant2")
-    @Builder.Default
-    private List<Conversation> conversationsAsParticipant2 = new ArrayList<>();
-
-    @OneToMany(mappedBy = "sender")
-    @Builder.Default
-    private List<ChatMessage> sentMessages = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<ActivityLog> activityLogs = new ArrayList<>();
-
-    @OneToMany(mappedBy = "customer")
-    @Builder.Default
-    private List<Review> reviews = new ArrayList<>();
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
 
     // UserDetails implementation
     @Override

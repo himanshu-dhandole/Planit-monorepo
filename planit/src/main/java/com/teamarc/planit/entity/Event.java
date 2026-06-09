@@ -1,94 +1,67 @@
 package com.teamarc.planit.entity;
 
-import com.teamarc.planit.entity.enums.*;
+import com.teamarc.planit.entity.enums.EventStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "events")
-@Data
+@Table(name = "events", indexes = {
+    @Index(name = "idx_customer_event", columnList = "customer_id"),
+    @Index(name = "idx_event_date", columnList = "event_date"),
+    @Index(name = "idx_event_status", columnList = "status")
+})
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Event {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class Event extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organizer_id", nullable = false)
-    private User organizer;
+    @JoinColumn(name = "customer_id", nullable = false, foreignKey = @ForeignKey(name = "fk_event_customer"))
+    private Customer customer;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 200)
     private String title;
-
-    @Column(length = 100)
-    private String eventType;
-
-    @Column(nullable = false)
-    private LocalDate eventDate;
-
-    private LocalTime eventStartTime;
-
-    private LocalTime eventEndTime;
-
-    @Column(length = 255)
-    private String venueName;
-
-    @Column(length = 500)
-    private String venueAddress;
-
-    @Column(length = 100)
-    private String city;
-
-    @Column(length = 100)
-    private String state;
-
-    @Column(length = 20)
-    private String pincode;
-
-    private Integer guestCount;
-
-    @Column(precision = 15, scale = 2)
-    private BigDecimal budgetAmount;
-
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50)
-    private Visibility visibility = Visibility.PRIVATE;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private LocalDate eventDate;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(nullable = false)
+    private String location;
 
-    // Relationships
+    @Column(length = 500)
+    private String venue;
+
+    @Column(nullable = false)
+    private Integer guestCount;
+
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal budget;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EventStatus status = EventStatus.DRAFT;
+
+    @Column(length = 500)
+    private String eventImageUrl;
+
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventGuest> guests = new ArrayList<>();
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EventTimeline> timelines = new ArrayList<>();
+    private List<EventTask> tasks = new ArrayList<>();
 
-    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Budget budget;
-
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Task> tasks = new ArrayList<>();
-
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<Booking> bookings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "event")
-    private List<Conversation> conversations = new ArrayList<>();
+    @Column(name = "created_event_date")
+    private LocalDateTime createdEventDate;
 }

@@ -1,45 +1,47 @@
 package com.teamarc.planit.entity;
 
-import com.teamarc.planit.entity.enums.*;
+import com.teamarc.planit.entity.enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "bookings")
-@Data
+@Table(name = "bookings", indexes = {
+    @Index(name = "idx_booking_number", columnList = "booking_number", unique = true),
+    @Index(name = "idx_customer_booking", columnList = "customer_id"),
+    @Index(name = "idx_vendor_booking", columnList = "vendor_id"),
+    @Index(name = "idx_booking_status", columnList = "status"),
+    @Index(name = "idx_booking_date", columnList = "booking_date")
+})
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Booking {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class Booking extends BaseEntity {
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(unique = true, nullable = false, length = 50)
     private String bookingNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id")
-    private Event event;
+    @JoinColumn(name = "customer_id", nullable = false, foreignKey = @ForeignKey(name = "fk_booking_customer"))
+    private Customer customer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vendor_id", nullable = false)
+    @JoinColumn(name = "vendor_id", nullable = false, foreignKey = @ForeignKey(name = "fk_booking_vendor"))
     private Vendor vendor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
-    private User customer;
+    @JoinColumn(name = "service_id", nullable = false, foreignKey = @ForeignKey(name = "fk_booking_service"))
+    private Service service;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = false)
-    private VendorService service;
+    @JoinColumn(name = "event_id", nullable = false, foreignKey = @ForeignKey(name = "fk_booking_event"))
+    private Event event;
 
     @Column(nullable = false)
     private LocalDate bookingDate;
@@ -50,45 +52,46 @@ public class Booking {
     @Column(nullable = false)
     private LocalTime endTime;
 
-    @Column(nullable = false, precision = 15, scale = 2)
+    @Column(nullable = false)
+    private Integer durationMinutes;
+
+    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
 
+    @Column(precision = 12, scale = 2)
+    private BigDecimal discountAmount = BigDecimal.ZERO;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal platformFee = BigDecimal.ZERO;
+
     @Enumerated(EnumType.STRING)
-    @Column(length = 50)
+    @Column(nullable = false)
     private BookingStatus status = BookingStatus.PENDING;
 
-    @Column(columnDefinition = "TEXT")
-    private String specialRequirements;
+    @Column(length = 500)
+    private String cancellationReason;
 
-    @Column(columnDefinition = "TEXT")
-    private String notes;
+    @Column(name = "cancelled_by")
+    private String cancelledBy;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
-    // Relationships
-    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BookingSlot> slots = new ArrayList<>();
+    @Column(name = "cancelled_at")
+    private LocalDateTime cancelledAt;
 
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private Payment payment;
 
-    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Cancellation cancellation;
-
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BookingStatusHistory> statusHistory = new ArrayList<>();
+    private List<BookingStatusChange> statusChanges = new ArrayList<>();
 
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private Review review;
 
-    @OneToMany(mappedBy = "booking")
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
     private List<Dispute> disputes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "booking")
-    private List<Conversation> conversations = new ArrayList<>();
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
+    private Conversation conversation;
+
+    @Column(name = "notes", columnDefinition = "TEXT")
+    private String notes;
 }

@@ -1,69 +1,62 @@
 package com.teamarc.planit.entity;
 
-import com.teamarc.planit.entity.enums.*;
+import com.teamarc.planit.entity.enums.PaymentMethod;
+import com.teamarc.planit.entity.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "payments")
-@Data
+@Table(name = "payments", indexes = {
+    @Index(name = "idx_booking_payment", columnList = "booking_id", unique = true),
+    @Index(name = "idx_transaction_id", columnList = "transaction_id"),
+    @Index(name = "idx_payment_status", columnList = "status")
+})
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Payment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class Payment extends BaseEntity {
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id", nullable = false, unique = true)
+    @OneToOne
+    @JoinColumn(name = "booking_id", nullable = false, unique = true, foreignKey = @ForeignKey(name = "fk_payment_booking"))
     private Booking booking;
 
-    @Column(nullable = false, precision = 15, scale = 2)
+    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal taxAmount = BigDecimal.ZERO;
-
-    @Column(precision = 10, scale = 2)
-    private BigDecimal discountAmount = BigDecimal.ZERO;
-
-    @Column(nullable = false, precision = 15, scale = 2)
-    private BigDecimal totalAmount;
-
-    @Column(length = 10)
+    @Column(nullable = false, length = 3)
     private String currency = "INR";
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentMethod paymentMethod;
+
     @Column(length = 100)
-    private String paymentMethod;
-
-    @Column(length = 255)
-    private String razorpayOrderId;
-
-    @Column(length = 255)
-    private String razorpayPaymentId;
+    private String transactionId;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 50)
+    @Column(nullable = false)
     private PaymentStatus status = PaymentStatus.PENDING;
 
+    @Column(name = "paid_at")
     private LocalDateTime paidAt;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "payment_gateway")
+    private String paymentGateway;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(columnDefinition = "TEXT")
+    private String paymentDetails;
 
-    // Relationships
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Refund> refunds = new ArrayList<>();
+
+    @Column(name = "total_refunded_amount", precision = 12, scale = 2)
+    private BigDecimal totalRefundedAmount = BigDecimal.ZERO;
+
+    @Column(name = "receipt_url")
+    private String receiptUrl;
 }

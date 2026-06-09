@@ -1,58 +1,66 @@
 package com.teamarc.planit.entity;
 
-import com.teamarc.planit.entity.enums.*;
+import com.teamarc.planit.entity.enums.DisputeStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
 
 @Entity
-@Table(name = "disputes")
-@Data
+@Table(name = "disputes", indexes = {
+    @Index(name = "idx_booking_dispute", columnList = "booking_id"),
+    @Index(name = "idx_customer_dispute", columnList = "customer_id"),
+    @Index(name = "idx_vendor_dispute", columnList = "vendor_id"),
+    @Index(name = "idx_dispute_status", columnList = "status")
+})
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Dispute {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class Dispute extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id", nullable = false)
+    @JoinColumn(name = "booking_id", nullable = false, foreignKey = @ForeignKey(name = "fk_dispute_booking"))
     private Booking booking;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "raised_by")
-    private User raisedBy;
-
-    @Column(nullable = false, length = 255)
-    private String reason;
-
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50)
-    private DisputeStatus status = DisputeStatus.OPEN;
-
-    @Column(columnDefinition = "TEXT")
-    private String resolutionNotes;
+    @JoinColumn(name = "customer_id", nullable = false, foreignKey = @ForeignKey(name = "fk_dispute_customer"))
+    private Customer customer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resolved_by")
-    private User resolvedBy;
+    @JoinColumn(name = "vendor_id", nullable = false, foreignKey = @ForeignKey(name = "fk_dispute_vendor"))
+    private Vendor vendor;
 
-    private LocalDateTime resolvedAt;
+    @Column(nullable = false, length = 200)
+    private String reason;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String description;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(length = 500)
+    private String evidenceUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DisputeStatus status = DisputeStatus.OPEN;
+
+    @Column(name = "raised_by", nullable = false, length = 50)
+    private String raisedBy;
+
+    @Column(name = "raised_at", nullable = false)
+    private LocalDateTime raisedAt;
+
+    @OneToOne(mappedBy = "dispute", cascade = CascadeType.ALL, orphanRemoval = true)
+    private DisputeResponse response;
+
+    @OneToOne(mappedBy = "dispute", cascade = CascadeType.ALL, orphanRemoval = true)
+    private DisputeResolution resolution;
+
+    @Column(name = "is_escalated")
+    private Boolean isEscalated = false;
+
+    @Column(name = "escalated_at")
+    private LocalDateTime escalatedAt;
+
+    @Column(columnDefinition = "TEXT")
+    private String notes;
 }

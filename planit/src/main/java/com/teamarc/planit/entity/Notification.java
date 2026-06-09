@@ -1,56 +1,49 @@
 package com.teamarc.planit.entity;
 
-import com.teamarc.planit.entity.enums.*;
+import com.teamarc.planit.entity.enums.NotificationType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
+import java.util.UUID;
 
 @Entity
-@Table(name = "notifications")
-@Data
+@Table(name = "notifications", indexes = {
+    @Index(name = "idx_user_notification", columnList = "user_id"),
+    @Index(name = "idx_notification_type", columnList = "notification_type"),
+    @Index(name = "idx_notification_is_read", columnList = "is_read")
+})
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Notification {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class Notification extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_notification_user"))
     private User user;
 
-    @Column(nullable = false, length = 255)
-    private String title;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String message;
-
     @Enumerated(EnumType.STRING)
-    @Column(length = 100)
+    @Column(nullable = false)
     private NotificationType notificationType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50)
-    private NotificationChannel channel = NotificationChannel.IN_APP;
+    @Column(nullable = false, length = 200)
+    private String title;
 
-    private UUID referenceId;
-
-    @Column(length = 100)
-    private String referenceType;
+    @Column(columnDefinition = "TEXT")
+    private String message;
 
     @Column(nullable = false)
     private Boolean isRead = false;
 
+    @Column(name = "read_at")
     private LocalDateTime readAt;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "related_entity_type")
+    private String relatedEntityType;
+
+    @Column(name = "related_entity_id")
+    private UUID relatedEntityId;
+
+    @Column(name = "sent_at", nullable = false)
+    private LocalDateTime sentAt;
 }

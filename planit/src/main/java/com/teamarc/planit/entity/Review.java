@@ -1,59 +1,55 @@
 package com.teamarc.planit.entity;
 
-import com.teamarc.planit.entity.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "reviews")
-@Data
+@Table(name = "reviews", indexes = {
+    @Index(name = "idx_booking_review", columnList = "booking_id", unique = true),
+    @Index(name = "idx_vendor_review", columnList = "vendor_id"),
+    @Index(name = "idx_customer_review", columnList = "customer_id")
+})
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Review {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class Review extends BaseEntity {
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id", nullable = false, unique = true)
+    @OneToOne
+    @JoinColumn(name = "booking_id", nullable = false, unique = true, foreignKey = @ForeignKey(name = "fk_review_booking"))
     private Booking booking;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vendor_id", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = false, foreignKey = @ForeignKey(name = "fk_review_customer"))
+    private Customer customer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendor_id", nullable = false, foreignKey = @ForeignKey(name = "fk_review_vendor"))
     private Vendor vendor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
-    private User customer;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = false)
-    private VendorService service;
-
     @Column(nullable = false)
-    private Integer rating; // 1-5
+    private Integer rating;
 
     @Column(columnDefinition = "TEXT")
     private String comment;
 
-    @Column(nullable = false)
-    private Boolean isVerifiedPurchase = false;
+    @Column(length = 500)
+    private String reviewTitle;
 
     @Column(nullable = false)
+    private Boolean verifiedBooking = false;
+
+    @Column(name = "helpful_count")
     private Integer helpfulCount = 0;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "is_flagged")
+    private Boolean isFlagged = false;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(name = "flag_reason")
+    private String flagReason;
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewReply> replies = new ArrayList<>();
 }

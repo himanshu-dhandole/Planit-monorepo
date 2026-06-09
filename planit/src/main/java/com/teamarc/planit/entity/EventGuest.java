@@ -1,50 +1,38 @@
 package com.teamarc.planit.entity;
 
-import com.teamarc.planit.entity.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
 
 @Entity
-@Table(name = "event_guests")
-@Data
+@Table(name = "event_guests", indexes = {
+    @Index(name = "idx_event_guest", columnList = "event_id")
+})
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class EventGuest {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class EventGuest extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id", nullable = false)
+    @JoinColumn(name = "event_id", nullable = false, foreignKey = @ForeignKey(name = "fk_guest_event"))
     private Event event;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 150)
     private String guestName;
 
-    @Column(length = 255)
+    @Column(nullable = false, length = 100)
     private String guestEmail;
 
     @Column(length = 20)
     private String guestPhone;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 100)
     private String dietaryPreferences;
 
-    private Boolean isAttending;
+    @Column(nullable = false)
+    private Boolean confirmationStatus = false;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50)
-    private InvitationStatus invitationStatus = InvitationStatus.PENDING;
-
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "rsvp_date")
+    private LocalDate rsvpDate;
 }

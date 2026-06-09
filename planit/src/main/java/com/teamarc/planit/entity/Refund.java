@@ -1,51 +1,48 @@
 package com.teamarc.planit.entity;
 
-import com.teamarc.planit.entity.enums.*;
+import com.teamarc.planit.entity.enums.RefundStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
 
 @Entity
-@Table(name = "refunds")
-@Data
+@Table(name = "refunds", indexes = {
+    @Index(name = "idx_payment_refund", columnList = "payment_id"),
+    @Index(name = "idx_refund_status", columnList = "status")
+})
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Refund {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class Refund extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_id", nullable = false)
+    @JoinColumn(name = "payment_id", nullable = false, foreignKey = @ForeignKey(name = "fk_refund_payment"))
     private Payment payment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id", nullable = false)
-    private Booking booking;
-
-    @Column(nullable = false, precision = 15, scale = 2)
+    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal refundAmount;
 
-    @Column(length = 255)
-    private String razorpayRefundId;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RefundStatus status = RefundStatus.PENDING;
 
-    @Column(length = 255)
+    @Column(nullable = false, length = 500)
     private String reason;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50)
-    private RefundStatus status = RefundStatus.INITIATED;
+    @Column(name = "initiated_by", nullable = false)
+    private String initiatedBy;
 
-    private LocalDateTime refundedAt;
+    @Column(name = "initiated_at", nullable = false)
+    private LocalDateTime initiatedAt;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "processed_at")
+    private LocalDateTime processedAt;
+
+    @Column(length = 100)
+    private String refundTransactionId;
+
+    @Column(columnDefinition = "TEXT")
+    private String notes;
 }

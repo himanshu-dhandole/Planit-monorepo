@@ -1,51 +1,47 @@
 package com.teamarc.planit.entity;
 
-import com.teamarc.planit.entity.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "conversations")
-@Data
+@Table(name = "conversations", indexes = {
+    @Index(name = "idx_booking_conversation", columnList = "booking_id", unique = true),
+    @Index(name = "idx_customer_conversation", columnList = "customer_id"),
+    @Index(name = "idx_vendor_conversation", columnList = "vendor_id")
+})
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Conversation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+public class Conversation extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id", nullable = false)
+    @JoinColumn(name = "booking_id", foreignKey = @ForeignKey(name = "fk_conversation_booking"))
     private Booking booking;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id")
-    private Event event;
+    @JoinColumn(name = "customer_id", nullable = false, foreignKey = @ForeignKey(name = "fk_conversation_customer"))
+    private Customer customer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "participant_1", nullable = false)
-    private User participant1;
+    @JoinColumn(name = "vendor_id", nullable = false, foreignKey = @ForeignKey(name = "fk_conversation_vendor"))
+    private Vendor vendor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "participant_2", nullable = false)
-    private User participant2;
+    @Column(name = "last_message_at")
+    private LocalDateTime lastMessageAt;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "unread_count_customer")
+    private Integer unreadCountCustomer = 0;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(name = "unread_count_vendor")
+    private Integer unreadCountVendor = 0;
 
-    // Relationships
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChatMessage> messages = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
 }
