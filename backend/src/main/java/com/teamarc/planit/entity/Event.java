@@ -1,7 +1,6 @@
 package com.teamarc.planit.entity;
 
-import com.teamarc.planit.entity.enums.Mode;
-import com.teamarc.planit.entity.enums.Status;
+import com.teamarc.planit.entity.enums.EventStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,55 +8,64 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Entity
+@Table(name = "events", indexes = {
+        @Index(name = "idx_customer_event", columnList = "customer_id"),
+        @Index(name = "idx_event_date", columnList = "event_date"),
+        @Index(name = "idx_event_status", columnList = "status")
+})
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class Event {
+@AllArgsConstructor
+public class Event extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private String date;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", nullable = false, foreignKey = @ForeignKey(name = "fk_event_customer"))
+    private Customer customer;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    private Set<Mode> mode;
+    @Column(nullable = false, length = 200)
+    private String title;
 
-    @OneToOne
-    private Venue venue;
-
-    private Integer capacity;
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @Column(nullable = false)
+    private LocalDate eventDate;
+
+    @Column(nullable = false)
+    private String location;
+
+    @Column(length = 500)
+    private String venue;
+
+    @Column(nullable = false)
+    private Integer guestCount;
+
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal budget;
+
     @Enumerated(EnumType.STRING)
-    private Set<Status> status;
+    @Column(nullable = false)
+    private EventStatus status = EventStatus.DRAFT;
 
-    @OneToMany
-    @JoinColumn(name = "event_id")
-    private List<Slot> schedule;
-    private BigDecimal ticketPrice;
+    @Column(length = 500)
+    private String eventImageUrl;
 
-    @OneToOne(mappedBy = "event")
-    @JoinColumn(name = "event_id")
-    private Ticket ticket;
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EventGuest> guests = new ArrayList<>();
 
-    @OneToOne
-    private Host host;
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EventTask> tasks = new ArrayList<>();
 
-    @OneToOne
-    private Organiser organizer;
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    private List<Booking> bookings = new ArrayList<>();
 
-    @OneToMany
-    private List<Participant> participants;
-
-    @OneToMany
-    private List<ServiceProvider> serviceProviders;
-
+    @Column(name = "created_event_date")
+    private LocalDateTime createdEventDate;
 }

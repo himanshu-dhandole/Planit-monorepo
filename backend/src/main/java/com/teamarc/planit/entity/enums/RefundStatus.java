@@ -1,9 +1,8 @@
 package com.teamarc.planit.entity.enums;
 
-public enum PaymentStatus {
+public enum RefundStatus {
     PENDING,
+    PROCESSING,
     COMPLETED,
-    FAILED,
-    REFUNDED,
-    DISPUTED
+    FAILED
 }

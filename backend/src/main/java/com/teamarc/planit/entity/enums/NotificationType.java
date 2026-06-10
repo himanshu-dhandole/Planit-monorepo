@@ -1,0 +1,14 @@
+package com.teamarc.planit.entity.enums;
+
+public enum NotificationType {
+    BOOKING_CONFIRMED,
+    BOOKING_CANCELLED,
+    PAYMENT_RECEIVED,
+    REVIEW_POSTED,
+    DISPUTE_RAISED,
+    DISPUTE_RESOLVED,
+    MESSAGE_RECEIVED,
+    VENDOR_ACCEPTED,
+    VENDOR_REJECTED,
+    ADMIN_ACTION
+}
