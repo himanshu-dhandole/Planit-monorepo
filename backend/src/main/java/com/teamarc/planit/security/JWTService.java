@@ -28,7 +28,7 @@ public class JWTService {
         return Jwts.builder()
                 .subject(Long.toString(user.getId()))
                 .claim("email", user.getEmail())
-                .claim("roles", user.getRoles().toString())
+                .claim("role", user.getRole().name())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
                 .signWith(getSecretKey())

@@ -21,6 +21,6 @@ public class UserDTO {
     private String email;
 
     @NotNull(message = "Role cannot be null")
-    private Set<Role> roles;
+    private Role role;
 
 }

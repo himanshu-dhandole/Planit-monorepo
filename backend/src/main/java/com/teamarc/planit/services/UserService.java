@@ -28,6 +28,6 @@ public class UserService implements UserDetailsService {
     }
 
     public User loadUserByRole(Role role) {
-        return userRepository.findByRoles(role);
+        return userRepository.findByRole(role);
     }
 }
