@@ -33,3 +33,8 @@ build/
 .vscode/
 ./DS_Store
 *.code-workspace
+./mvnw
+./mvnw.cmd
+mvnw
+mvnw.cmd
+

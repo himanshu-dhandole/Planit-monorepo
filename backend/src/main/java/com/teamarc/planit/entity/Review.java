@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,7 +22,8 @@ public class Review {
     @JoinColumn(name = "booking_id", nullable = false, unique = true)
     private Booking booking;
     
-    @Column(nullable = false, columnDefinition = "INT DEFAULT 5")
+    @Column(nullable = false)
+    @ColumnDefault("5")
     private Integer rating;
     
     @Column(name = "review_text", columnDefinition = "TEXT")

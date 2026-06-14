@@ -1,9 +1,12 @@
 package com.teamarc.planit.entity;
 
+import com.teamarc.planit.entity.enums.VendorServiceCategory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,6 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Vendor {
     
     @Id
@@ -26,20 +30,27 @@ public class Vendor {
     
     @Column(columnDefinition = "TEXT")
     private String description;
-    
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String category;
+    private VendorServiceCategory category;
     
     @Column(columnDefinition = "TEXT")
     private String verification;
+
+    @Column(name = "is_verified", nullable = false)
+    @ColumnDefault("false")
+    private Boolean isVerified;
     
-    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    @Column(nullable = false)
+    @ColumnDefault("0")
     private Integer totalBookings;
     
     @Column(columnDefinition = "TEXT")
     private String location;
     
-    @Column(nullable = false, columnDefinition = "DECIMAL(3,2) DEFAULT 5.0")
+    @Column(nullable = false, columnDefinition = "DECIMAL(3,2)")
+    @ColumnDefault("5.0")
     private Double karma;
     
     @Column(name = "created_at", nullable = false, updatable = false)

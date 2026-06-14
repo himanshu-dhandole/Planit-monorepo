@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "app_user")
@@ -32,9 +34,10 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private Set<Role> role;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -55,7 +58,8 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        return role.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                .collect(Collectors.toSet());
     }
 
     @Override

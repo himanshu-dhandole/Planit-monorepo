@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
@@ -31,7 +32,8 @@ public class Service {
     @Column(nullable = false, columnDefinition = "DECIMAL(10,2)")
     private BigDecimal price;
     
-    @Column(name = "is_available", nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
+    @Column(name = "is_available", nullable = false)
+    @ColumnDefault("true")
     private Boolean isAvailable;
     
     @Column(columnDefinition = "TEXT")

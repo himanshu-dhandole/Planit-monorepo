@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,7 +31,8 @@ public class Customer {
     @Column(columnDefinition = "TEXT")
     private String address;
     
-    @Column(nullable = false, columnDefinition = "DECIMAL(3,2) DEFAULT 5.0")
+    @Column(nullable = false, columnDefinition = "DECIMAL(3,2)")
+    @ColumnDefault("5.0")
     private Double karma;
     
     @Column(name = "created_at", nullable = false, updatable = false)

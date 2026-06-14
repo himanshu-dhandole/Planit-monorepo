@@ -11,10 +11,10 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public interface BookingMapper {
     
     // User mappings
-    User toEntity(UserRequestDTO dto);
-    UserResponseDTO toUserResponse(User entity);
-    void updateUserFromDTO(UserRequestDTO dto, @MappingTarget User entity);
-    
+//    User toEntity(UserRequestDTO dto);
+//    UserResponseDTO toUserResponse(User entity);
+//    void updateUserFromDTO(UserRequestDTO dto, @MappingTarget User entity);
+//
     // Customer mappings
     Customer toEntity(CustomerRequestDTO dto);
     CustomerResponseDTO toCustomerResponse(Customer entity);
