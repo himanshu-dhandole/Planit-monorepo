@@ -41,6 +41,10 @@ public class Vendor {
     @Column(name = "is_verified", nullable = false)
     @ColumnDefault("false")
     private Boolean isVerified;
+
+    @Column(name = "is_active", nullable = false)
+    @ColumnDefault("true")
+    private Boolean isActive;
     
     @Column(nullable = false)
     @ColumnDefault("0")

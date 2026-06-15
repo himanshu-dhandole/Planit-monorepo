@@ -43,27 +43,5 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public OnBoardNewVendorRequestDTO requestVendorOnBoard(OnBoardNewVendorRequestDTO requestDTO) {
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        OnBoardNewVendorRequest request = OnBoardNewVendorRequest.builder()
-                .userId(user.getId())
-                .businessName(requestDTO.getBusinessName())
-                .description(requestDTO.getDescription())
-                .category(VendorServiceCategory.valueOf(requestDTO.getCategory()))
-                .location(requestDTO.getLocation())
-                .verification(null)
-                .build();
-
-
-        return onBoardNewVendorRequestService.saveRequest(request);
-    }
-
-    public String updateVendorVerification(Long requestId, MultipartFile file) {
-        OnBoardNewVendorRequest request = onBoardNewVendorRequestRepository.findById(requestId).orElseThrow(() -> new ResourceNotFoundException("Unable to find request for id " + requestId));
-        request.setVerification(fileService.uploadFile(file));
-        onBoardNewVendorRequestService.saveRequest(request);
-        return "Vendor verification updated successfully.";
-    }
 }
