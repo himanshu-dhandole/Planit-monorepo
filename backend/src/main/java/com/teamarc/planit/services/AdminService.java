@@ -25,7 +25,7 @@ public class AdminService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final OnBoardNewVendorRequestService onBoardNewVendorRequestService;
-
+    private final EmailService emailService;
 
     public List<OnBoardNewVendorRequestDTO> getAllVendorOnBoardRequests() {
         List<OnBoardNewVendorRequest> requests = onBoardNewVendorRequestRepository.findAll();
@@ -53,6 +53,13 @@ public class AdminService {
 
         user.getRole().add(Role.VENDOR);
         userRepository.save(user);
+
+        // Send approval email
+        emailService.sendVendorApprovalEmail(
+            user.getEmail(),
+            user.getName(),
+            onBoardNewVendorRequestDTO.getBusinessName()
+        );
 
         onBoardNewVendorRequestService.deleteRequestById(requestId);
     }

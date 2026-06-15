@@ -45,10 +45,15 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "is_email_verified", nullable = false)
+    @org.hibernate.annotations.ColumnDefault("false")
+    private Boolean isEmailVerified;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (isEmailVerified == null) isEmailVerified = false;
     }
 
     @PreUpdate
