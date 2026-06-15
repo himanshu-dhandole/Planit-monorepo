@@ -57,7 +57,7 @@ public class AuthService {
         return modelMapper.map(savedUser, UserDTO.class);
     }
 
-    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
+    public String[] login(LoginRequestDTO loginRequestDTO) {
         User user = userRepository.findByEmail(loginRequestDTO.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + loginRequestDTO.getEmail()));
 
@@ -72,10 +72,7 @@ public class AuthService {
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
-        LoginResponseDTO response = new LoginResponseDTO(accessToken);
-        response.setRefreshToken(refreshToken);
-        response.setId(user.getId());
-        return response;
+        return new String[]{accessToken, refreshToken};
     }
 
     public String refreshToken(String refreshToken) {
