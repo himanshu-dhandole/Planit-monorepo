@@ -32,6 +32,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
     private final OTPService otpService;
+    private final WalletService walletService;
 
     @Transactional
     public UserDTO signUp(SignupDTO signupDto) {
@@ -53,6 +54,8 @@ public class AuthService {
         User savedUser = userRepository.save(user);
 
         otpService.generateAndSendOTP(savedUser.getEmail(), OTP.OTPType.EMAIL_VERIFICATION);
+
+        walletService.createNewWallet(savedUser);
 
         return modelMapper.map(savedUser, UserDTO.class);
     }
