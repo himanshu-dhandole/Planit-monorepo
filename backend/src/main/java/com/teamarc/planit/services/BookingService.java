@@ -1,19 +1,30 @@
 package com.teamarc.planit.services;
 
+import com.teamarc.planit.dto.request.BookingRequestDTO;
 import com.teamarc.planit.dto.response.BookingResponseDTO;
+import com.teamarc.planit.entity.Booking;
+import com.teamarc.planit.entity.Customer;
+import com.teamarc.planit.entity.Event;
+import com.teamarc.planit.entity.Service;
+import com.teamarc.planit.exceptions.ResourceNotFoundException;
 import com.teamarc.planit.repository.BookingRepository;
+import com.teamarc.planit.repository.CustomerRepository;
+import com.teamarc.planit.repository.EventRepository;
+import com.teamarc.planit.repository.ServiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@org.springframework.stereotype.Service
 @RequiredArgsConstructor
 public class BookingService {
 
-
     private final BookingRepository bookingRepository;
+    private final EventRepository eventRepository;
+    private final ServiceRepository serviceRepository;
+    private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
 
     public Page<BookingResponseDTO> getAllVendorBookings(Long id, int page, int size) {
@@ -21,4 +32,42 @@ public class BookingService {
                 .map(booking -> modelMapper.map(booking, BookingResponseDTO.class));
     }
 
+    public Booking getBookingEntityById(Long id) {
+        return bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
+    }
+
+    public BookingResponseDTO getBookingById(Long id) {
+        return modelMapper.map(getBookingEntityById(id), BookingResponseDTO.class);
+    }
+
+    @Transactional
+    public BookingResponseDTO createBooking(BookingRequestDTO dto) {
+        Event event = eventRepository.findById(dto.getEventId())
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + dto.getEventId()));
+        Service service = serviceRepository.findById(dto.getServiceId())
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found with id: " + dto.getServiceId()));
+        Customer customer = customerRepository.findById(dto.getCustomerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + dto.getCustomerId()));
+
+        Booking booking = new Booking();
+        booking.setEvent(event);
+        booking.setService(service);
+        booking.setCustomer(customer);
+        booking.setStatus(Booking.BookingStatus.PENDING);
+        booking.setBookingAmount(dto.getBookingAmount());
+        booking.setStartDt(dto.getStartDt());
+        booking.setEndDt(dto.getEndDt());
+
+        Booking savedBooking = bookingRepository.save(booking);
+        return modelMapper.map(savedBooking, BookingResponseDTO.class);
+    }
+
+    @Transactional
+    public BookingResponseDTO updateBookingStatus(Long id, Booking.BookingStatus status) {
+        Booking booking = getBookingEntityById(id);
+        booking.setStatus(status);
+        Booking saved = bookingRepository.save(booking);
+        return modelMapper.map(saved, BookingResponseDTO.class);
+    }
 }

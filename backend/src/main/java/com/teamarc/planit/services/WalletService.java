@@ -1,5 +1,8 @@
 package com.teamarc.planit.services;
 
+import com.razorpay.RazorpayClient;
+import com.teamarc.planit.dto.request.WalletDepositVerificationDTO;
+import com.teamarc.planit.dto.response.RazorpayOrderResponseDTO;
 import com.teamarc.planit.entity.Booking;
 import com.teamarc.planit.entity.User;
 import com.teamarc.planit.entity.Wallet;
@@ -9,7 +12,9 @@ import com.teamarc.planit.entity.enums.TransactionType;
 import com.teamarc.planit.exceptions.ResourceNotFoundException;
 import com.teamarc.planit.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +25,13 @@ public class WalletService{
     private final WalletRepository walletRepository;
     private final ModelMapper modelMapper;
     private final WalletTransactionService walletTransactionService;
+    private final RazorpayClient razorpayClient;
+
+    @Value("${razorpay.key.id}")
+    private String keyId;
+
+    @Value("${razorpay.key.secret}")
+    private String keySecret;
 
     @Transactional
     public Wallet addMoneyToWallet(User user, Double amount, String transactionId, Booking booking , TransactionMethod transactionMethod) {
@@ -61,6 +73,61 @@ public class WalletService{
 
     public void withdrawAllMyMoneyFromWallet() {
 
+    }
+
+    @Transactional
+    public RazorpayOrderResponseDTO createDepositOrder(User user, Double amount) {
+        long amountInPaise = Math.round(amount * 100);
+        try {
+            JSONObject orderRequest = new JSONObject();
+            orderRequest.put("amount", amountInPaise);
+            orderRequest.put("currency", "INR");
+            orderRequest.put("receipt", "wallet_deposit_" + user.getId() + "_" + System.currentTimeMillis());
+
+            com.razorpay.Order razorpayOrder = razorpayClient.orders.create(orderRequest);
+            String orderId = razorpayOrder.get("id");
+
+            return RazorpayOrderResponseDTO.builder()
+                    .id(orderId)
+                    .amount(amountInPaise)
+                    .currency("INR")
+                    .keyId(keyId)
+                    .bookingId(null)
+                    .build();
+        } catch (com.razorpay.RazorpayException e) {
+            throw new RuntimeException("Error creating Razorpay order for wallet deposit: " + e.getMessage(), e);
+        }
+    }
+
+    @Transactional
+    public Wallet verifyAndDepositWallet(User user, WalletDepositVerificationDTO verificationDTO) {
+        try {
+            JSONObject options = new JSONObject();
+            options.put("razorpay_order_id", verificationDTO.getRazorpayOrderId());
+            options.put("razorpay_payment_id", verificationDTO.getRazorpayPaymentId());
+            options.put("razorpay_signature", verificationDTO.getRazorpaySignature());
+
+            boolean isValid = com.razorpay.Utils.verifyPaymentSignature(options, keySecret);
+            if (!isValid) {
+                throw new IllegalArgumentException("Razorpay signature verification failed for wallet deposit");
+            }
+
+            return addMoneyToWallet(
+                    user,
+                    verificationDTO.getAmount().doubleValue(),
+                    verificationDTO.getRazorpayPaymentId(),
+                    null,
+                    TransactionMethod.BANKING
+            );
+        } catch (com.razorpay.RazorpayException e) {
+            throw new RuntimeException("Error verifying Razorpay wallet deposit: " + e.getMessage(), e);
+        }
+    }
+
+    @Transactional
+    public Wallet withdrawMoneyFromWallet(User user, Double amount) {
+        String transactionId = "WWD_" + System.currentTimeMillis();
+        return deductMoneyFromWallet(user, amount, transactionId, null, TransactionMethod.REFUND);
     }
 
     public Wallet findWalletById(Long walletId) {
