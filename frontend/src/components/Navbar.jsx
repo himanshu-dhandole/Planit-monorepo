@@ -10,7 +10,9 @@ import {
   Sparkles,
   Users,
   HelpCircle,
-  FileText
+  FileText,
+  AlertCircle,
+  Wallet
 } from 'lucide-react';
 
 function DropdownItem({ icon, title, desc }) {
@@ -36,7 +38,8 @@ function DropdownItemSmall({ icon, title }) {
 
 export default function Navbar() {
   const [hoveredItem, setHoveredItem] = useState(null);
-  const { user, logout } = useContext(AuthContext);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
+  const { user, customerProfile, logout } = useContext(AuthContext);
   const timeoutRef = useRef(null);
 
   const handleMouseEnter = (item) => {
@@ -92,12 +95,35 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4 ml-4">
             {user ? (
-              <>
-                <Link to="/profile" className="font-semibold text-gray-800 hover:text-black truncate max-w-[120px]">{user.email}</Link>
-                <button onClick={logout} className="bg-red-50 text-red-600 px-5 py-2 rounded-full hover:bg-red-100 transition-colors shadow-sm font-medium text-sm">
-                  Sign Out
-                </button>
-              </>
+              <div className="relative group flex items-center gap-2 cursor-pointer py-2">
+                <span className="font-semibold text-gray-800 hidden sm:block">
+                  Hi {customerProfile?.firstName || user.email.split('@')[0]}!
+                </span>
+                <div className="w-9 h-9 rounded-full bg-gray-100 overflow-hidden border-2 border-white shadow-sm flex items-center justify-center">
+                  {customerProfile?.profilePictureUrl ? (
+                    <img src={customerProfile.profilePictureUrl} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <User size={18} className="text-gray-400" />
+                  )}
+                </div>
+                
+                {/* Dropdown Menu */}
+                <div className="absolute top-full right-0 mt-1 w-48 bg-white border border-gray-100 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2 origin-top-right">
+                  <div className="px-4 py-3 border-b border-gray-50 mb-1">
+                    <p className="text-sm font-semibold text-gray-900 truncate">{customerProfile ? `${customerProfile.firstName} ${customerProfile.lastName || ''}` : 'User'}</p>
+                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                  </div>
+                  <Link to="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-black font-medium transition-colors">
+                    <User size={16} /> My Profile
+                  </Link>
+                  <Link to="/wallet" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-black font-medium transition-colors">
+                    <Wallet size={16} /> Wallet
+                  </Link>
+                  <button onClick={() => setShowSignOutModal(true)} className="w-full flex items-center gap-2 text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium transition-colors">
+                    Sign Out
+                  </button>
+                </div>
+              </div>
             ) : (
               <>
                 <Link to="/signin" className="cursor-pointer text-gray-500 hover:text-black transition-colors hidden sm:block border border-gray-300/50 rounded-full px-4 py-1.5 hover:bg-white/50">Log in</Link>
@@ -142,6 +168,52 @@ export default function Navbar() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Sign Out Confirmation Modal */}
+      <AnimatePresence>
+        {showSignOutModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+              onClick={() => setShowSignOutModal(false)}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-sm bg-white/80 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] p-8 md:p-10"
+            >
+              <div className="w-14 h-14 bg-red-50/80 rounded-full flex items-center justify-center mb-6 mx-auto shadow-sm border border-red-100">
+                <AlertCircle className="text-red-500" size={28} />
+              </div>
+              <h3 className="text-2xl font-bold text-center text-gray-900 mb-2 font-serif tracking-tight">Sign Out</h3>
+              <p className="text-center text-gray-500 text-sm mb-8 font-medium">
+                Are you sure you want to sign out of your account?
+              </p>
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setShowSignOutModal(false)}
+                  className="flex-1 py-3.5 px-4 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 font-semibold rounded-xl transition-all shadow-sm"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => {
+                    setShowSignOutModal(false);
+                    logout();
+                  }}
+                  className="flex-1 py-3.5 px-4 bg-[#111111] hover:bg-black text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                >
+                  Sign Out
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

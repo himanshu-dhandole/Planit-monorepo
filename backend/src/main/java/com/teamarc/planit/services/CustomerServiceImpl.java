@@ -5,6 +5,7 @@ import com.teamarc.planit.dto.response.BookingResponseDTO;
 import com.teamarc.planit.dto.response.CustomerResponseDTO;
 import com.teamarc.planit.entity.Customer;
 import com.teamarc.planit.entity.User;
+import com.teamarc.planit.entity.enums.Role;
 import com.teamarc.planit.entity.enums.VerificationStatus;
 import com.teamarc.planit.repository.CustomerRepository;
 import com.teamarc.planit.utils.FileService;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -25,6 +27,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final FileService fileService;
 
     @Override
+    @Transactional
     public CustomerResponseDTO createCustomerProfile(CustomerRequestDTO customerRequestDTO, MultipartFile profilePic, MultipartFile aadhar) {
         User user = userService.getUserById(customerRequestDTO.getUserId());
         
@@ -49,6 +52,9 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setAadharUrl(fileService.uploadFile(aadhar));
         }
 
+        user.getRole().add(Role.CUSTOMER);
+        userService.saveUser(user);
+
         return modelMapper.map(customerRepository.save(customer), CustomerResponseDTO.class);
     }
 
@@ -67,6 +73,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public CustomerResponseDTO updateCustomerProfile(Long id, CustomerRequestDTO customerRequestDTO, MultipartFile profilePic, MultipartFile aadhar) {
         Customer existingCustomer = customerRepository.findById(id).orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
         
@@ -86,6 +93,12 @@ public class CustomerServiceImpl implements CustomerService {
         if (aadhar != null && !aadhar.isEmpty()) {
             existingCustomer.setAadharUrl(fileService.uploadFile(aadhar));
             existingCustomer.setVerificationStatus(VerificationStatus.PENDING); // Reset verification status when Aadhar is updated
+        }
+
+        User user = existingCustomer.getUser();
+        if (user != null) {
+            user.getRole().add(Role.CUSTOMER);
+            userService.saveUser(user);
         }
 
         return modelMapper.map(customerRepository.save(existingCustomer), CustomerResponseDTO.class);

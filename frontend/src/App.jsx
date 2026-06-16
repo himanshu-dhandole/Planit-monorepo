@@ -11,6 +11,7 @@ import SignIn from './components/SignIn';
 import Navbar from './components/Navbar';
 import Profile from './components/Profile';
 import Sandbox from './components/Sandbox';
+import WalletPage from './components/WalletPage';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           </Route>
           
           <Route path="/profile" element={<Protected><Layout><Profile /></Layout></Protected>} />
+          <Route path="/wallet" element={<Protected><Layout><WalletPage /></Layout></Protected>} />
           <Route path="/sandbox" element={<Protected><Sandbox /></Protected>} />
           
           <Route path="*" element={<NotFound />} />

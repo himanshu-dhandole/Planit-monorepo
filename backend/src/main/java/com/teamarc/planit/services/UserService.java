@@ -42,6 +42,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findByRole(role);
     }
 
-
-
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
 }

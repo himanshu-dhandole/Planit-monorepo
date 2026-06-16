@@ -47,9 +47,13 @@ export default function SignIn() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await login(formData.email, formData.password);
+      const { hasProfile } = await login(formData.email, formData.password);
       toast.success("Welcome back!");
-      navigate('/');
+      if (hasProfile) {
+        navigate('/');
+      } else {
+        navigate('/profile');
+      }
     } catch (err) {
       const errorData = err.response?.data?.error;
       const errorMsg = errorData?.message || err.response?.data?.message || err.message || "Invalid credentials.";

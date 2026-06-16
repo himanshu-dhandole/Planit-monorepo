@@ -6,6 +6,7 @@ export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [customerProfile, setCustomerProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,11 +15,23 @@ export function AuthProvider({ children }) {
       if (token) {
         try {
           const decoded = jwtDecode(token);
-          setUser({ id: decoded.sub, email: decoded.email || 'User', roles: decoded.role || [] });
+          const userData = { id: decoded.sub, email: decoded.email || 'User', roles: decoded.role || [] };
+          setUser(userData);
+          
+          // Fetch customer profile on load
+          try {
+            const res = await apiClient.get(`/api/customer/user/${userData.id}`);
+            if (res.data) {
+              setCustomerProfile(res.data.data || res.data);
+            }
+          } catch (err) {
+            setCustomerProfile(null);
+          }
         } catch (error) {
           console.error("Token decoding failed", error);
           localStorage.removeItem('accessToken');
           setUser(null);
+          setCustomerProfile(null);
         }
       }
       setLoading(false);
@@ -32,8 +45,22 @@ export function AuthProvider({ children }) {
     if (accessToken) {
       localStorage.setItem('accessToken', accessToken);
       const decoded = jwtDecode(accessToken);
-      setUser({ id: decoded.sub, email: decoded.email || email, roles: decoded.role || [] });
-      return response;
+      const userData = { id: decoded.sub, email: decoded.email || email, roles: decoded.role || [] };
+      setUser(userData);
+
+      // Fetch profile
+      let hasProfile = false;
+      try {
+        const res = await apiClient.get(`/api/customer/user/${userData.id}`);
+        if (res.data) {
+          setCustomerProfile(res.data.data || res.data);
+          hasProfile = true;
+        }
+      } catch (err) {
+        setCustomerProfile(null);
+      }
+      
+      return { response, hasProfile };
     } else {
       throw new Error('Access token missing from response');
     }
@@ -51,8 +78,23 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const refreshUser = async () => {
+    try {
+      const response = await apiClient.post('/auth/refresh');
+      const token = response.data?.data?.accessToken || response.data?.accessToken;
+      if (token) {
+        localStorage.setItem('accessToken', token);
+        const decoded = jwtDecode(token);
+        const userData = { id: decoded.sub, email: decoded.email || decoded.sub, roles: decoded.role || [] };
+        setUser(userData);
+      }
+    } catch (error) {
+      console.error("Token refresh failed", error);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, setUser, customerProfile, setCustomerProfile, login, logout, refreshUser, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );

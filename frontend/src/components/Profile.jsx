@@ -2,10 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import apiClient from '../lib/apiClient';
 import { toast } from 'sonner';
-import { Camera, FileText, User, MapPin, Phone, CheckCircle, Clock, AlertCircle, Loader2 } from 'lucide-react';
+import { Camera, FileText, User, MapPin, Phone, CheckCircle, Clock, AlertCircle, Loader2, Shield } from 'lucide-react';
+import CloudsBackground from './CloudsBackground';
 
 export default function Profile() {
-  const { user } = useContext(AuthContext);
+  const { user, refreshUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [customerId, setCustomerId] = useState(null);
@@ -151,6 +152,9 @@ export default function Profile() {
         });
         setFiles({ profilePic: null, aadhar: null }); // Clear selected files after successful upload
         setIsEditing(false); // Switch back to read-only after saving
+        
+        // Refresh token to get the updated CUSTOMER role
+        await refreshUser();
       }
 
     } catch (err) {
@@ -178,18 +182,18 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex justify-center items-center bg-gradient-to-b from-[#CBE4F9] to-[#E3F2FC]">
-        <Loader2 className="animate-spin text-blue-500" size={48} />
-      </div>
+      <CloudsBackground>
+        <div className="flex-1 flex justify-center items-center">
+          <Loader2 className="animate-spin text-blue-500" size={48} />
+        </div>
+      </CloudsBackground>
     );
   }
 
   return (
-    <div className="flex-1 pt-32 bg-gradient-to-b from-[#CBE4F9] to-[#E3F2FC] relative font-sans w-full min-h-screen py-12 px-4 sm:px-6 lg:px-8 overflow-y-auto">
-      {/* Background Decor */}
-      <div className="absolute inset-0 bg-noise pointer-events-none z-0 mix-blend-overlay opacity-30"></div>
-      
-      <div className="relative z-10 max-w-5xl mx-auto space-y-8">
+    <CloudsBackground>
+      <div className="flex-1 pt-32 relative font-sans w-full py-12 px-4 sm:px-6 lg:px-8 overflow-y-auto z-10">
+        <div className="max-w-5xl mx-auto space-y-8">
         
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/70 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
@@ -213,6 +217,21 @@ export default function Profile() {
                 {formData.firstName || formData.lastName ? `${formData.firstName} ${formData.lastName}` : 'Complete Your Profile'}
               </h1>
               <p className="text-gray-500 font-medium">{user?.email}</p>
+              
+              {user?.roles && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {(Array.isArray(user.roles) ? user.roles : [user.roles]).map((role, idx) => {
+                    const roleName = typeof role === 'string' ? role.replace('ROLE_', '').replace('_', ' ') : String(role);
+                    return (
+                      <span key={idx} className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold border border-blue-200 shadow-sm">
+                        <Shield size={14} />
+                        <span className="capitalize">{roleName.toLowerCase()}</span>
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+
               <div className="mt-3">
                 {getStatusBadge()}
               </div>
@@ -345,6 +364,7 @@ export default function Profile() {
           
         </div>
       </div>
-    </div>
+      </div>
+    </CloudsBackground>
   );
 }
