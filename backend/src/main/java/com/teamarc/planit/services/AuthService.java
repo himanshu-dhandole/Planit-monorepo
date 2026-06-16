@@ -98,4 +98,12 @@ public class AuthService {
     public void verifyPasswordResetOTP(OTPVerificationDTO verificationDTO) {
         otpService.verifyPasswordResetOTP(verificationDTO);
     }
+
+    @Transactional
+    public void resetPassword(com.teamarc.planit.dto.request.ResetPasswordDTO dto) {
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        userRepository.save(user);
+    }
 }

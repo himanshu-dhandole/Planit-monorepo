@@ -81,4 +81,10 @@ public class AuthController {
         authService.verifyPasswordResetOTP(verificationDTO);
         return ResponseEntity.ok(java.util.Map.of("message", "OTP verified. You can now reset your password."));
     }
+
+    @PostMapping(path = "/reset-password")
+    public ResponseEntity<java.util.Map<String, String>> resetPassword(@RequestBody @Valid com.teamarc.planit.dto.request.ResetPasswordDTO resetPasswordDTO) {
+        authService.resetPassword(resetPasswordDTO);
+        return ResponseEntity.ok(java.util.Map.of("message", "Password reset successfully. You can now login."));
+    }
 }
