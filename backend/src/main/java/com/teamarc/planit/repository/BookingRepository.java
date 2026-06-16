@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    Page<Booking> findAllByService_Vendor_Id(Long id, Pageable pageable);
+    Page<Booking> findAllByServices_Vendor_Id(Long id, Pageable pageable);
 
     Page<Booking> findAllByCustomer_Id(Long customerId, PageRequest of);
 }

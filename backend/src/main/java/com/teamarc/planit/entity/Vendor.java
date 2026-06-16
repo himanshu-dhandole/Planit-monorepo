@@ -64,7 +64,7 @@ public class Vendor {
     private LocalDateTime updatedAt;
     
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private java.util.Set<Service> services;
+    private java.util.Set<Services> services;
     
     @PrePersist
     protected void onCreate() {

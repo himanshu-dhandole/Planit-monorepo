@@ -29,4 +29,5 @@ public class ServiceRequestDTO {
     
     @Size(max = 300)
     private String location;
+
 }

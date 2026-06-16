@@ -31,9 +31,9 @@ public interface BookingMapper {
     void updateEventFromDTO(EventRequestDTO dto, @MappingTarget Event entity);
     
     // Service mappings
-    Service toEntity(ServiceRequestDTO dto);
-    ServiceResponseDTO toServiceResponse(Service entity);
-    void updateServiceFromDTO(ServiceRequestDTO dto, @MappingTarget Service entity);
+    Services toEntity(ServiceRequestDTO dto);
+    ServiceResponseDTO toServiceResponse(Services entity);
+    void updateServiceFromDTO(ServiceRequestDTO dto, @MappingTarget Services entity);
     
     // Booking mappings
     Booking toEntity(BookingRequestDTO dto);

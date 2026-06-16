@@ -15,10 +15,10 @@ public class BookingController {
 
     private final BookingService bookingService;
 
-    @PostMapping
-    public ResponseEntity<BookingResponseDTO> createBooking(@RequestBody @Valid BookingRequestDTO bookingRequestDTO) {
-        return ResponseEntity.ok(bookingService.createBooking(bookingRequestDTO));
-    }
+//    @PostMapping
+//    public ResponseEntity<BookingResponseDTO> createBooking(@RequestBody @Valid BookingRequestDTO bookingRequestDTO) {
+//        return ResponseEntity.ok(bookingService.createBookingRequest(bookingRequestDTO));
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<BookingResponseDTO> getBookingById(@PathVariable Long id) {

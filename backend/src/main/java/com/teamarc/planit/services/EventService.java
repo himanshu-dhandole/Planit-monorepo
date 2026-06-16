@@ -21,7 +21,6 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final ModelMapper modelMapper;
-    private final CustomerService customerService;
     private final CustomerRepository customerRepository;
 
     @Transactional

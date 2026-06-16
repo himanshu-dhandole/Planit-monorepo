@@ -1,5 +1,6 @@
 package com.teamarc.planit.dto.response;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ public class ServiceResponseDTO {
     private String name;
     private String description;
     private BigDecimal price;
+    private String category;
     private Boolean isAvailable;
     private String location;
     private LocalDateTime createdAt;

@@ -6,7 +6,9 @@ import com.teamarc.planit.dto.response.ServiceResponseDTO;
 import com.teamarc.planit.dto.response.VendorResponseDTO;
 import com.teamarc.planit.entity.Vendor;
 import com.teamarc.planit.entity.enums.VendorServiceCategory;
+import com.teamarc.planit.exceptions.ResourceNotFoundException;
 import com.teamarc.planit.repository.VendorRepository;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -59,5 +61,9 @@ public class VendorService {
 
     public Page<BookingResponseDTO> getAllVendorBookings(Long id, int page, int size) {
         return bookingService.getAllVendorBookings(id, page, size);
+    }
+
+    public Vendor getVendorEntityById(Long vendorId) {
+        return vendorRepository.findById(vendorId).orElseThrow(() -> new ResourceNotFoundException("Vendor not found with id: " + vendorId));
     }
 }
