@@ -1,5 +1,6 @@
 package com.teamarc.planit.entity;
 
+import com.teamarc.planit.entity.enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -82,9 +83,5 @@ public class Booking {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
-    }
-    
-    public enum BookingStatus {
-        CONFIRMED, CANCELLED, COMPLETED, PENDING
     }
 }

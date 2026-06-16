@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 public class WalletService{
@@ -47,6 +49,48 @@ public class WalletService{
                 .build();
 
         walletTransactionService.createNewWalletTransaction(walletTransaction);
+        return walletRepository.save(wallet);
+    }
+
+    public void addMoney(User user, BigDecimal amount, String transactionId, Booking booking) {
+        Wallet wallet = findByUser(user);
+        wallet.setBalance(wallet.getBalance() + amount.doubleValue());
+        WalletTransaction walletTxn = WalletTransaction.builder()
+                .transactionId(transactionId)
+                .transactionType(TransactionType.CREDIT)
+                .transactionMethod(TransactionMethod.BANKING)
+                .amount(amount.doubleValue())
+                .booking(booking)
+                .wallet(wallet)
+                .build();
+        walletTransactionService.createNewWalletTransaction(walletTxn);
+
+        wallet.getTransactions().add(walletTxn);
+        walletRepository.save(wallet);
+
+        // TODO_MAIL_VENDOR
+
+    }
+
+    public Wallet deductMoney(User user, BigDecimal amount, String transactionId, Booking booking) {
+        Wallet wallet = findByUser(user);
+
+        if(BigDecimal.valueOf(wallet.getBalance()).compareTo(amount) < 0) {
+            throw new IllegalArgumentException("Insufficient wallet balance");
+        }
+
+        wallet.setBalance(wallet.getBalance() - amount.doubleValue());
+        WalletTransaction walletTxn = WalletTransaction.builder()
+                .transactionId(transactionId)
+                .transactionType(TransactionType.DEBIT)
+                .transactionMethod(TransactionMethod.BANKING)
+                .amount(amount.doubleValue())
+                .booking(booking)
+                .wallet(wallet)
+                .build();
+        walletTransactionService.createNewWalletTransaction(walletTxn);
+
+        wallet.getTransactions().add(walletTxn);
         return walletRepository.save(wallet);
     }
 

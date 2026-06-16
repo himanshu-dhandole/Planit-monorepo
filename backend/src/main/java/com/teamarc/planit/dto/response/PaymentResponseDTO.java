@@ -1,6 +1,7 @@
 package com.teamarc.planit.dto.response;
 
 import com.teamarc.planit.entity.Payment;
+import com.teamarc.planit.entity.enums.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ public class PaymentResponseDTO {
     private Long id;
     private Long bookingId;
     private BigDecimal amount;
-    private Payment.PaymentStatus status;
+    private PaymentStatus status;
     private LocalDateTime timestamp;
     private String txnId;
 }

@@ -1,6 +1,7 @@
 package com.teamarc.planit.dto.response;
 
 import com.teamarc.planit.entity.Booking;
+import com.teamarc.planit.entity.enums.BookingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ public class BookingResponseDTO {
     private Long eventId;
     private Long serviceId;
     private Long customerId;
-    private Booking.BookingStatus status;
+    private BookingStatus status;
     private Long cancelledByUserId;
     private String cancellationReason;
     private BigDecimal bookingAmount;

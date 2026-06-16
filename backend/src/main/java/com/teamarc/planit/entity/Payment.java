@@ -1,9 +1,10 @@
 package com.teamarc.planit.entity;
 
+import com.teamarc.planit.entity.enums.PaymentStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
@@ -12,6 +13,8 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class Payment {
     
     @Id
@@ -40,7 +43,5 @@ public class Payment {
         if (timestamp == null) timestamp = LocalDateTime.now();
     }
     
-    public enum PaymentStatus {
-        PAID, PENDING, CANCELLED, REFUNDED, ONHOLD
-    }
+
 }

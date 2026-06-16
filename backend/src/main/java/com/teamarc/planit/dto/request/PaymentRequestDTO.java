@@ -1,6 +1,7 @@
 package com.teamarc.planit.dto.request;
 
 import com.teamarc.planit.entity.Payment;
+import com.teamarc.planit.entity.enums.PaymentStatus;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,7 +21,7 @@ public class PaymentRequestDTO {
     private BigDecimal amount;
     
     @NotNull(message = "Payment status is required")
-    private Payment.PaymentStatus status;
+    private PaymentStatus status;
     
     private String txnId;
 }
