@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import apiClient from '../lib/apiClient';
 import { toast } from 'sonner';
-import { Camera, FileText, User, MapPin, Phone, CheckCircle, Clock, AlertCircle, Loader2, Shield } from 'lucide-react';
+import { Camera, FileText, User, MapPin, Phone, CheckCircle, Clock, AlertCircle, Loader2, Shield, Briefcase } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import CloudsBackground from './CloudsBackground';
 
 export default function Profile() {
@@ -12,6 +13,8 @@ export default function Profile() {
   const [customerId, setCustomerId] = useState(null);
   const [status, setStatus] = useState('PENDING'); // PENDING, VERIFIED, NOT_VERIFIED
   const [isEditing, setIsEditing] = useState(true);
+  const navigate = useNavigate();
+  const isVendor = user?.roles && (Array.isArray(user.roles) ? user.roles : [user.roles]).some(role => role === 'VENDOR' || role === 'ROLE_VENDOR');
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -239,6 +242,14 @@ export default function Profile() {
           </div>
           
           <div className="flex gap-4 self-start md:self-center">
+            {!isVendor && !isEditing && customerId && (
+              <button 
+                onClick={() => navigate('/vendor-onboard')} 
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl shadow-sm transition-all font-semibold flex items-center gap-2"
+              >
+                <Briefcase size={18} /> Apply for Vendor
+              </button>
+            )}
             {!isEditing && (
               <button 
                 onClick={() => setIsEditing(true)} 

@@ -29,9 +29,9 @@ public class PublicController {
         return ResponseEntity.ok(vendorService.getVendorById(vendorid));
     }
 
-    @GetMapping(path = "vendor/user/{userid}")
-    public ResponseEntity<VendorResponseDTO> getVendorByUserId(@RequestParam Long userId) {
-        return ResponseEntity.ok(vendorService.getVendorByUserId(userId));
+    @GetMapping(path = "vendor/customer/{customerId}")
+    public ResponseEntity<VendorResponseDTO> getVendorByCustomerId(@RequestParam Long customerId) {
+        return ResponseEntity.ok(vendorService.getVendorByCustomerId(customerId));
     }
 
     @GetMapping("vendor/category")

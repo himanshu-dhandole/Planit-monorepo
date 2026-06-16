@@ -24,12 +24,22 @@ public class VendorService {
     private final ServicesService servicesService;
     private final BookingService bookingService;
 
-    public VendorResponseDTO getVendorById(Long id) {
-        return modelMapper.map(vendorRepository.findById(id).orElseThrow(() -> new RuntimeException("Vendor not found")), VendorResponseDTO.class);
+    private VendorResponseDTO mapToDTO(Vendor vendor) {
+        VendorResponseDTO dto = modelMapper.map(vendor, VendorResponseDTO.class);
+        if (vendor.getCustomer() != null) {
+            dto.setOwnerName(vendor.getCustomer().getFirstName() + " " + vendor.getCustomer().getLastName());
+            dto.setAadharUrl(vendor.getCustomer().getAadharUrl());
+            dto.setCustomerId(vendor.getCustomer().getId());
+        }
+        return dto;
     }
 
-    public VendorResponseDTO getVendorByUserId(Long userId) {
-        return modelMapper.map(vendorRepository.findByUser_Id(userId).orElseThrow(() -> new RuntimeException("Vendor not found by userId" + userId)), VendorResponseDTO.class);
+    public VendorResponseDTO getVendorById(Long id) {
+        return mapToDTO(vendorRepository.findById(id).orElseThrow(() -> new RuntimeException("Vendor not found")));
+    }
+
+    public VendorResponseDTO getVendorByCustomerId(Long customerId) {
+        return mapToDTO(vendorRepository.findByCustomer_Id(customerId).orElseThrow(() -> new RuntimeException("Vendor not found by customerId " + customerId)));
     }
 
     public VendorResponseDTO updateVendorDetails(Long vendorId, VendorRequestDTO vendorRequestDTO) {
@@ -37,18 +47,26 @@ public class VendorService {
         vendor.setBusinessName(vendorRequestDTO.getBusinessName());
         vendor.setDescription(vendorRequestDTO.getDescription());
         vendor.setCategory(VendorServiceCategory.valueOf(vendorRequestDTO.getCategory()));
-        vendor.setLocation(vendorRequestDTO.getLocation());
-        return modelMapper.map(vendorRepository.save(vendor), VendorResponseDTO.class);
+        vendor.setPhoneNumber(vendorRequestDTO.getPhoneNumber());
+        vendor.setUpiAddress(vendorRequestDTO.getUpiAddress());
+        vendor.setAddressLine1(vendorRequestDTO.getAddressLine1());
+        vendor.setAddressLine2(vendorRequestDTO.getAddressLine2());
+        vendor.setPincode(vendorRequestDTO.getPincode());
+        vendor.setState(vendorRequestDTO.getState());
+        if(vendorRequestDTO.getProfileImageUrl() != null) vendor.setProfileImageUrl(vendorRequestDTO.getProfileImageUrl());
+        vendor.setPan(vendorRequestDTO.getPan());
+        vendor.setGstNumber(vendorRequestDTO.getGstNumber());
+        return mapToDTO(vendorRepository.save(vendor));
     }
 
     public Page<VendorResponseDTO> getAllVendors(int page, int size) {
         return vendorRepository.findAll(PageRequest.of(page, size))
-                .map(vendor -> modelMapper.map(vendor, VendorResponseDTO.class));
+                .map(this::mapToDTO);
     }
 
     public Page<VendorResponseDTO> getVendorsByCategory(String category, int page, int size) {
         return vendorRepository.findAllByCategory(VendorServiceCategory.valueOf(category), PageRequest.of(page, size))
-                .map(vendor -> modelMapper.map(vendor, VendorResponseDTO.class));
+                .map(this::mapToDTO);
     }
 
     //TODO Delete Vendor Account

@@ -33,4 +33,21 @@ public class AdminController {
         adminService.rejectOnBoardNewVendorRequest(requestId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping(path = "/requests/customer")
+    public ResponseEntity<List<com.teamarc.planit.dto.response.CustomerResponseDTO>> getAllCustomerRequests() {
+        return ResponseEntity.ok(adminService.getAllCustomerVerificationRequests());
+    }
+
+    @PostMapping(path = "/requests/customer/approve/{customerId}")
+    public ResponseEntity<Void> approveCustomerRequest(@PathVariable Long customerId) {
+        adminService.approveCustomerVerification(customerId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(path = "/requests/customer/reject/{customerId}")
+    public ResponseEntity<Void> rejectCustomerRequest(@PathVariable Long customerId) {
+        adminService.rejectCustomerVerification(customerId);
+        return ResponseEntity.ok().build();
+    }
 }

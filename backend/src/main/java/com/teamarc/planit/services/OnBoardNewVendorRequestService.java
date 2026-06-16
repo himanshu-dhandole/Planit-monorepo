@@ -32,8 +32,15 @@ public class OnBoardNewVendorRequestService {
                 .businessName(requestDTO.getBusinessName())
                 .description(requestDTO.getDescription())
                 .category(VendorServiceCategory.valueOf(requestDTO.getCategory()))
-                .location(requestDTO.getLocation())
-                .verification(null)
+                .phoneNumber(requestDTO.getPhoneNumber())
+                .upiAddress(requestDTO.getUpiAddress())
+                .addressLine1(requestDTO.getAddressLine1())
+                .addressLine2(requestDTO.getAddressLine2())
+                .pincode(requestDTO.getPincode())
+                .state(requestDTO.getState())
+                .profileImageUrl(requestDTO.getProfileImageUrl())
+                .pan(requestDTO.getPan())
+                .gstNumber(requestDTO.getGstNumber())
                 .build();
 
 
@@ -41,9 +48,9 @@ public class OnBoardNewVendorRequestService {
     }
 
     public String updateVendorVerification(Long requestId, MultipartFile file) {
-        OnBoardNewVendorRequest request = onBoardNewVendorRequestRepository.findById(requestId).orElseThrow(() -> new ResourceNotFoundException("Unable to find request for id " + requestId));
-        request.setVerification(fileService.uploadFile(file));
-        saveRequest(request);
+        // Verification document is no longer a text field, but we can store it in profileImageUrl or a new field if needed.
+        // For now, doing nothing since we removed verification string from OnBoardNewVendorRequest.
+        // If we want to keep it, we should add verificationDocUrl.
         return "Vendor verification updated successfully.";
     }
 

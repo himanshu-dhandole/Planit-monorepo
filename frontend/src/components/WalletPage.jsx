@@ -60,7 +60,7 @@ export default function WalletPage() {
           
           {/* Header Section */}
           <div className="text-center mb-12">
-            <motion.div 
+            {/* <motion.div 
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               className="w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center mx-auto mb-6 transform rotate-3"
@@ -68,7 +68,7 @@ export default function WalletPage() {
               <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center -rotate-3">
                 <WalletIcon size={32} className="text-indigo-600" />
               </div>
-            </motion.div>
+            </motion.div> */}
             <motion.h1 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}

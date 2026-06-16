@@ -27,10 +27,28 @@ public class OnBoardNewVendorRequestDTO {
     @NotBlank(message = "Category is required")
     private String category;
 
-    @Size(max = 500)
-    private String verification;
-
-    @Size(max = 300)
-    private String location;
+    @NotBlank(message = "Phone number is required")
+    private String phoneNumber;
+    
+    private String upiAddress;
+    
+    @NotBlank(message = "Address line 1 is required")
+    private String addressLine1;
+    
+    private String addressLine2;
+    
+    @NotBlank(message = "Pincode is required")
+    private String pincode;
+    
+    @NotBlank(message = "State is required")
+    private String state;
+    
+    private String profileImageUrl;
+    
+    @NotBlank(message = "PAN is required")
+    private String pan;
+    
+    @NotBlank(message = "GST number is required")
+    private String gstNumber;
 
 }

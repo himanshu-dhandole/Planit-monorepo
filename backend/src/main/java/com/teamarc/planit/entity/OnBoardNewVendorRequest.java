@@ -29,10 +29,31 @@ public class OnBoardNewVendorRequest {
     @Column(nullable = false)
     private VendorServiceCategory category;
 
-    @Column(columnDefinition = "TEXT")
-    private String verification;
-
-    @Column(columnDefinition = "TEXT")
-    private String location;
+    @Column(nullable = false)
+    private String phoneNumber;
+    
+    @Column
+    private String upiAddress;
+    
+    @Column(nullable = false)
+    private String addressLine1;
+    
+    @Column
+    private String addressLine2;
+    
+    @Column(nullable = false)
+    private String pincode;
+    
+    @Column(nullable = false)
+    private String state;
+    
+    @Column
+    private String profileImageUrl;
+    
+    @Column(nullable = false)
+    private String pan;
+    
+    @Column(nullable = false)
+    private String gstNumber;
 
 }

@@ -9,6 +9,9 @@ import com.teamarc.planit.entity.enums.VendorServiceCategory;
 import com.teamarc.planit.repository.OnBoardNewVendorRequestRepository;
 import com.teamarc.planit.repository.UserRepository;
 import com.teamarc.planit.repository.VendorRepository;
+import com.teamarc.planit.repository.CustomerRepository;
+import com.teamarc.planit.entity.Customer;
+import com.teamarc.planit.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ public class AdminService {
     private final UserService userService;
     private final VendorRepository vendorRepository;
     private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
     private final OnBoardNewVendorRequestService onBoardNewVendorRequestService;
     private final EmailService emailService;
@@ -38,15 +42,27 @@ public class AdminService {
     public void approveOnBoardNewVendorRequest(Long requestId) {
         OnBoardNewVendorRequestDTO onBoardNewVendorRequestDTO = onBoardNewVendorRequestService.getRequestByRequestId(requestId);
         User user = userService.getUserById(onBoardNewVendorRequestDTO.getUserId());
+        Customer customer = customerRepository.findByUserId(onBoardNewVendorRequestDTO.getUserId());
+        if (customer == null) {
+            throw new ResourceNotFoundException("Customer not found. User must be a registered customer to become a vendor.");
+        }
 
         Vendor vendor = Vendor.builder()
-                            .user(user)
+                            .customer(customer)
                             .businessName(onBoardNewVendorRequestDTO.getBusinessName())
                             .description(onBoardNewVendorRequestDTO.getDescription())
                             .category(VendorServiceCategory.valueOf(onBoardNewVendorRequestDTO.getCategory()))
-                            .verification(onBoardNewVendorRequestDTO.getVerification())
-                            .location(onBoardNewVendorRequestDTO.getLocation())
-                            .isVerified(Boolean.TRUE)
+                            .phoneNumber(onBoardNewVendorRequestDTO.getPhoneNumber())
+                            .upiAddress(onBoardNewVendorRequestDTO.getUpiAddress())
+                            .addressLine1(onBoardNewVendorRequestDTO.getAddressLine1())
+                            .addressLine2(onBoardNewVendorRequestDTO.getAddressLine2())
+                            .pincode(onBoardNewVendorRequestDTO.getPincode())
+                            .state(onBoardNewVendorRequestDTO.getState())
+                            .profileImageUrl(onBoardNewVendorRequestDTO.getProfileImageUrl())
+                            .pan(onBoardNewVendorRequestDTO.getPan())
+                            .gstNumber(onBoardNewVendorRequestDTO.getGstNumber())
+                            .verificationStatus(com.teamarc.planit.entity.enums.VerificationStatus.VERIFIED)
+                            .isActive(true)
                             .build();
 
         vendorRepository.save(vendor);
@@ -66,6 +82,27 @@ public class AdminService {
 
     public void rejectOnBoardNewVendorRequest(Long requestId) {
         onBoardNewVendorRequestService.deleteRequestById(requestId);
+    }
+
+    public List<com.teamarc.planit.dto.response.CustomerResponseDTO> getAllCustomerVerificationRequests() {
+        return customerRepository.findByVerificationStatus(com.teamarc.planit.entity.enums.VerificationStatus.PENDING)
+                .stream()
+                .map(customer -> modelMapper.map(customer, com.teamarc.planit.dto.response.CustomerResponseDTO.class))
+                .toList();
+    }
+
+    public void approveCustomerVerification(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + customerId));
+        customer.setVerificationStatus(com.teamarc.planit.entity.enums.VerificationStatus.VERIFIED);
+        customerRepository.save(customer);
+    }
+
+    public void rejectCustomerVerification(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + customerId));
+        customer.setVerificationStatus(com.teamarc.planit.entity.enums.VerificationStatus.NOT_VERIFIED);
+        customerRepository.save(customer);
     }
 
 }

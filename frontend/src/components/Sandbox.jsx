@@ -3,7 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import apiClient from '../lib/apiClient';
 
 export default function Sandbox() {
-  const { user, loading: authLoading } = useContext(AuthContext);
+  const { user, loading: authLoading, refreshUser } = useContext(AuthContext);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +50,28 @@ export default function Sandbox() {
       
       <div className="mb-8">
         <h2 className="text-lg font-bold bg-blue-200 p-2">Current AuthContext User</h2>
-        <pre className="bg-white p-4 shadow">{JSON.stringify(user, null, 2)}</pre>
+        <div className="bg-white p-4 shadow mb-2">
+          <p><strong>ID:</strong> {user?.id}</p>
+          <p><strong>Email:</strong> {user?.email}</p>
+          <p><strong>Roles:</strong> {user?.roles?.length ? (
+            <span className="flex gap-2 mt-1">
+              {(Array.isArray(user.roles) ? user.roles : [user.roles]).map((r, i) => (
+                <span key={i} className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs font-bold">{r}</span>
+              ))}
+            </span>
+          ) : 'None'}</p>
+          <button 
+            onClick={async () => {
+              setLoading(true);
+              await refreshUser();
+              setLoading(false);
+            }}
+            className="mt-4 bg-purple-600 text-white px-3 py-1 rounded text-sm hover:bg-purple-700 transition"
+          >
+            Refresh Auth Context
+          </button>
+        </div>
+        <pre className="bg-white p-4 shadow text-xs overflow-auto">{JSON.stringify(user, null, 2)}</pre>
       </div>
 
       <div className="mb-8">

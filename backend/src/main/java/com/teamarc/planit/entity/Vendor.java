@@ -22,8 +22,8 @@ public class Vendor {
     private Long id;
     
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private User user;
+    @JoinColumn(name = "customer_id", nullable = false, unique = true)
+    private Customer customer;
     
     @Column(nullable = false)
     private String businessName;
@@ -35,12 +35,36 @@ public class Vendor {
     @Column(nullable = false)
     private VendorServiceCategory category;
     
-    @Column(columnDefinition = "TEXT")
-    private String verification;
+    @Column(nullable = false)
+    private String phoneNumber;
+    
+    @Column
+    private String upiAddress;
+    
+    @Column(nullable = false)
+    private String addressLine1;
+    
+    @Column
+    private String addressLine2;
+    
+    @Column(nullable = false)
+    private String pincode;
+    
+    @Column(nullable = false)
+    private String state;
+    
+    @Column
+    private String profileImageUrl;
+    
+    @Column(nullable = false, unique = true)
+    private String pan;
+    
+    @Column(nullable = false, unique = true)
+    private String gstNumber;
 
-    @Column(name = "is_verified", nullable = false)
-    @ColumnDefault("false")
-    private Boolean isVerified;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private com.teamarc.planit.entity.enums.VerificationStatus verificationStatus;
 
     @Column(name = "is_active", nullable = false)
     @ColumnDefault("true")
@@ -49,9 +73,6 @@ public class Vendor {
     @Column(nullable = false)
     @ColumnDefault("0")
     private Integer totalBookings;
-    
-    @Column(columnDefinition = "TEXT")
-    private String location;
     
     @Column(nullable = false, columnDefinition = "DECIMAL(3,2)")
     @ColumnDefault("5.0")
