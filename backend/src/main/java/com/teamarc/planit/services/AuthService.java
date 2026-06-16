@@ -49,7 +49,7 @@ public class AuthService {
 
         User user = modelMapper.map(signupDto, User.class);
         user.setPassword(passwordEncoder.encode(signupDto.getPassword()));
-        user.setRole(new java.util.HashSet<>(java.util.Collections.singleton(Role.CUSTOMER)));
+        user.getRole().add(Role.USER);
         user.setIsEmailVerified(false);
         User savedUser = userRepository.save(user);
 

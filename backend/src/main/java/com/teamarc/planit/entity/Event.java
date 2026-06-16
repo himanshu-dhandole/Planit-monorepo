@@ -2,15 +2,20 @@ package com.teamarc.planit.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "events")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Event {
     
     @Id
@@ -43,7 +48,11 @@ public class Event {
     private LocalDateTime updatedAt;
     
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private java.util.Set<Booking> bookings;
+    private Set<Booking> bookings;
+
+    @Column(name = "is_deleted")
+    @ColumnDefault("false")
+    private Boolean isDeleted;
     
     @PrePersist
     protected void onCreate() {

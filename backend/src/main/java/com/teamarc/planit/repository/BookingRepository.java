@@ -2,7 +2,9 @@ package com.teamarc.planit.repository;
 
 import com.teamarc.planit.dto.response.BookingResponseDTO;
 import com.teamarc.planit.entity.Booking;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,4 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     Page<Booking> findAllByService_Vendor_Id(Long id, Pageable pageable);
+
+    Page<Booking> findAllByCustomer_Id(Long customerId, PageRequest of);
 }
