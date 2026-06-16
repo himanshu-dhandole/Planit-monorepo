@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Mail, Lock, ArrowRight, ArrowLeft, Eye, EyeOff } from 'lucide-react';
@@ -6,6 +6,8 @@ import { motion } from 'framer-motion';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import apiClient from '../lib/apiClient';
+import FluidLoader from './FluidLoader';
+import OtpInput from 'react-otp-input';
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [timer, setTimer] = useState(60);
   
   const [formData, setFormData] = useState({
     email: '',
@@ -22,8 +25,22 @@ export default function SignIn() {
     newPassword: ''
   });
 
+  useEffect(() => {
+    let interval;
+    if (mode === 'forgot-otp' && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [mode, timer]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleOtpChange = (otpCode) => {
+    setFormData({ ...formData, otpCode });
   };
 
   const handleLogin = async (e) => {
@@ -43,12 +60,13 @@ export default function SignIn() {
   };
 
   const handleRequestReset = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setIsLoading(true);
     try {
       await apiClient.post(`/auth/request-password-reset?email=${encodeURIComponent(formData.email)}`);
       toast.success("Password reset code sent to your email.");
       setMode('forgot-otp');
+      setTimer(60);
     } catch (err) {
       const errorData = err.response?.data?.error;
       const errorMsg = errorData?.message || err.response?.data?.message || "Failed to send reset code.";
@@ -99,13 +117,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center py-20 px-4 relative z-10 bg-gradient-to-b from-[#CBE4F9]/30 to-[#E3F2FC]/50">
-      {/* Background Shapes */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-40 left-10 w-96 h-96 bg-white/40 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-32 w-80 h-80 bg-white/50 rounded-full blur-3xl"></div>
-      </div>
-
+    <div className="w-full flex items-center justify-center py-10 px-4 relative z-10">
       <div className="w-full max-w-md bg-white/70 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] p-8 md:p-10 relative z-10">
         
         {/* LOGIN MODE */}
@@ -174,13 +186,7 @@ export default function SignIn() {
                 disabled={isLoading}
                 className="w-full bg-[#111111] hover:bg-black text-white font-medium py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-6 disabled:opacity-70 hover:shadow-lg hover:-translate-y-0.5"
               >
-                {isLoading ? (
-                  <motion.div
-                    className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-                  />
-                ) : 'Sign In'} 
+                {isLoading ? <FluidLoader /> : 'Sign In'} 
                 {!isLoading && <ArrowRight size={18} />}
               </button>
               
@@ -228,13 +234,7 @@ export default function SignIn() {
                 disabled={isLoading || !formData.email}
                 className="w-full bg-[#111111] hover:bg-black text-white font-medium py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-6 disabled:opacity-70 hover:shadow-lg hover:-translate-y-0.5"
               >
-                {isLoading ? (
-                  <motion.div
-                    className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-                  />
-                ) : 'Send Reset Code'} 
+                {isLoading ? <FluidLoader /> : 'Send Reset Code'} 
               </button>
             </form>
           </>
@@ -251,33 +251,53 @@ export default function SignIn() {
               <p className="text-gray-500 text-sm font-medium">Enter the 6-digit code sent to {formData.email}</p>
             </div>
 
-            <form onSubmit={handleVerifyResetOTP} className="space-y-6">
-              <div>
-                <input 
-                  type="text" 
-                  name="otpCode"
+            <form onSubmit={handleVerifyResetOTP} className="space-y-6 flex flex-col items-center">
+              <div className="w-full flex justify-center">
+                <OtpInput
                   value={formData.otpCode}
-                  onChange={handleChange}
-                  required
-                  maxLength={6}
-                  className="w-full text-center tracking-[0.5em] font-mono text-3xl py-5 bg-white/50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-gray-300 focus:ring-4 focus:ring-gray-100 transition-all font-semibold text-gray-800 placeholder-gray-300"
-                  placeholder="------"
+                  onChange={handleOtpChange}
+                  numInputs={6}
+                  renderSeparator={<span className="w-2 md:w-3"></span>}
+                  renderInput={(props) => <input {...props} />}
+                  inputStyle={{
+                    width: "3rem",
+                    height: "3.5rem",
+                    margin: "0",
+                    fontSize: "1.5rem",
+                    borderRadius: "0.75rem",
+                    border: "1px solid #E5E7EB",
+                    backgroundColor: "rgba(255, 255, 255, 0.5)",
+                    outline: "none",
+                    fontWeight: "600",
+                    color: "#1F2937",
+                  }}
+                  containerStyle="justify-center"
                 />
               </div>
 
               <button 
                 type="submit" 
                 disabled={isLoading || formData.otpCode.length !== 6}
-                className="w-full bg-[#111111] hover:bg-black text-white font-medium py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed hover:shadow-lg hover:-translate-y-0.5"
+                className="w-full bg-[#111111] hover:bg-black text-white font-medium py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-6 disabled:opacity-70 disabled:cursor-not-allowed hover:shadow-lg hover:-translate-y-0.5"
               >
-                {isLoading ? (
-                  <motion.div
-                    className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-                  />
-                ) : 'Verify Code'} 
+                {isLoading ? <FluidLoader /> : 'Verify Code'} 
               </button>
+
+              <div className="text-center mt-4">
+                {timer > 0 ? (
+                  <p className="text-sm text-gray-500 font-semibold">
+                    Resend code in <span className="text-black">{timer}s</span>
+                  </p>
+                ) : (
+                  <button 
+                    type="button"
+                    onClick={() => handleRequestReset()}
+                    className="text-sm text-gray-500 font-semibold hover:text-black transition-colors"
+                  >
+                    Didn't receive a code? Resend
+                  </button>
+                )}
+              </div>
             </form>
           </>
         )}
@@ -322,13 +342,7 @@ export default function SignIn() {
                 disabled={isLoading || formData.newPassword.length < 8}
                 className="w-full bg-[#111111] hover:bg-black text-white font-medium py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-6 disabled:opacity-70 hover:shadow-lg hover:-translate-y-0.5"
               >
-                {isLoading ? (
-                  <motion.div
-                    className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-                  />
-                ) : 'Update Password'} 
+                {isLoading ? <FluidLoader /> : 'Update Password'} 
               </button>
             </form>
           </>

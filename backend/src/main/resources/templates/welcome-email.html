@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Planit!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #E3F2FC;
+        }
+        .wrapper {
+            background: linear-gradient(180deg, #CBE4F9 0%, #E3F2FC 100%);
+            min-height: 100%;
+            width: 100%;
+            padding: 40px 0;
+        }
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 32px;
+            padding: 40px 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+            text-align: center;
+        }
+        .header {
+            margin-bottom: 24px;
+        }
+        .logo {
+            font-family: Georgia, serif;
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #111111;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0 0 16px 0;
+        }
+        .content {
+            font-size: 15px;
+            color: #555555;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+        .btn-box {
+            margin: 30px 0;
+        }
+        .btn {
+            background-color: #111111;
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            display: inline-block;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+        }
+        .footer {
+            margin-top: 32px;
+            font-size: 12px;
+            color: #888888;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="header">
+                <svg width="80" height="50" viewBox="0 0 400 250" style="margin: 0 auto 12px auto; display: block;">
+                    <path d="M 120 130 C 120 80, 180 70, 210 100 C 240 50, 330 60, 330 120 C 380 120, 380 180, 330 180 L 120 180 C 60 180, 60 130, 120 130 Z" fill="#8BA4F9" opacity="0.8" />
+                </svg>
+                <div class="logo">Planit</div>
+            </div>
+            
+            <h2 class="title">Welcome to Planit! 🎉</h2>
+            
+            <div class="content">
+                <p style="margin: 0 0 12px 0;">Hi <strong th:text="${userName}">User</strong>,</p>
+                <p style="margin: 0 0 16px 0;">We're absolutely thrilled to have you join the Planit community! Planit is your all-in-one platform for creating and running flawless events.</p>
+                <p style="margin: 0;">Get started by logging into your dashboard and customizing your first event.</p>
+                
+                <div class="btn-box">
+                    <a href="http://localhost:5173/signin" class="btn">Go to Dashboard</a>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <p style="margin: 0 0 4px 0;">© <span th:text="${currentYear}">2026</span> Planit. All rights reserved.</p>
+                <p style="margin: 0;">This is an automated email. Please do not reply.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -50,14 +50,16 @@ public class EmailService {
     /**
      * Send OTP email
      */
-    public void sendOTPEmail(String email, String userName, String otpCode, Integer validityMinutes) {
+    public void sendOTPEmail(String email, String userName, String otpCode, Integer validityMinutes, String otpType) {
         Map<String, Object> variables = new HashMap<>();
         variables.put("userName", userName);
         variables.put("otpCode", otpCode);
         variables.put("validityMinutes", validityMinutes);
+        variables.put("otpType", otpType);
         variables.put("currentYear", java.time.Year.now().getValue());
 
-        sendTemplateEmail(email, "otp-email", variables, "Email Verification - OTP");
+        String subject = "PASSWORD_RESET".equals(otpType) ? "Reset Your Password - OTP" : "Email Verification - OTP";
+        sendTemplateEmail(email, "otp-email", variables, subject);
     }
 
     /**

@@ -3,91 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planit Security Code</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #E3F2FC;
         }
-        .email-container {
-            max-width: 600px;
+        .wrapper {
+            background: linear-gradient(180deg, #CBE4F9 0%, #E3F2FC 100%);
+            min-height: 100%;
+            width: 100%;
+            padding: 40px 0;
+        }
+        .container {
+            max-width: 520px;
             margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 32px;
+            padding: 40px 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+            text-align: center;
         }
         .header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 8px 8px 0 0;
+            margin-bottom: 24px;
+        }
+        .logo {
+            font-family: Georgia, serif;
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #111111;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0 0 16px 0;
         }
         .content {
-            padding: 20px;
+            font-size: 15px;
+            color: #555555;
+            line-height: 1.6;
+            margin-bottom: 32px;
         }
         .otp-box {
-            background-color: #f5f5f5;
-            border: 2px solid #4CAF50;
-            padding: 20px;
-            text-align: center;
-            margin: 20px 0;
-            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 24px 0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02);
+        }
+        .otp-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888888;
+            margin-bottom: 12px;
         }
         .otp-code {
-            font-size: 32px;
-            font-weight: bold;
-            color: #4CAF50;
-            letter-spacing: 5px;
-        }
-        .footer {
-            background-color: #f5f5f5;
-            padding: 20px;
-            text-align: center;
-            font-size: 12px;
-            color: #666;
-            border-radius: 0 0 8px 8px;
+            font-size: 36px;
+            font-weight: 700;
+            color: #111111;
+            letter-spacing: 6px;
+            font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
         }
         .warning {
+            font-size: 12px;
+            color: #856404;
             background-color: #fff3cd;
-            border: 1px solid #ffc107;
-            padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
+            border: 1px solid #ffeeba;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 20px 0;
+            display: inline-block;
+        }
+        .footer {
+            margin-top: 32px;
+            font-size: 12px;
+            color: #888888;
+            line-height: 1.5;
         }
     </style>
 </head>
 <body>
-    <div class="email-container">
-        <div class="header">
-            <h1>Email Verification</h1>
-        </div>
-
-        <div class="content">
-            <p>Hi <strong th:text="${userName}">User</strong>,</p>
+    <div class="wrapper">
+        <div class="container">
+            <div class="header">
+                <!-- SVG Cloud Logo Header -->
+                <svg width="80" height="50" viewBox="0 0 400 250" style="margin: 0 auto 12px auto; display: block;">
+                    <path d="M 120 130 C 120 80, 180 70, 210 100 C 240 50, 330 60, 330 120 C 380 120, 380 180, 330 180 L 120 180 C 60 180, 60 130, 120 130 Z" fill="#8BA4F9" opacity="0.8" />
+                </svg>
+                <div class="logo">Planit</div>
+            </div>
             
-            <p>Thank you for signing up with Planit! To verify your email address and secure your account, please use the One-Time Password (OTP) below:</p>
-
-            <div class="otp-box">
-                <p>Your OTP Code:</p>
-                <div class="otp-code" th:text="${otpCode}">123456</div>
+            <h2 class="title" th:text="${otpType == 'PASSWORD_RESET' ? 'Reset Your Password' : 'Verify Your Email'}">Verify your email address</h2>
+            
+            <div class="content">
+                <p style="margin: 0 0 12px 0;">Hi <strong th:text="${userName}">User</strong>,</p>
+                <p style="margin: 0;" th:text="${otpType == 'PASSWORD_RESET' ? 'We received a request to reset your Planit account password. Use the security code below to proceed.' : 'Thank you for signing up with Planit! To complete your registration and secure your account, please use the 6-digit verification code below.'}">Thank you for signing up with Planit! To complete your registration and secure your account, please use the 6-digit verification code below.</p>
+                
+                <div class="otp-box">
+                    <div class="otp-label" th:text="${otpType == 'PASSWORD_RESET' ? 'Reset Code' : 'Verification Code'}">Verification Code</div>
+                    <div class="otp-code" th:text="${otpCode}">123456</div>
+                </div>
+                
+                <div class="warning">
+                    This code will expire in <strong th:text="${validityMinutes}">5</strong> minutes. If you did not make this request, you can safely ignore this email.
+                </div>
             </div>
-
-            <div class="warning">
-                <strong>Important:</strong> This OTP is valid for <strong th:text="${validityMinutes}">5</strong> minutes only. Do not share this code with anyone.
+            
+            <div class="footer">
+                <p style="margin: 0 0 4px 0;">© <span th:text="${currentYear}">2026</span> Planit. All rights reserved.</p>
+                <p style="margin: 0;">This is an automated email. Please do not reply.</p>
             </div>
-
-            <p>If you didn't request this email, please ignore it or contact our support team.</p>
-
-            <p>
-                Best regards,<br>
-                <strong>The Planit Team</strong>
-            </p>
-        </div>
-
-        <div class="footer">
-            <p>© <span th:text="${currentYear}">2024</span> Planit. All rights reserved.</p>
-            <p>This is an automated email. Please do not reply to this message.</p>
         </div>
     </div>
 </body>

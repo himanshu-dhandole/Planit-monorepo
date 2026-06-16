@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Mail, Lock, User, ArrowRight, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import apiClient from '../lib/apiClient';
+import FluidLoader from './FluidLoader';
+import OtpInput from 'react-otp-input';
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -18,8 +20,24 @@ export default function SignUp() {
     otpCode: ''
   });
 
+  const [timer, setTimer] = useState(60);
+
+  useEffect(() => {
+    let interval;
+    if (step === 2 && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [step, timer]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleOtpChange = (otpCode) => {
+    setFormData({ ...formData, otpCode });
   };
 
   const handleSignup = async (e) => {
@@ -33,6 +51,7 @@ export default function SignUp() {
       });
       toast.success("Account created! Check your email for the verification code.");
       setStep(2);
+      setTimer(60);
     } catch (err) {
       const errorData = err.response?.data?.error;
       const errorMsg = errorData?.subErrors?.length ? errorData.subErrors.join(', ') : (errorData?.message || err.response?.data?.message || err.message || "Failed to sign up.");
@@ -61,14 +80,13 @@ export default function SignUp() {
     }
   };
 
-  return (
-    <div className="min-h-screen w-full flex items-center justify-center py-20 px-4 relative z-10 bg-gradient-to-b from-[#CBE4F9]/30 to-[#E3F2FC]/50">
-      {/* Background Shapes specific to Auth */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-20 left-10 md:left-40 w-72 h-72 bg-white/40 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 md:right-40 w-96 h-96 bg-white/50 rounded-full blur-3xl"></div>
-      </div>
+  const handleResend = () => {
+    toast.info("Resending code...");
+    setTimer(60);
+  };
 
+  return (
+    <div className="w-full flex items-center justify-center py-10 px-4 relative z-10">
       <div className="w-full max-w-md bg-white/70 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] p-8 md:p-10 relative z-10">
         
         <div className="text-center mb-8">
@@ -154,13 +172,7 @@ export default function SignUp() {
               disabled={isLoading}
               className="w-full bg-[#111111] hover:bg-black text-white font-medium py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-6 disabled:opacity-70 hover:shadow-lg hover:-translate-y-0.5"
             >
-              {isLoading ? (
-                <motion.div
-                  className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-                />
-              ) : 'Continue'} 
+              {isLoading ? <FluidLoader /> : 'Continue'} 
               {!isLoading && <ArrowRight size={18} />}
             </button>
             
@@ -171,44 +183,54 @@ export default function SignUp() {
             </div>
           </form>
         ) : (
-          <form onSubmit={handleVerifyOTP} className="space-y-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5 text-center">Verification Code</label>
-              <input 
-                type="text" 
-                name="otpCode"
+          <form onSubmit={handleVerifyOTP} className="space-y-6 flex flex-col items-center">
+            <div className="w-full flex flex-col items-center">
+              <label className="block text-sm font-semibold text-gray-700 mb-4 text-center">Verification Code</label>
+              <OtpInput
                 value={formData.otpCode}
-                onChange={handleChange}
-                required
-                maxLength={6}
-                className="w-full text-center tracking-[0.5em] font-mono text-3xl py-5 bg-white/50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-gray-300 focus:ring-4 focus:ring-gray-100 transition-all font-semibold text-gray-800 placeholder-gray-300"
-                placeholder="------"
+                onChange={handleOtpChange}
+                numInputs={6}
+                renderSeparator={<span className="w-2 md:w-3"></span>}
+                renderInput={(props) => <input {...props} />}
+                inputStyle={{
+                  width: "3rem",
+                  height: "3.5rem",
+                  margin: "0",
+                  fontSize: "1.5rem",
+                  borderRadius: "0.75rem",
+                  border: "1px solid #E5E7EB",
+                  backgroundColor: "rgba(255, 255, 255, 0.5)",
+                  outline: "none",
+                  fontWeight: "600",
+                  color: "#1F2937",
+                }}
+                containerStyle="justify-center"
               />
             </div>
 
             <button 
               type="submit" 
               disabled={isLoading || formData.otpCode.length !== 6}
-              className="w-full bg-[#111111] hover:bg-black text-white font-medium py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed hover:shadow-lg hover:-translate-y-0.5"
+              className="w-full bg-[#111111] hover:bg-black text-white font-medium py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 mt-6 disabled:opacity-70 disabled:cursor-not-allowed hover:shadow-lg hover:-translate-y-0.5"
             >
-              {isLoading ? (
-                <motion.div
-                  className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-                />
-              ) : 'Verify Email'} 
+              {isLoading ? <FluidLoader /> : 'Verify Email'} 
               {!isLoading && <CheckCircle2 size={18} />}
             </button>
 
             <div className="text-center mt-4">
-              <button 
-                type="button"
-                onClick={() => toast.info("Resending code...")}
-                className="text-sm text-gray-500 font-semibold hover:text-black transition-colors"
-              >
-                Didn't receive a code? Resend
-              </button>
+              {timer > 0 ? (
+                <p className="text-sm text-gray-500 font-semibold">
+                  Resend code in <span className="text-black">{timer}s</span>
+                </p>
+              ) : (
+                <button 
+                  type="button"
+                  onClick={handleResend}
+                  className="text-sm text-gray-500 font-semibold hover:text-black transition-colors"
+                >
+                  Didn't receive a code? Resend
+                </button>
+              )}
             </div>
           </form>
         )}

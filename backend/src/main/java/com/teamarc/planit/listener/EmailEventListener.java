@@ -22,7 +22,8 @@ public class EmailEventListener {
                     event.getEmail(),
                     event.getUserName(),
                     event.getOtpCode(),
-                    event.getExpiryMinutes()
+                    event.getExpiryMinutes(),
+                    event.getOtpType()
             );
             log.info("OTP email sent successfully to: {}", event.getEmail());
         } catch (Exception e) {

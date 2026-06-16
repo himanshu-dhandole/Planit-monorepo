@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import Protected from './components/Protected';
 import LandingPage from './components/LandingPage';
 import Layout from './components/Layout';
+import AuthLayout from './components/AuthLayout';
 import NotFound from './components/NotFound';
 import SignUp from './components/SignUp';
 import SignIn from './components/SignIn';
@@ -14,8 +15,13 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Layout><LandingPage /></Layout>} />
-          <Route path="/signup" element={<Protected authentication={false}><Layout><SignUp /></Layout></Protected>} />
-          <Route path="/signin" element={<Protected authentication={false}><Layout><SignIn /></Layout></Protected>} />
+          
+          {/* Auth Routes with seamless Cloud Background */}
+          <Route element={<AuthLayout />}>
+            <Route path="/signup" element={<Protected authentication={false}><SignUp /></Protected>} />
+            <Route path="/signin" element={<Protected authentication={false}><SignIn /></Protected>} />
+          </Route>
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       <Toaster 
