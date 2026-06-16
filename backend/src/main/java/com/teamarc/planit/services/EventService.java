@@ -6,7 +6,9 @@ import com.teamarc.planit.dto.response.BookingResponseDTO;
 import com.teamarc.planit.dto.response.EventResponseDTO;
 import com.teamarc.planit.entity.Customer;
 import com.teamarc.planit.entity.Event;
+import com.teamarc.planit.repository.CustomerRepository;
 import com.teamarc.planit.repository.EventRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -20,9 +22,11 @@ public class EventService {
     private final EventRepository eventRepository;
     private final ModelMapper modelMapper;
     private final CustomerService customerService;
+    private final CustomerRepository customerRepository;
 
+    @Transactional
     public EventResponseDTO createNewEvent(EventRequestDTO eventRequestDTO) {
-        Customer customer = modelMapper.map(customerService.getCustomerById(eventRequestDTO.getCustomerId()), Customer.class);
+        Customer customer = customerRepository.findById(eventRequestDTO.getCustomerId()).orElseThrow(() -> new RuntimeException("Customer not found with id: " + eventRequestDTO.getCustomerId()));
         Event event = Event.builder()
                 .customer(customer)
                 .title(eventRequestDTO.getTitle())

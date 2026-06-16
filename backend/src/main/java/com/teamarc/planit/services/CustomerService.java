@@ -38,6 +38,10 @@ public class CustomerService {
         return modelMapper.map(customerRepository.findById(id).orElseThrow(() -> new RuntimeException("Customer not found with id: " + id)), CustomerResponseDTO.class);
     }
 
+    public Customer getCustomerEntityById(Long id) {
+        return customerRepository.findById(id).orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
+    }
+
     public CustomerResponseDTO getCustomerByUserId(Long userId) {
         Customer customer = customerRepository.findByUserId(userId);
         if (customer == null) {
