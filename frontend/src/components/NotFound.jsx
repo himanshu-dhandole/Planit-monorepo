@@ -1,12 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import CloudsBackground from './CloudsBackground';
-import Navbar from './Navbar';
 
 export default function NotFound() {
   return (
     <CloudsBackground>
-      <Navbar />
       <div className="relative z-10 text-center px-4 flex flex-col items-center pt-24 justify-center flex-1">
         <h1 className="font-serif text-5xl md:text-[4rem] text-[#111111] tracking-tight mb-6">
           Page Not Found | 404

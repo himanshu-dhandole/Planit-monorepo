@@ -25,13 +25,41 @@ public class Customer {
     private User user;
     
     @Column(nullable = false)
-    private String name;
+    private String firstName;
+    
+    @Column
+    private String middleName;
+    
+    @Column(nullable = false)
+    private String lastName;
+
+    @Column(nullable = false)
+    private String phoneNumber;
+
+    @Column
+    private String profilePictureUrl;
     
     @Column(columnDefinition = "TEXT")
     private String bio;
     
-    @Column(columnDefinition = "TEXT")
-    private String address;
+    @Column(nullable = false)
+    private String addressLine1;
+
+    @Column
+    private String addressLine2;
+
+    @Column(nullable = false)
+    private String state;
+
+    @Column(nullable = false)
+    private String pincode;
+
+    @Column
+    private String aadharUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private com.teamarc.planit.entity.enums.VerificationStatus verificationStatus;
     
     @Column(nullable = false, columnDefinition = "DECIMAL(3,2)")
     @ColumnDefault("5.0")
@@ -54,6 +82,7 @@ public class Customer {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
         if (karma == null) karma = 5.0;
+        if (verificationStatus == null) verificationStatus = com.teamarc.planit.entity.enums.VerificationStatus.PENDING;
     }
     
     @PreUpdate

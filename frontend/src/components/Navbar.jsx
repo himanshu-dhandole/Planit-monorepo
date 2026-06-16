@@ -1,6 +1,7 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   CalendarDays,
   User,
@@ -34,27 +35,59 @@ function DropdownItemSmall({ icon, title }) {
 }
 
 export default function Navbar() {
-  const [isFeaturesHovered, setIsFeaturesHovered] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState(null);
   const { user, logout } = useContext(AuthContext);
+  const timeoutRef = useRef(null);
+
+  const handleMouseEnter = (item) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setHoveredItem(item);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setHoveredItem(null);
+    }, 150);
+  };
+
+  const navItems = [
+    { name: 'Product', hasDropdown: true },
+    { name: 'Vendors', hasDropdown: false },
+    { name: 'Community', hasDropdown: false },
+    { name: 'Pricing', hasDropdown: false },
+    { name: 'Learn', hasDropdown: false },
+    { name: 'Download', hasDropdown: false }
+  ];
 
   return (
     <div className="fixed top-4 left-0 w-full z-50 flex justify-center px-4">
-      <div 
-        className="relative"
-        onMouseEnter={() => setIsFeaturesHovered(true)}
-        onMouseLeave={() => setIsFeaturesHovered(false)}
-      >
+      <div className="relative">
         {/* Main Navbar Pill */}
         <div className="bg-white/50 backdrop-blur-xl border border-white/40 shadow-sm rounded-full px-6 py-3 flex items-center gap-8 text-sm font-medium text-gray-800 transition-all">
           <div className="font-serif text-2xl font-black tracking-tighter">PLANIT</div>
           
           <div className="hidden md:flex items-center gap-6">
-            <span className={`cursor-pointer transition-colors py-2 ${isFeaturesHovered ? 'text-black' : 'text-gray-700 hover:text-black'}`}>Features</span>
-            <span className="cursor-pointer text-gray-500 hover:text-black transition-colors py-2">Vendors</span>
-            <span className="cursor-pointer text-gray-500 hover:text-black transition-colors py-2">Community</span>
-            <span className="cursor-pointer text-gray-500 hover:text-black transition-colors py-2">Pricing</span>
-            <span className="cursor-pointer text-gray-500 hover:text-black transition-colors py-2">Learn</span>
-            <span className="cursor-pointer text-gray-500 hover:text-black transition-colors py-2">Download</span>
+            {navItems.map((item) => {
+              const isHovered = hoveredItem === item.name;
+              const isDimmed = hoveredItem !== null && hoveredItem !== item.name;
+
+              return (
+                <span
+                  key={item.name}
+                  className={`cursor-pointer transition-all duration-300 py-2 ${
+                    isHovered 
+                      ? 'text-black' 
+                      : isDimmed 
+                        ? 'text-gray-400 opacity-60' 
+                        : 'text-gray-700 hover:text-black'
+                  }`}
+                  onMouseEnter={() => handleMouseEnter(item.name)}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  {item.name}
+                </span>
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-4 ml-4">
@@ -77,29 +110,37 @@ export default function Navbar() {
         </div>
 
         {/* Mega Menu Dropdown */}
-        <div 
-          className={`absolute top-full left-0 mt-2 w-[800px] bg-white/60 backdrop-blur-xl border border-white/40 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] rounded-3xl p-3 transition-all duration-300 origin-top ${
-            isFeaturesHovered ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'
-          }`}
-        >
-          <div className="flex gap-2">
-            {/* Left Column (Main Features) */}
-            <div className="grid grid-cols-2 gap-2 flex-1">
-              <DropdownItem icon={<CalendarDays size={20} />} title="Events" desc="Organize your perfect day" />
-              <DropdownItem icon={<User size={20} />} title="Vendors" desc="Find top professionals" />
-              <DropdownItem icon={<Box size={20} />} title="Rentals" desc="Equipment for any need" />
-              <DropdownItem icon={<CreditCard size={20} />} title="Payments" desc="Secure and easy transactions" />
-            </div>
-            
-            {/* Right Column (Secondary Links) */}
-            <div className="w-64 flex flex-col gap-1 pl-2">
-              <DropdownItemSmall icon={<Sparkles size={16} />} title="What's New" />
-              <DropdownItemSmall icon={<Sparkles size={16} />} title="Imagine" />
-              <DropdownItemSmall icon={<HelpCircle size={16} />} title="Help and Support" />
-              <DropdownItemSmall icon={<FileText size={16} />} title="Blog" />
-            </div>
-          </div>
-        </div>
+        <AnimatePresence>
+          {hoveredItem === 'Product' && (
+            <motion.div 
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.98 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="absolute top-full left-0 mt-2 w-[800px] bg-white/60 backdrop-blur-xl border border-white/40 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] rounded-3xl p-3 origin-top"
+              onMouseEnter={() => handleMouseEnter('Product')}
+              onMouseLeave={handleMouseLeave}
+            >
+              <div className="flex gap-2">
+                {/* Left Column (Main Features) */}
+                <div className="grid grid-cols-2 gap-2 flex-1">
+                  <DropdownItem icon={<CalendarDays size={20} />} title="Events" desc="Organize your perfect day" />
+                  <DropdownItem icon={<User size={20} />} title="Vendors" desc="Find top professionals" />
+                  <DropdownItem icon={<Box size={20} />} title="Rentals" desc="Equipment for any need" />
+                  <DropdownItem icon={<CreditCard size={20} />} title="Payments" desc="Secure and easy transactions" />
+                </div>
+                
+                {/* Right Column (Secondary Links) */}
+                <div className="w-64 flex flex-col gap-1 pl-2">
+                  <DropdownItemSmall icon={<Sparkles size={16} />} title="What's New" />
+                  <DropdownItemSmall icon={<Sparkles size={16} />} title="Imagine" />
+                  <DropdownItemSmall icon={<HelpCircle size={16} />} title="Help and Support" />
+                  <DropdownItemSmall icon={<FileText size={16} />} title="Blog" />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

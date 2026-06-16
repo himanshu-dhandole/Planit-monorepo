@@ -8,11 +8,15 @@ import AuthLayout from './components/AuthLayout';
 import NotFound from './components/NotFound';
 import SignUp from './components/SignUp';
 import SignIn from './components/SignIn';
+import Navbar from './components/Navbar';
+import Profile from './components/Profile';
+import Sandbox from './components/Sandbox';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <Navbar />
         <Routes>
           <Route path="/" element={<Layout><LandingPage /></Layout>} />
           
@@ -21,6 +25,9 @@ function App() {
             <Route path="/signup" element={<Protected authentication={false}><SignUp /></Protected>} />
             <Route path="/signin" element={<Protected authentication={false}><SignIn /></Protected>} />
           </Route>
+          
+          <Route path="/profile" element={<Protected><Layout><Profile /></Layout></Protected>} />
+          <Route path="/sandbox" element={<Protected><Sandbox /></Protected>} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

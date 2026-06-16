@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
       if (token) {
         try {
           const decoded = jwtDecode(token);
-          setUser({ email: decoded.sub || 'User', roles: decoded.roles || [] });
+          setUser({ id: decoded.sub, email: decoded.email || 'User', roles: decoded.role || [] });
         } catch (error) {
           console.error("Token decoding failed", error);
           localStorage.removeItem('accessToken');
@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
     if (accessToken) {
       localStorage.setItem('accessToken', accessToken);
       const decoded = jwtDecode(accessToken);
-      setUser({ email: decoded.sub || email, roles: decoded.roles || [] });
+      setUser({ id: decoded.sub, email: decoded.email || email, roles: decoded.role || [] });
       return response;
     } else {
       throw new Error('Access token missing from response');

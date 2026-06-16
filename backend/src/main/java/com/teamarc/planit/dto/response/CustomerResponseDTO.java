@@ -12,9 +12,18 @@ public class CustomerResponseDTO {
     
     private Long id;
     private Long userId;
-    private String name;
+    private String firstName;
+    private String middleName;
+    private String lastName;
+    private String phoneNumber;
+    private String profilePictureUrl;
     private String bio;
-    private String address;
+    private String addressLine1;
+    private String addressLine2;
+    private String state;
+    private String pincode;
+    private String aadharUrl;
+    private com.teamarc.planit.entity.enums.VerificationStatus verificationStatus;
     private Double karma;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
