@@ -50,4 +50,21 @@ public class AdminController {
         adminService.rejectCustomerVerification(customerId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping(path = "/requests/service")
+    public ResponseEntity<List<com.teamarc.planit.dto.response.ServiceResponseDTO>> getAllServiceRequests() {
+        return ResponseEntity.ok(adminService.getAllPendingServices());
+    }
+
+    @PostMapping(path = "/requests/service/approve/{serviceId}")
+    public ResponseEntity<Void> approveServiceRequest(@PathVariable Long serviceId) {
+        adminService.approveService(serviceId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(path = "/requests/service/reject/{serviceId}")
+    public ResponseEntity<Void> rejectServiceRequest(@PathVariable Long serviceId) {
+        adminService.rejectService(serviceId);
+        return ResponseEntity.ok().build();
+    }
 }

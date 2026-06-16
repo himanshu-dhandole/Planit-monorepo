@@ -24,6 +24,11 @@ public class VendorController {
         return ResponseEntity.ok(vendorService.updateVendorDetails(id, vendorRequestDTO));
     }
 
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<VendorResponseDTO> getVendorByCustomerId(@PathVariable Long customerId) {
+        return ResponseEntity.ok(vendorService.getVendorByCustomerId(customerId));
+    }
+
     @GetMapping("/bookings/{vendorId}")
     public ResponseEntity<Page<BookingResponseDTO>> getAllVendorBookings(@PathVariable Long vendorId, @RequestParam int page, @RequestParam int size) {
         return ResponseEntity.ok(vendorService.getAllVendorBookings(vendorId, page, size));

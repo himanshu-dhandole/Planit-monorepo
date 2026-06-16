@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import apiClient from '../lib/apiClient';
 import { toast } from 'sonner';
-import { Users, Briefcase, CheckCircle, XCircle, FileText, Loader2, ArrowRight } from 'lucide-react';
+import { Users, Briefcase, CheckCircle, XCircle, FileText, Loader2, ArrowRight, Server } from 'lucide-react';
 import CloudsBackground from './CloudsBackground';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,6 +13,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [customers, setCustomers] = useState([]);
   const [vendors, setVendors] = useState([]);
+  const [services, setServices] = useState([]);
   const [actionLoading, setActionLoading] = useState(null); // stores id of item being processed
 
   useEffect(() => {
@@ -31,9 +32,12 @@ export default function AdminDashboard() {
       if (activeTab === 'CUSTOMERS') {
         const res = await apiClient.get('/api/admin/requests/customer');
         setCustomers(res.data?.data || res.data || []);
-      } else {
+      } else if (activeTab === 'VENDORS') {
         const res = await apiClient.get('/api/admin/requests/vendor');
         setVendors(res.data?.data || res.data || []);
+      } else if (activeTab === 'SERVICES') {
+        const res = await apiClient.get('/api/admin/requests/service');
+        setServices(res.data?.data || res.data || []);
       }
     } catch (err) {
       console.error(`Error fetching ${activeTab.toLowerCase()} requests:`, err);
@@ -83,6 +87,12 @@ export default function AdminDashboard() {
                 className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'VENDORS' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
               >
                 <Briefcase size={18} /> Vendors
+              </button>
+              <button
+                onClick={() => setActiveTab('SERVICES')}
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'SERVICES' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+              >
+                <Server size={18} /> Services
               </button>
             </div>
           </div>
@@ -202,6 +212,61 @@ export default function AdminDashboard() {
                               <button 
                                 onClick={() => handleAction('vendor', 'reject', vendor.id)}
                                 disabled={actionLoading === vendor.id}
+                                className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-70"
+                              >
+                                <XCircle size={18} /> Reject
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'SERVICES' && (
+                  <div className="space-y-6">
+                    {services.length === 0 ? (
+                      <div className="text-center py-20">
+                        <Server size={48} className="text-gray-300 mx-auto mb-4" />
+                        <h3 className="text-xl font-bold text-gray-700">No pending service requests</h3>
+                        <p className="text-gray-500 mt-2">All vendor services have been processed.</p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {services.map((service) => (
+                          <div key={service.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_4px_20px_rgb(0,0,0,0.06)] transition-all flex flex-col">
+                            <div className="flex items-start justify-between mb-4">
+                              <div>
+                                <span className="inline-block px-2.5 py-1 bg-purple-50 text-purple-700 text-xs font-bold rounded-lg mb-2">{service.category}</span>
+                                <h3 className="font-bold text-gray-900 text-lg">{service.name}</h3>
+                                <p className="text-sm text-gray-500 mt-1 line-clamp-2">{service.description}</p>
+                              </div>
+                            </div>
+                            
+                            <div className="bg-gray-50 rounded-xl p-4 mb-6 mt-auto space-y-3">
+                              <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Price</span>
+                                <span className="font-semibold text-gray-800">₹{service.price}</span>
+                              </div>
+                              <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Location</span>
+                                <span className="font-semibold text-gray-800">{service.location || 'N/A'}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-3">
+                              <button 
+                                onClick={() => handleAction('service', 'approve', service.id)}
+                                disabled={actionLoading === service.id}
+                                className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-70"
+                              >
+                                {actionLoading === service.id ? <Loader2 size={18} className="animate-spin" /> : <CheckCircle size={18} />}
+                                Approve
+                              </button>
+                              <button 
+                                onClick={() => handleAction('service', 'reject', service.id)}
+                                disabled={actionLoading === service.id}
                                 className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-70"
                               >
                                 <XCircle size={18} /> Reject

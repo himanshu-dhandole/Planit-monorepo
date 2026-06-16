@@ -56,11 +56,16 @@ public class Services {
     @OneToMany(mappedBy = "services", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Booking> bookings;
     
+    @Enumerated(EnumType.STRING)
+    @Column(name = "verification_status")
+    private com.teamarc.planit.entity.enums.VerificationStatus verificationStatus;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
         if (isAvailable == null) isAvailable = true;
+        if (verificationStatus == null) verificationStatus = com.teamarc.planit.entity.enums.VerificationStatus.PENDING;
     }
     
     @PreUpdate

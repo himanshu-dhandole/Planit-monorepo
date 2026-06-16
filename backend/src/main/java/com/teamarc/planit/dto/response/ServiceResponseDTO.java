@@ -20,6 +20,7 @@ public class ServiceResponseDTO {
     private String category;
     private Boolean isAvailable;
     private String location;
+    private com.teamarc.planit.entity.enums.VerificationStatus verificationStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

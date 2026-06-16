@@ -14,6 +14,7 @@ import Sandbox from './components/Sandbox';
 import WalletPage from './components/WalletPage';
 import VendorOnboard from './components/VendorOnboard';
 import AdminDashboard from './components/AdminDashboard';
+import VendorDashboard from './components/VendorDashboard';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           
           <Route path="/profile" element={<Protected><Layout><Profile /></Layout></Protected>} />
           <Route path="/vendor-onboard" element={<Protected><Layout><VendorOnboard /></Layout></Protected>} />
+          <Route path="/vendor-dashboard" element={<Protected><Layout><VendorDashboard /></Layout></Protected>} />
           <Route path="/wallet" element={<Protected><Layout><WalletPage /></Layout></Protected>} />
           <Route path="/admin" element={<Protected><Layout><AdminDashboard /></Layout></Protected>} />
           <Route path="/sandbox" element={<Protected><Sandbox /></Protected>} />

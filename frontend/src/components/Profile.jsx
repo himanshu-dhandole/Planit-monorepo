@@ -250,6 +250,14 @@ export default function Profile() {
                 <Briefcase size={18} /> Apply for Vendor
               </button>
             )}
+            {isVendor && !isEditing && (
+              <button 
+                onClick={() => navigate('/vendor-dashboard')} 
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl shadow-sm transition-all font-semibold flex items-center gap-2"
+              >
+                <Briefcase size={18} /> Vendor Dashboard
+              </button>
+            )}
             {!isEditing && (
               <button 
                 onClick={() => setIsEditing(true)} 

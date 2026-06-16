@@ -27,6 +27,9 @@ public class ServiceRequestDTO {
     
     private Boolean isAvailable;
     
+    @NotBlank(message = "Category is required")
+    private String category;
+    
     @Size(max = 300)
     private String location;
 

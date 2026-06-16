@@ -6,9 +6,12 @@ import com.teamarc.planit.entity.User;
 import com.teamarc.planit.entity.Vendor;
 import com.teamarc.planit.entity.enums.Role;
 import com.teamarc.planit.entity.enums.VendorServiceCategory;
+import com.teamarc.planit.entity.enums.VerificationStatus;
 import com.teamarc.planit.repository.OnBoardNewVendorRequestRepository;
 import com.teamarc.planit.repository.UserRepository;
 import com.teamarc.planit.repository.VendorRepository;
+import com.teamarc.planit.repository.ServicesRepository;
+import com.teamarc.planit.dto.response.ServiceResponseDTO;
 import com.teamarc.planit.repository.CustomerRepository;
 import com.teamarc.planit.entity.Customer;
 import com.teamarc.planit.exceptions.ResourceNotFoundException;
@@ -28,6 +31,7 @@ public class AdminService {
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
+    private final ServicesRepository servicesRepository;
     private final OnBoardNewVendorRequestService onBoardNewVendorRequestService;
     private final EmailService emailService;
 
@@ -61,7 +65,7 @@ public class AdminService {
                             .profileImageUrl(onBoardNewVendorRequestDTO.getProfileImageUrl())
                             .pan(onBoardNewVendorRequestDTO.getPan())
                             .gstNumber(onBoardNewVendorRequestDTO.getGstNumber())
-                            .verificationStatus(com.teamarc.planit.entity.enums.VerificationStatus.VERIFIED)
+                            .verificationStatus(VerificationStatus.VERIFIED)
                             .isActive(true)
                             .build();
 
@@ -85,7 +89,7 @@ public class AdminService {
     }
 
     public List<com.teamarc.planit.dto.response.CustomerResponseDTO> getAllCustomerVerificationRequests() {
-        return customerRepository.findByVerificationStatus(com.teamarc.planit.entity.enums.VerificationStatus.PENDING)
+        return customerRepository.findByVerificationStatus(VerificationStatus.PENDING)
                 .stream()
                 .map(customer -> modelMapper.map(customer, com.teamarc.planit.dto.response.CustomerResponseDTO.class))
                 .toList();
@@ -94,15 +98,37 @@ public class AdminService {
     public void approveCustomerVerification(Long customerId) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + customerId));
-        customer.setVerificationStatus(com.teamarc.planit.entity.enums.VerificationStatus.VERIFIED);
+        customer.setVerificationStatus(VerificationStatus.VERIFIED);
         customerRepository.save(customer);
     }
 
     public void rejectCustomerVerification(Long customerId) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + customerId));
-        customer.setVerificationStatus(com.teamarc.planit.entity.enums.VerificationStatus.NOT_VERIFIED);
+        customer.setVerificationStatus(VerificationStatus.NOT_VERIFIED);
         customerRepository.save(customer);
+    }
+
+    // Services Verification methods
+    public List<ServiceResponseDTO> getAllPendingServices() {
+        return servicesRepository.findAllByVerificationStatus(VerificationStatus.PENDING)
+                .stream()
+                .map(service -> modelMapper.map(service, ServiceResponseDTO.class))
+                .toList();
+    }
+
+    public void approveService(Long serviceId) {
+        com.teamarc.planit.entity.Services service = servicesRepository.findById(serviceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found with id: " + serviceId));
+        service.setVerificationStatus(VerificationStatus.VERIFIED);
+        servicesRepository.save(service);
+    }
+
+    public void rejectService(Long serviceId) {
+        com.teamarc.planit.entity.Services service = servicesRepository.findById(serviceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found with id: " + serviceId));
+        service.setVerificationStatus(VerificationStatus.NOT_VERIFIED);
+        servicesRepository.save(service);
     }
 
 }

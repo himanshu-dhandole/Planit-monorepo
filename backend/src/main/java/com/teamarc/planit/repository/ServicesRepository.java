@@ -17,4 +17,6 @@ public interface ServicesRepository extends JpaRepository<Services, Long> {
     Page<Services> findAllByCategoryAndIsAvailable(VendorServiceCategory vendorServiceCategory, Boolean isAvailable, Pageable pageable);
 
     Page<Services> findAllByLocationAndIsAvailable(VendorServiceCategory vendorServiceCategory, Boolean isAvailable, Pageable pageable);
+
+    java.util.List<Services> findAllByVerificationStatus(com.teamarc.planit.entity.enums.VerificationStatus verificationStatus);
 }

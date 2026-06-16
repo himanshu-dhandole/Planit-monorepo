@@ -36,6 +36,7 @@ public class ServicesService {
                 .description(serviceRequestDTO.getDescription())
                 .price(serviceRequestDTO.getPrice())
                 .location(serviceRequestDTO.getLocation())
+                .category(VendorServiceCategory.valueOf(serviceRequestDTO.getCategory()))
                 .build();
 
         return modelMapper.map(servicesRepository.save(service), ServiceResponseDTO.class);
@@ -51,6 +52,7 @@ public class ServicesService {
         existingService.setDescription(serviceRequestDTO.getDescription());
         existingService.setPrice(serviceRequestDTO.getPrice());
         existingService.setLocation(serviceRequestDTO.getLocation());
+        existingService.setCategory(VendorServiceCategory.valueOf(serviceRequestDTO.getCategory()));
 
 
         return modelMapper.map(servicesRepository.save(existingService), ServiceResponseDTO.class);
