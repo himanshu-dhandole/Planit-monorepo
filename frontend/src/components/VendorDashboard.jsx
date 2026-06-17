@@ -320,11 +320,18 @@ export default function VendorDashboard() {
                     {photos.length < 5 && (
                       <div className="mt-2">
                         <Widget 
+                          key={`upload-widget-${photos.length}`}
                           publicKey="demopublickey" 
                           id="file" 
+                          multiple
                           onChange={(info) => {
-                              if (info.cdnUrl && !photos.includes(info.cdnUrl)) {
-                                  setPhotos(prev => [...prev, info.cdnUrl]);
+                              if (info.count && info.cdnUrl) {
+                                  const newUrls = Array.from({length: info.count}, (_, i) => `${info.cdnUrl}nth/${i}/`);
+                                  setPhotos(prev => [...prev, ...newUrls].slice(0, 5));
+                              } else if (info.cdnUrl && !info.count) {
+                                  if (!photos.includes(info.cdnUrl)) {
+                                      setPhotos(prev => [...prev, info.cdnUrl].slice(0, 5));
+                                  }
                               }
                           }} 
                         />

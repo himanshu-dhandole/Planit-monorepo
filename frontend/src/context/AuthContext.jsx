@@ -4,6 +4,15 @@ import { jwtDecode } from 'jwt-decode';
 
 export const AuthContext = createContext(null);
 
+const parseRoles = (rolesClaim) => {
+  if (!rolesClaim) return [];
+  if (Array.isArray(rolesClaim)) return rolesClaim;
+  if (typeof rolesClaim === 'string') {
+    return rolesClaim.replace(/^\[|\]$/g, '').split(',').map(r => r.trim()).filter(Boolean);
+  }
+  return [];
+};
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [customerProfile, setCustomerProfile] = useState(null);
@@ -15,7 +24,7 @@ export function AuthProvider({ children }) {
       if (token) {
         try {
           const decoded = jwtDecode(token);
-          const userData = { id: decoded.sub, email: decoded.email || 'User', roles: decoded.role || [] };
+          const userData = { id: decoded.sub, email: decoded.email || 'User', roles: parseRoles(decoded.role) };
           setUser(userData);
           
           // Fetch customer profile on load
@@ -45,7 +54,7 @@ export function AuthProvider({ children }) {
     if (accessToken) {
       localStorage.setItem('accessToken', accessToken);
       const decoded = jwtDecode(accessToken);
-      const userData = { id: decoded.sub, email: decoded.email || email, roles: decoded.role || [] };
+      const userData = { id: decoded.sub, email: decoded.email || email, roles: parseRoles(decoded.role) };
       setUser(userData);
 
       // Fetch profile
@@ -85,7 +94,7 @@ export function AuthProvider({ children }) {
       if (token) {
         localStorage.setItem('accessToken', token);
         const decoded = jwtDecode(token);
-        const userData = { id: decoded.sub, email: decoded.email || decoded.sub, roles: decoded.role || [] };
+        const userData = { id: decoded.sub, email: decoded.email || decoded.sub, roles: parseRoles(decoded.role) };
         setUser(userData);
       }
     } catch (error) {

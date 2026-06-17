@@ -16,6 +16,7 @@ import VendorOnboard from './components/VendorOnboard';
 import AdminDashboard from './components/AdminDashboard';
 import VendorDashboard from './components/VendorDashboard';
 import ServiceList from './components/ServiceList';
+import ServiceDetails from './components/ServiceDetails';
 import VendorList from './components/VendorList';
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <Route path="/vendor-dashboard" element={<Protected><Layout><VendorDashboard /></Layout></Protected>} />
           <Route path="/wallet" element={<Protected><Layout><WalletPage /></Layout></Protected>} />
           <Route path="/services" element={<Layout><ServiceList /></Layout>} />
+          <Route path="/services/:id" element={<Layout><ServiceDetails /></Layout>} />
           <Route path="/admin" element={<Protected><Layout><AdminDashboard /></Layout></Protected>} />
           <Route path="/sandbox" element={<Protected><Sandbox /></Protected>} />
           
