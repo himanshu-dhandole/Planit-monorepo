@@ -1,7 +1,7 @@
 package com.teamarc.planit.controller;
 
-import com.teamarc.planit.dto.LoginRequestDTO;
-import com.teamarc.planit.dto.LoginResponseDTO;
+import com.teamarc.planit.dto.request.LoginRequestDTO;
+import com.teamarc.planit.dto.response.LoginResponseDTO;
 import com.teamarc.planit.dto.SignupDTO;
 import com.teamarc.planit.dto.UserDTO;
 import com.teamarc.planit.dto.request.OTPVerificationDTO;
