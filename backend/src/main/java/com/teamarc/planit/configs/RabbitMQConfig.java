@@ -15,15 +15,18 @@ public class RabbitMQConfig {
     public static final String OTP_EMAIL_QUEUE = "otp.email.queue";
     public static final String USER_NOTIFICATION_QUEUE = "user.notification.queue";
     public static final String VENDOR_APPROVAL_QUEUE = "vendor.approval.queue";
+    public static final String CHAT_MESSAGE_QUEUE = "chat.message.queue";
 
     // Exchange Names
     public static final String EMAIL_EXCHANGE = "email.exchange";
     public static final String NOTIFICATION_EXCHANGE = "notification.exchange";
+    public static final String CHAT_EXCHANGE = "chat.exchange";
 
     // Routing Keys
     public static final String OTP_EMAIL_ROUTING_KEY = "email.otp";
     public static final String USER_NOTIFICATION_ROUTING_KEY = "notification.user";
     public static final String VENDOR_APPROVAL_ROUTING_KEY = "notification.vendor.approval";
+    public static final String CHAT_MESSAGE_ROUTING_KEY = "chat.message";
 
     // Declare Queues
     @Bean
@@ -41,6 +44,11 @@ public class RabbitMQConfig {
         return new Queue(VENDOR_APPROVAL_QUEUE, true);
     }
 
+    @Bean
+    public Queue chatMessageQueue() {
+        return new Queue(CHAT_MESSAGE_QUEUE, true);
+    }
+
     // Declare Exchanges
     @Bean
     public TopicExchange emailExchange() {
@@ -50,6 +58,11 @@ public class RabbitMQConfig {
     @Bean
     public TopicExchange notificationExchange() {
         return new TopicExchange(NOTIFICATION_EXCHANGE, true, false);
+    }
+
+    @Bean
+    public TopicExchange chatExchange() {
+        return new TopicExchange(CHAT_EXCHANGE, true, false);
     }
 
     // Bindings
@@ -72,6 +85,13 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(vendorApprovalQueue)
                 .to(notificationExchange)
                 .with(VENDOR_APPROVAL_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding chatMessageBinding(Queue chatMessageQueue, TopicExchange chatExchange) {
+        return BindingBuilder.bind(chatMessageQueue)
+                .to(chatExchange)
+                .with(CHAT_MESSAGE_ROUTING_KEY);
     }
 
     // Message Converter

@@ -7,7 +7,7 @@ import com.teamarc.planit.dto.response.ConversationResponseDTO;
 import com.teamarc.planit.dto.response.UserSearchResponseDTO;
 import com.teamarc.planit.entity.User;
 import com.teamarc.planit.services.ChatService;
-import com.teamarc.planit.services.KafkaProducerService;
+import com.teamarc.planit.services.ChatMessageProducerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ import java.util.List;
 public class ChatController {
 
     private final ChatService chatService;
-    private final KafkaProducerService kafkaProducerService;
+    private final ChatMessageProducerService chatMessageProducerService;
 
     @PostMapping("/api/chat/conversations")
     public ResponseEntity<ConversationResponseDTO> startConversation(
@@ -59,6 +59,6 @@ public class ChatController {
                 request.getSenderId(),
                 request.getContent()
         );
-        kafkaProducerService.sendMessage(savedMsg);
+        chatMessageProducerService.sendMessage(savedMsg);
     }
 }
