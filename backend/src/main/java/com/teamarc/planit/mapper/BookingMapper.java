@@ -3,12 +3,28 @@ package com.teamarc.planit.mapper;
 import com.teamarc.planit.dto.request.*;
 import com.teamarc.planit.dto.response.*;
 import com.teamarc.planit.entity.*;
+import com.teamarc.planit.dto.PointDTO;
+import org.locationtech.jts.geom.Point;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface BookingMapper {
+
+    default Point toPoint(PointDTO pointDTO) {
+        if (pointDTO == null) return null;
+        return com.teamarc.planit.utils.GeometryUtil.creatPoint(pointDTO);
+    }
+
+    default PointDTO toPointDTO(Point point) {
+        if (point == null) return null;
+        double[] coordinates = {
+                point.getX(),
+                point.getY()
+        };
+        return new PointDTO(coordinates);
+    }
     
     // User mappings
 //    User toEntity(UserRequestDTO dto);

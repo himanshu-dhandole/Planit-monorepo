@@ -1,5 +1,6 @@
 package com.teamarc.planit.dto.response;
 
+import com.teamarc.planit.dto.PointDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,8 +27,9 @@ public class VendorResponseDTO {
     private String description;
     private String category;
     private com.teamarc.planit.entity.enums.VerificationStatus verificationStatus;
-    private Integer totalBookings;
-    private Double karma;
+    private java.lang.Integer totalBookings;
+    private java.lang.Double karma;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private PointDTO coordinates;
 }

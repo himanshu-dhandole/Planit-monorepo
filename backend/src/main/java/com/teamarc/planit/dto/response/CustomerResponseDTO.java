@@ -1,5 +1,6 @@
 package com.teamarc.planit.dto.response;
 
+import com.teamarc.planit.dto.PointDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,4 +28,5 @@ public class CustomerResponseDTO {
     private Double karma;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private PointDTO coordinates;
 }

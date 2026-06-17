@@ -1,5 +1,6 @@
 package com.teamarc.planit.dto.request;
 
+import com.teamarc.planit.dto.PointDTO;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,4 +44,6 @@ public class VendorRequestDTO {
     
     @NotBlank(message = "GST number is required")
     private String gstNumber;
+
+    private PointDTO coordinates;
 }

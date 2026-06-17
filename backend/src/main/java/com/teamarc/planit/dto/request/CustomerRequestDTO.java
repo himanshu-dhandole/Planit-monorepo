@@ -1,5 +1,6 @@
 package com.teamarc.planit.dto.request;
 
+import com.teamarc.planit.dto.PointDTO;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -45,4 +46,6 @@ public class CustomerRequestDTO {
     @NotBlank(message = "Pincode is required")
     @Size(max = 20)
     private String pincode;
+
+    private PointDTO coordinates;
 }

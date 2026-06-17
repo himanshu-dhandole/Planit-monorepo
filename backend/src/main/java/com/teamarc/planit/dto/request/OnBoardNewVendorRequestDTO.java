@@ -1,5 +1,6 @@
 package com.teamarc.planit.dto.request;
 
+import com.teamarc.planit.dto.PointDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -50,5 +51,7 @@ public class OnBoardNewVendorRequestDTO {
     
     @NotBlank(message = "GST number is required")
     private String gstNumber;
+
+    private PointDTO coordinates;
 
 }

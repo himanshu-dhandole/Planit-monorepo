@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.locationtech.jts.geom.Point;
 import java.time.LocalDateTime;
 
 @Entity
@@ -87,6 +88,9 @@ public class Vendor {
     
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.Set<Services> services;
+
+    @Column(columnDefinition = "geometry(Point, 4326)")
+    private Point coordinates;
     
     @PrePersist
     protected void onCreate() {

@@ -10,6 +10,8 @@ import com.teamarc.planit.exceptions.ResourceNotFoundException;
 import com.teamarc.planit.repository.VendorRepository;
 import com.teamarc.planit.repository.CustomerRepository;
 import com.teamarc.planit.entity.Customer;
+import com.teamarc.planit.utils.GeometryUtil;
+import org.locationtech.jts.geom.Point;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -60,6 +62,11 @@ public class VendorService {
         if(vendorRequestDTO.getProfileImageUrl() != null) vendor.setProfileImageUrl(vendorRequestDTO.getProfileImageUrl());
         vendor.setPan(vendorRequestDTO.getPan());
         vendor.setGstNumber(vendorRequestDTO.getGstNumber());
+        if (vendorRequestDTO.getCoordinates() != null) {
+            vendor.setCoordinates(GeometryUtil.creatPoint(vendorRequestDTO.getCoordinates()));
+        } else {
+            vendor.setCoordinates(null);
+        }
         return mapToDTO(vendorRepository.save(vendor));
     }
 
@@ -70,6 +77,12 @@ public class VendorService {
 
     public Page<VendorResponseDTO> getVendorsByCategory(String category, int page, int size) {
         return vendorRepository.findAllByCategory(VendorServiceCategory.valueOf(category), PageRequest.of(page, size))
+                .map(this::mapToDTO);
+    }
+
+    public Page<VendorResponseDTO> getVendorsNear(double lat, double lon, double distanceInMeters, int page, int size) {
+        Point point = GeometryUtil.creatPoint(new com.teamarc.planit.dto.PointDTO(new double[]{lon, lat}));
+        return vendorRepository.findVendorsNear(point, distanceInMeters, PageRequest.of(page, size))
                 .map(this::mapToDTO);
     }
 

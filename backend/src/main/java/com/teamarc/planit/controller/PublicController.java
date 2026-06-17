@@ -39,4 +39,14 @@ public class PublicController {
         return ResponseEntity.ok(vendorService.getVendorsByCategory(category, page, size));
     }
 
+    @GetMapping(path = "/vendor/near")
+    public ResponseEntity<Page<VendorResponseDTO>> getVendorsNear(
+            @RequestParam double lat,
+            @RequestParam double lon,
+            @RequestParam(defaultValue = "10000") double distance,
+            @RequestParam int page,
+            @RequestParam int size) {
+        return ResponseEntity.ok(vendorService.getVendorsNear(lat, lon, distance, page, size));
+    }
+
 }

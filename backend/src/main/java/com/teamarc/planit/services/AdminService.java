@@ -15,6 +15,7 @@ import com.teamarc.planit.dto.response.ServiceResponseDTO;
 import com.teamarc.planit.repository.CustomerRepository;
 import com.teamarc.planit.entity.Customer;
 import com.teamarc.planit.exceptions.ResourceNotFoundException;
+import com.teamarc.planit.utils.GeometryUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -67,6 +68,7 @@ public class AdminService {
                             .gstNumber(onBoardNewVendorRequestDTO.getGstNumber())
                             .verificationStatus(VerificationStatus.VERIFIED)
                             .isActive(true)
+                            .coordinates(onBoardNewVendorRequestDTO.getCoordinates() != null ? GeometryUtil.creatPoint(onBoardNewVendorRequestDTO.getCoordinates()) : null)
                             .build();
 
         vendorRepository.save(vendor);

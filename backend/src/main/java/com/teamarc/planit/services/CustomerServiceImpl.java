@@ -9,6 +9,7 @@ import com.teamarc.planit.entity.enums.Role;
 import com.teamarc.planit.entity.enums.VerificationStatus;
 import com.teamarc.planit.repository.CustomerRepository;
 import com.teamarc.planit.utils.FileService;
+import com.teamarc.planit.utils.GeometryUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -43,6 +44,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .state(customerRequestDTO.getState())
                 .pincode(customerRequestDTO.getPincode())
                 .verificationStatus(VerificationStatus.PENDING)
+                .coordinates(customerRequestDTO.getCoordinates() != null ? GeometryUtil.creatPoint(customerRequestDTO.getCoordinates()) : null)
                 .build();
                 
         if (profilePic != null && !profilePic.isEmpty()) {
@@ -86,6 +88,11 @@ public class CustomerServiceImpl implements CustomerService {
         existingCustomer.setAddressLine2(customerRequestDTO.getAddressLine2());
         existingCustomer.setState(customerRequestDTO.getState());
         existingCustomer.setPincode(customerRequestDTO.getPincode());
+        if (customerRequestDTO.getCoordinates() != null) {
+            existingCustomer.setCoordinates(GeometryUtil.creatPoint(customerRequestDTO.getCoordinates()));
+        } else {
+            existingCustomer.setCoordinates(null);
+        }
 
         if (profilePic != null && !profilePic.isEmpty()) {
             existingCustomer.setProfilePictureUrl(fileService.uploadFile(profilePic));

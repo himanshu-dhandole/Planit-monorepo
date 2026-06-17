@@ -2,6 +2,7 @@ package com.teamarc.planit.entity;
 
 import com.teamarc.planit.entity.enums.VendorServiceCategory;
 import jakarta.persistence.*;
+import org.locationtech.jts.geom.Point;
 import lombok.*;
 
 
@@ -55,5 +56,8 @@ public class OnBoardNewVendorRequest {
     
     @Column(nullable = false)
     private String gstNumber;
+
+    @Column(columnDefinition = "geometry(Point, 4326)")
+    private Point coordinates;
 
 }

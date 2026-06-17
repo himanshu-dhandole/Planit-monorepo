@@ -8,6 +8,7 @@ import com.teamarc.planit.entity.enums.VendorServiceCategory;
 import com.teamarc.planit.exceptions.ResourceNotFoundException;
 import com.teamarc.planit.repository.OnBoardNewVendorRequestRepository;
 import com.teamarc.planit.utils.FileService;
+import com.teamarc.planit.utils.GeometryUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,6 +42,7 @@ public class OnBoardNewVendorRequestService {
                 .profileImageUrl(requestDTO.getProfileImageUrl())
                 .pan(requestDTO.getPan())
                 .gstNumber(requestDTO.getGstNumber())
+                .coordinates(requestDTO.getCoordinates() != null ? GeometryUtil.creatPoint(requestDTO.getCoordinates()) : null)
                 .build();
 
 

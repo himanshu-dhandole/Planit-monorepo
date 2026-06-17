@@ -1,6 +1,7 @@
 package com.teamarc.planit.entity;
 
 import jakarta.persistence.*;
+import org.locationtech.jts.geom.Point;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -76,6 +77,9 @@ public class Customer {
     
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.Set<Booking> bookings;
+
+    @Column(columnDefinition = "geometry(Point, 4326)")
+    private Point coordinates;
     
     @PrePersist
     protected void onCreate() {
