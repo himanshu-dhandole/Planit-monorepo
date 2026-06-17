@@ -21,5 +21,7 @@ public interface ServicesRepository extends JpaRepository<Services, Long> {
     @org.springframework.data.jpa.repository.Query("SELECT s FROM Services s JOIN s.availableLocations l WHERE l.city = :city AND l.state = :state AND s.isAvailable = true")
     Page<Services> findByAvailableLocationCityAndState(@org.springframework.data.repository.query.Param("city") String city, @org.springframework.data.repository.query.Param("state") String state, Pageable pageable);
 
+    Page<Services> findAllByIsAvailableAndVerificationStatus(Boolean isAvailable, com.teamarc.planit.entity.enums.VerificationStatus verificationStatus, Pageable pageable);
+
     java.util.List<Services> findAllByVerificationStatus(com.teamarc.planit.entity.enums.VerificationStatus verificationStatus);
 }

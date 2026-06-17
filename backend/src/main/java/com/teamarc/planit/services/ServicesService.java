@@ -103,7 +103,10 @@ public class ServicesService {
                 .map(service -> modelMapper.map(service, ServiceResponseDTO.class));
     }
 
+    public Page<ServiceResponseDTO> getAllServices(int page, int size) {
+        return servicesRepository.findAllByIsAvailableAndVerificationStatus(Boolean.TRUE, com.teamarc.planit.entity.enums.VerificationStatus.VERIFIED, PageRequest.of(page, size))
+                .map(service -> modelMapper.map(service, ServiceResponseDTO.class));
+    }
+
     // TODO_DELETE_SERVICE
-
-
 }

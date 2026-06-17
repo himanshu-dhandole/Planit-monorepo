@@ -15,6 +15,8 @@ import java.util.Optional;
 public interface VendorRepository extends JpaRepository<Vendor, Long> {
     Optional<Vendor> findByUser_Id(long userId);
 
+    Optional<Vendor> findByPhoneNumber(String phoneNumber);
+
     Page<Vendor> findAllByCategory(VendorServiceCategory vendorServiceCategory, Pageable pageable);
 
     @Query(value = "SELECT * FROM vendors v WHERE ST_DWithin(CAST(v.coordinates AS geography), CAST(:point AS geography), :distanceInMeters) = true", nativeQuery = true)

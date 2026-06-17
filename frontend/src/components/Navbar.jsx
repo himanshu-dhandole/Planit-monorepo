@@ -13,6 +13,7 @@ import {
   FileText,
   AlertCircle,
   Wallet,
+  MessageSquare,
   LogOut,
 } from "lucide-react";
 
@@ -126,7 +127,7 @@ export default function Navbar() {
     { name: "Dashboards", hasDropdown: true, path: "#" },
     { name: "Services", hasDropdown: false, path: "/services" },
     { name: "Vendors", hasDropdown: false, path: "/vendors" },
-    { name: "Messages", hasDropdown: false, path: "#" },
+    { name: "Messages", hasDropdown: false, path: "/chats" },
     { name: "Karma", hasDropdown: false, path: "#" },
   ];
 
@@ -203,6 +204,7 @@ export default function Navbar() {
                     <User size={18} className="text-gray-400" />
                   )}
                 </div>
+
               </div>
             ) : (
               <>
@@ -333,6 +335,13 @@ export default function Navbar() {
                   title="Wallet"
                   desc="Manage your funds and payments"
                   to="/wallet"
+                  onClick={() => setHoveredItem(null)}
+                />
+                <DropdownItem
+                  icon={<MessageSquare size={20} />}
+                  title="Chats"
+                  desc="Chat with your vendors"
+                  to="/chats"
                   onClick={() => setHoveredItem(null)}
                 />
                 <DropdownItem

@@ -18,6 +18,7 @@ import VendorDashboard from './components/VendorDashboard';
 import ServiceList from './components/ServiceList';
 import ServiceDetails from './components/ServiceDetails';
 import VendorList from './components/VendorList';
+import ChatPage from './components/ChatPage';
 
 function App() {
   return (
@@ -42,6 +43,8 @@ function App() {
           <Route path="/services/:id" element={<Layout><ServiceDetails /></Layout>} />
           <Route path="/admin" element={<Protected><Layout><AdminDashboard /></Layout></Protected>} />
           <Route path="/sandbox" element={<Protected><Sandbox /></Protected>} />
+          
+          <Route path="/chats" element={<Protected><Layout><ChatPage /></Layout></Protected>} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

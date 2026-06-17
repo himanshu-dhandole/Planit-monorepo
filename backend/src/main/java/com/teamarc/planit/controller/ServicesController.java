@@ -39,6 +39,13 @@ public class ServicesController {
         return ResponseEntity.ok(servicesService.deleteService(id, isAvailable));
     }
 
+    @GetMapping
+    public ResponseEntity<org.springframework.data.domain.Page<ServiceResponseDTO>> getAllServices(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(servicesService.getAllServices(page, size));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ServiceResponseDTO> getServiceById(@PathVariable Long id) {
         return ResponseEntity.ok(servicesService.getServiceById(id));

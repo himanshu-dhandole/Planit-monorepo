@@ -31,13 +31,13 @@ export default function AdminDashboard() {
     try {
       if (activeTab === 'CUSTOMERS') {
         const res = await apiClient.get('/api/admin/requests/customer');
-        setCustomers(res.data?.data || res.data || []);
+        setCustomers(Array.isArray(res.data?.data) ? res.data.data : []);
       } else if (activeTab === 'VENDORS') {
         const res = await apiClient.get('/api/admin/requests/vendor');
-        setVendors(res.data?.data || res.data || []);
+        setVendors(Array.isArray(res.data?.data) ? res.data.data : []);
       } else if (activeTab === 'SERVICES') {
         const res = await apiClient.get('/api/admin/requests/service');
-        setServices(res.data?.data || res.data || []);
+        setServices(Array.isArray(res.data?.data) ? res.data.data : []);
       }
     } catch (err) {
       console.error(`Error fetching ${activeTab.toLowerCase()} requests:`, err);

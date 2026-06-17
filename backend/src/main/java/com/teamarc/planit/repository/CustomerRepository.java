@@ -9,5 +9,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     Customer findByUserId(Long userId);
 
+    java.util.Optional<Customer> findByPhoneNumber(String phoneNumber);
+
     java.util.List<Customer> findByVerificationStatus(com.teamarc.planit.entity.enums.VerificationStatus status);
 }
