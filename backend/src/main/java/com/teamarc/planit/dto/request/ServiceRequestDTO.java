@@ -33,4 +33,11 @@ public class ServiceRequestDTO {
     @Size(max = 300)
     private String location;
 
+    private Double rating;
+    
+    private java.util.List<com.teamarc.planit.dto.ServiceLocationDTO> availableLocations;
+    
+    @Size(max = 5, message = "Maximum 5 photos allowed")
+    private java.util.List<String> photos;
+
 }

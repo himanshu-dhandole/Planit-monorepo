@@ -13,6 +13,7 @@
     "@base-ui/react": "^1.5.0",
     "@fontsource-variable/geist": "^5.2.9",
     "@fontsource/plus-jakarta-sans": "^5.2.8",
+    "@uploadcare/react-widget": "^3.0.1",
     "axios": "^1.18.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import apiClient from '../lib/apiClient';
 import { toast } from 'sonner';
 import { Plus, Edit2, Trash2, MapPin, CheckCircle, XCircle, Clock, Loader2, IndianRupee, Phone, FileText, Briefcase, User, Map, CreditCard, Activity, Star } from 'lucide-react';
+import { Widget } from '@uploadcare/react-widget';
 import CloudsBackground from './CloudsBackground';
 import CustomLoader from './CustomLoader';
 import PageTransition from './PageTransition';
@@ -23,6 +24,8 @@ export default function VendorDashboard() {
     category: '',
     location: '',
   });
+  const [availableLocations, setAvailableLocations] = useState([{ city: '', state: '' }]);
+  const [photos, setPhotos] = useState([]);
 
   const fetchVendorData = async () => {
     if (!customerProfile?.id) return;
@@ -73,6 +76,8 @@ export default function VendorDashboard() {
         price: parseFloat(formData.price),
         category: formData.category || vendorProfile.category, // Default to vendor's category
         location: formData.location,
+        availableLocations: availableLocations.filter(loc => loc.city.trim() !== '' && loc.state.trim() !== ''),
+        photos: photos,
         isAvailable: true
       };
 
@@ -80,6 +85,8 @@ export default function VendorDashboard() {
       toast.success("Service created and sent for admin approval!");
       setShowAddForm(false);
       setFormData({ name: '', description: '', price: '', category: '', location: '' });
+      setAvailableLocations([{ city: '', state: '' }]);
+      setPhotos([]);
       fetchVendorData(); // Refresh list
     } catch (err) {
       console.error("Error adding service:", err);
@@ -250,8 +257,79 @@ export default function VendorDashboard() {
                   </div>
                   
                   <div className="space-y-1">
-                    <label className="text-sm font-semibold text-gray-700">Location Area</label>
+                    <label className="text-sm font-semibold text-gray-700">Location Area (Fallback)</label>
                     <input name="location" value={formData.location} onChange={handleInputChange} type="text" className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="e.g., Downtown, Citywide" />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <label className="text-sm font-semibold text-gray-700">Available Locations (City & State) *</label>
+                    <button type="button" onClick={() => setAvailableLocations([...availableLocations, { city: '', state: '' }])} className="text-xs text-blue-600 font-bold hover:underline flex items-center gap-1">
+                      <Plus size={12} /> Add Location
+                    </button>
+                  </div>
+                  
+                  {availableLocations.map((loc, index) => (
+                    <div key={index} className="flex gap-3 items-center">
+                      <input 
+                        required
+                        type="text" 
+                        value={loc.city} 
+                        onChange={(e) => {
+                          const newLocs = [...availableLocations];
+                          newLocs[index].city = e.target.value;
+                          setAvailableLocations(newLocs);
+                        }} 
+                        placeholder="City" 
+                        className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm" 
+                      />
+                      <input 
+                        required
+                        type="text" 
+                        value={loc.state} 
+                        onChange={(e) => {
+                          const newLocs = [...availableLocations];
+                          newLocs[index].state = e.target.value;
+                          setAvailableLocations(newLocs);
+                        }} 
+                        placeholder="State" 
+                        className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm" 
+                      />
+                      {availableLocations.length > 1 && (
+                        <button type="button" onClick={() => setAvailableLocations(availableLocations.filter((_, i) => i !== index))} className="p-3 text-red-500 hover:bg-red-50 rounded-xl border border-red-100 transition-colors">
+                          <Trash2 size={18} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-sm font-semibold text-gray-700">Event Photos (Up to 5 from Uploadcare)</label>
+                  <div className="flex flex-wrap gap-4 items-center">
+                    {photos.map((photo, index) => (
+                      <div key={index} className="relative w-24 h-24 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                        <img src={photo} alt={`Service ${index}`} className="w-full h-full object-cover" />
+                        <button type="button" onClick={() => setPhotos(photos.filter((_, i) => i !== index))} className="absolute top-1 right-1 bg-white/80 p-1 rounded-full text-red-500 hover:text-red-700">
+                          <XCircle size={14} />
+                        </button>
+                      </div>
+                    ))}
+                    
+                    {photos.length < 5 && (
+                      <div className="mt-2">
+                        <Widget 
+                          publicKey="demopublickey" 
+                          id="file" 
+                          onChange={(info) => {
+                              if (info.cdnUrl && !photos.includes(info.cdnUrl)) {
+                                  setPhotos(prev => [...prev, info.cdnUrl]);
+                              }
+                          }} 
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
 

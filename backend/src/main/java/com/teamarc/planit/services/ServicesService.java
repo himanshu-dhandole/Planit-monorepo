@@ -37,6 +37,10 @@ public class ServicesService {
                 .price(serviceRequestDTO.getPrice())
                 .location(serviceRequestDTO.getLocation())
                 .category(VendorServiceCategory.valueOf(serviceRequestDTO.getCategory()))
+                .rating(0.0)
+                .availableLocations(serviceRequestDTO.getAvailableLocations() != null ? 
+                    serviceRequestDTO.getAvailableLocations().stream().map(loc -> new com.teamarc.planit.entity.ServiceLocation(loc.getCity(), loc.getState())).toList() : null)
+                .photos(serviceRequestDTO.getPhotos())
                 .build();
 
         return modelMapper.map(servicesRepository.save(service), ServiceResponseDTO.class);
@@ -53,6 +57,13 @@ public class ServicesService {
         existingService.setPrice(serviceRequestDTO.getPrice());
         existingService.setLocation(serviceRequestDTO.getLocation());
         existingService.setCategory(VendorServiceCategory.valueOf(serviceRequestDTO.getCategory()));
+        if (serviceRequestDTO.getAvailableLocations() != null) {
+            existingService.setAvailableLocations(serviceRequestDTO.getAvailableLocations().stream()
+                .map(loc -> new com.teamarc.planit.entity.ServiceLocation(loc.getCity(), loc.getState())).toList());
+        }
+        if (serviceRequestDTO.getPhotos() != null) {
+            existingService.setPhotos(serviceRequestDTO.getPhotos());
+        }
 
 
         return modelMapper.map(servicesRepository.save(existingService), ServiceResponseDTO.class);
@@ -82,6 +93,15 @@ public class ServicesService {
                 .map(service -> modelMapper.map(service, ServiceResponseDTO.class));
     }
 
+    public Page<ServiceResponseDTO> searchServicesByCityAndState(String city, String state, int page, int size) {
+        return servicesRepository.findByAvailableLocationCityAndState(city, state, PageRequest.of(page, size))
+                .map(service -> modelMapper.map(service, ServiceResponseDTO.class));
+    }
+
+    public Page<ServiceResponseDTO> getAllServices(int page, int size) {
+        return servicesRepository.findAll(PageRequest.of(page, size))
+                .map(service -> modelMapper.map(service, ServiceResponseDTO.class));
+    }
 
     // TODO_DELETE_SERVICE
 

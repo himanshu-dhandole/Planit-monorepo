@@ -43,4 +43,20 @@ public class ServicesController {
     public ResponseEntity<ServiceResponseDTO> getServiceById(@PathVariable Long id) {
         return ResponseEntity.ok(servicesService.getServiceById(id));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<org.springframework.data.domain.Page<ServiceResponseDTO>> searchServicesByCityAndState(
+            @RequestParam String city, 
+            @RequestParam String state,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(servicesService.searchServicesByCityAndState(city, state, page, size));
+    }
+
+    @GetMapping
+    public ResponseEntity<org.springframework.data.domain.Page<ServiceResponseDTO>> getAllServices(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(servicesService.getAllServices(page, size));
+    }
 }

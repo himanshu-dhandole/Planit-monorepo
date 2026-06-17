@@ -43,6 +43,22 @@ public class Services {
     @Column(columnDefinition = "TEXT")
     private String location;
 
+    @org.hibernate.annotations.ColumnDefault("0.0")
+    private Double rating = 0.0;
+
+    @OneToMany(mappedBy = "services", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Review> reviews = new java.util.ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "service_locations", joinColumns = @JoinColumn(name = "service_id"))
+    private java.util.List<ServiceLocation> availableLocations;
+
+    @ElementCollection
+    @CollectionTable(name = "service_photos", joinColumns = @JoinColumn(name = "service_id"))
+    @Column(name = "photo_url")
+    @jakarta.validation.constraints.Size(max = 5, message = "Maximum 5 photos allowed")
+    private java.util.List<String> photos;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private VendorServiceCategory category;

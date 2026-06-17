@@ -20,6 +20,12 @@ public class ServiceResponseDTO {
     private String category;
     private Boolean isAvailable;
     private String location;
+    
+    private Double rating;
+    private java.util.List<com.teamarc.planit.dto.response.ReviewResponseDTO> reviews;
+    private java.util.List<com.teamarc.planit.dto.ServiceLocationDTO> availableLocations;
+    private java.util.List<String> photos;
+
     private com.teamarc.planit.entity.enums.VerificationStatus verificationStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

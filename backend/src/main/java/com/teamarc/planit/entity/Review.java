@@ -21,6 +21,10 @@ public class Review {
     @OneToOne
     @JoinColumn(name = "booking_id", nullable = false, unique = true)
     private Booking booking;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id")
+    private Services services;
     
     @Column(nullable = false)
     @ColumnDefault("5")
