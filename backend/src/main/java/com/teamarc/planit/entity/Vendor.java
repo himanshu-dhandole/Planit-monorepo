@@ -1,6 +1,7 @@
 package com.teamarc.planit.entity;
 
 import com.teamarc.planit.entity.enums.VendorServiceCategory;
+import com.teamarc.planit.entity.enums.VerificationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,8 +23,8 @@ public class Vendor {
     private Long id;
     
     @OneToOne
-    @JoinColumn(name = "customer_id", nullable = false, unique = true)
-    private Customer customer;
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
     
     @Column(nullable = false)
     private String businessName;
@@ -64,7 +65,7 @@ public class Vendor {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private com.teamarc.planit.entity.enums.VerificationStatus verificationStatus;
+    private VerificationStatus verificationStatus;
 
     @Column(name = "is_active", nullable = false)
     @ColumnDefault("true")

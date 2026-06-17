@@ -10,9 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VendorRequestDTO {
     
-    @NotNull(message = "Customer ID is required")
-    private Long customerId;
-    
     @NotBlank(message = "Business name is required")
     @Size(min = 2, max = 100)
     private String businessName;

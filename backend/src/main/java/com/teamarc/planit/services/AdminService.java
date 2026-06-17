@@ -52,7 +52,7 @@ public class AdminService {
         }
 
         Vendor vendor = Vendor.builder()
-                            .customer(customer)
+                            .user(user)
                             .businessName(onBoardNewVendorRequestDTO.getBusinessName())
                             .description(onBoardNewVendorRequestDTO.getDescription())
                             .category(VendorServiceCategory.valueOf(onBoardNewVendorRequestDTO.getCategory()))

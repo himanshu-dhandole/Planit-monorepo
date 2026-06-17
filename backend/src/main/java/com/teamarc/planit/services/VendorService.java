@@ -8,6 +8,8 @@ import com.teamarc.planit.entity.Vendor;
 import com.teamarc.planit.entity.enums.VendorServiceCategory;
 import com.teamarc.planit.exceptions.ResourceNotFoundException;
 import com.teamarc.planit.repository.VendorRepository;
+import com.teamarc.planit.repository.CustomerRepository;
+import com.teamarc.planit.entity.Customer;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -21,15 +23,14 @@ public class VendorService {
 
     private final ModelMapper modelMapper;
     private final VendorRepository vendorRepository;
+    private final CustomerRepository customerRepository;
     private final ServicesService servicesService;
     private final BookingService bookingService;
 
     private VendorResponseDTO mapToDTO(Vendor vendor) {
         VendorResponseDTO dto = modelMapper.map(vendor, VendorResponseDTO.class);
-        if (vendor.getCustomer() != null) {
-            dto.setOwnerName(vendor.getCustomer().getFirstName() + " " + vendor.getCustomer().getLastName());
-            dto.setAadharUrl(vendor.getCustomer().getAadharUrl());
-            dto.setCustomerId(vendor.getCustomer().getId());
+        if (vendor.getUser() != null) {
+            dto.setOwnerName(vendor.getUser().getName());
         }
         return dto;
     }
@@ -39,7 +40,10 @@ public class VendorService {
     }
 
     public VendorResponseDTO getVendorByCustomerId(Long customerId) {
-        return mapToDTO(vendorRepository.findByCustomer_Id(customerId).orElseThrow(() -> new RuntimeException("Vendor not found by customerId " + customerId)));
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + customerId));
+        return mapToDTO(vendorRepository.findByUser_Id(customer.getUser().getId())
+                .orElseThrow(() -> new RuntimeException("Vendor not found by customerId " + customerId)));
     }
 
     public VendorResponseDTO updateVendorDetails(Long vendorId, VendorRequestDTO vendorRequestDTO) {

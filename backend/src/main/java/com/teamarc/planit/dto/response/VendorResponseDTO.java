@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 public class VendorResponseDTO {
     
     private Long id;
-    private Long customerId;
     private String businessName;
     private String ownerName;
     private String phoneNumber;
