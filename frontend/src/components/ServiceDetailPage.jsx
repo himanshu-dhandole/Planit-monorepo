@@ -29,7 +29,7 @@ export default function ServiceDetailPage() {
       setService(serviceData);
       
       if (serviceData?.vendorId) {
-        const vendorRes = await apiClient.get(`/api/vendor/${serviceData.vendorId}`);
+        const vendorRes = await apiClient.get(`/api/public/vendor/${serviceData.vendorId}`);
         setVendor(vendorRes.data?.data || vendorRes.data);
       }
     } catch (err) {

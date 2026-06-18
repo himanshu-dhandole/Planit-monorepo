@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin,
   IndianRupee,
@@ -15,11 +15,15 @@ import {
   CalendarCheck,
   Sparkles,
   Crown,
+  Calendar,
+  X,
 } from "lucide-react";
 import apiClient from "../lib/apiClient";
 import CloudsBackground from "./CloudsBackground";
 import PageTransition from "./PageTransition";
 import { toast } from "sonner";
+import { CartContext } from "../context/CartContext";
+import { AuthContext } from "../context/AuthContext";
 import {
   Carousel,
   CarouselContent,
@@ -32,11 +36,117 @@ import Autoplay from "embla-carousel-autoplay";
 export default function ServiceDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { addToCart } = useContext(CartContext);
+  const { user, customerProfile } = useContext(AuthContext);
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
   const [api, setApi] = useState(null);
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+
+  // Event modal states
+  const [showEventModal, setShowEventModal] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [eventsLoading, setEventsLoading] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState("");
+  const [showCreateEventInline, setShowCreateEventInline] = useState(false);
+  const [pendingAction, setPendingAction] = useState(""); // 'book' or 'cart'
+  const [inlineEventForm, setInlineEventForm] = useState({
+    title: "",
+    description: "",
+    address: "",
+    startDate: "",
+    endDate: ""
+  });
+
+  const getTodayString = (daysOffset = 0, hour = 9) => {
+    const d = new Date();
+    d.setDate(d.getDate() + daysOffset);
+    d.setHours(hour, 0, 0, 0);
+    const tzoffset = d.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(d.getTime() - tzoffset)).toISOString().slice(0, 16);
+    return localISOTime;
+  };
+
+  const [startDt, setStartDt] = useState(() => getTodayString(1, 9));
+  const [endDt, setEndDt] = useState(() => getTodayString(1, 18));
+
+  // Load events
+  const fetchEvents = async () => {
+    try {
+      setEventsLoading(true);
+      const res = await apiClient.get(`/api/events/customer/${customerProfile.id}?page=0&size=100`);
+      const eventsData = res.data?.data?.content || res.data?.content || [];
+      setEvents(eventsData);
+      if (eventsData.length > 0) {
+        setSelectedEventId(eventsData[0].id.toString());
+      }
+    } catch (err) {
+      console.error("Error loading events:", err);
+      toast.error("Failed to load events.");
+    } finally {
+      setEventsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showEventModal && customerProfile?.id) {
+      fetchEvents();
+    }
+  }, [showEventModal, customerProfile]);
+
+  const handleEventSelectionSubmit = async (e) => {
+    e.preventDefault();
+    let finalEventId = selectedEventId;
+    let finalEventTitle = "";
+
+    try {
+      if (showCreateEventInline) {
+        if (!inlineEventForm.title || !inlineEventForm.startDate || !inlineEventForm.endDate) {
+          toast.error("Please fill in required fields to create the event.");
+          return;
+        }
+        const payload = {
+          customerId: customerProfile.id,
+          title: inlineEventForm.title,
+          description: inlineEventForm.description,
+          address: inlineEventForm.address,
+          startDate: inlineEventForm.startDate,
+          endDate: inlineEventForm.endDate
+        };
+        const res = await apiClient.post('/api/events/create', payload);
+        const created = res.data?.data || res.data;
+        finalEventId = created.id.toString();
+        finalEventTitle = created.title;
+        setEvents(prev => [...prev, created]);
+      } else {
+        const found = events.find(ev => ev.id.toString() === selectedEventId);
+        if (!found) {
+          toast.error("Please select a valid event.");
+          return;
+        }
+        finalEventTitle = found.title;
+      }
+
+      addToCart(service, startDt, endDt, parseInt(finalEventId), finalEventTitle);
+      setShowEventModal(false);
+      setShowCreateEventInline(false);
+      setInlineEventForm({
+        title: "",
+        description: "",
+        address: "",
+        startDate: "",
+        endDate: ""
+      });
+
+      if (pendingAction === 'book') {
+        navigate('/cart');
+      }
+    } catch (err) {
+      console.error("Error handling event selection:", err);
+      toast.error("Failed to associate service with event.");
+    }
+  };
 
   useEffect(() => {
     if (!api) {
@@ -386,20 +496,83 @@ export default function ServiceDetails() {
                   </div>
                 </div>
 
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1 mb-1.5">
+                      <Calendar size={12} className="text-indigo-500" /> Start Date & Time
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={startDt}
+                      onChange={(e) => setStartDt(e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1 mb-1.5">
+                      <Calendar size={12} className="text-indigo-500" /> End Date & Time
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={endDt}
+                      onChange={(e) => setEndDt(e.target.value)}
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-4">
                   <button
-                    onClick={() => toast.success("Booking flow initiated")}
+                    onClick={() => {
+                      if (!user) {
+                        navigate('/signin');
+                        return;
+                      }
+                      if (!customerProfile) {
+                        toast.error("Please set up your customer profile first.");
+                        return;
+                      }
+                      if (!startDt || !endDt) {
+                        toast.error("Please select booking dates.");
+                        return;
+                      }
+                      if (new Date(startDt) >= new Date(endDt)) {
+                        toast.error("End date must be after start date.");
+                        return;
+                      }
+                      setPendingAction("book");
+                      setShowEventModal(true);
+                    }}
                     className="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
                   >
                     Book Now
                   </button>
 
                   <button
-                    onClick={() => toast.success("Added to event")}
+                    onClick={() => {
+                      if (!user) {
+                        navigate('/signin');
+                        return;
+                      }
+                      if (!customerProfile) {
+                        toast.error("Please set up your customer profile first.");
+                        return;
+                      }
+                      if (!startDt || !endDt) {
+                        toast.error("Please select booking dates.");
+                        return;
+                      }
+                      if (new Date(startDt) >= new Date(endDt)) {
+                        toast.error("End date must be after start date.");
+                        return;
+                      }
+                      setPendingAction("cart");
+                      setShowEventModal(true);
+                    }}
                     className="w-full py-4 bg-white border border-slate-200 text-slate-700 font-bold rounded-2xl shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 flex items-center justify-center gap-2"
                   >
                     <CalendarCheck size={20} className="text-indigo-500" />
-                    Add to event
+                    Add to Event
                   </button>
                 </div>
 
@@ -416,6 +589,138 @@ export default function ServiceDetails() {
             </div>
           </div>
         </div>
+
+        {/* Event Selection Modal */}
+        <AnimatePresence>
+          {showEventModal && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+                onClick={() => { setShowEventModal(false); setShowCreateEventInline(false); }}
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                className="relative w-full max-w-md bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2.5rem] p-8 md:p-10"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">
+                    Add Service to Event
+                  </h3>
+                  <button 
+                    onClick={() => { setShowEventModal(false); setShowCreateEventInline(false); }}
+                    className="p-1.5 hover:bg-slate-100 rounded-xl transition-colors text-slate-500"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+
+                <form onSubmit={handleEventSelectionSubmit} className="space-y-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">
+                      {showCreateEventInline ? "Event Details" : "Select Event"}
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowCreateEventInline(!showCreateEventInline)}
+                      className="text-xs font-bold text-indigo-600 hover:text-indigo-800"
+                    >
+                      {showCreateEventInline ? "Select Existing" : "Create New Inline"}
+                    </button>
+                  </div>
+
+                  {!showCreateEventInline ? (
+                    eventsLoading ? (
+                      <div className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-xs text-slate-400">
+                        <Loader2 className="animate-spin text-indigo-500 mr-2" size={16} /> Loading events...
+                      </div>
+                    ) : events.length === 0 ? (
+                      <div className="text-center p-4 border border-dashed border-slate-200 rounded-2xl">
+                        <p className="text-xs text-slate-400 mb-2">No events found. Create one to continue.</p>
+                        <button
+                          type="button"
+                          onClick={() => setShowCreateEventInline(true)}
+                          className="px-3 py-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-bold rounded-lg"
+                        >
+                          Create Event
+                        </button>
+                      </div>
+                    ) : (
+                      <select
+                        value={selectedEventId}
+                        onChange={(e) => setSelectedEventId(e.target.value)}
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-indigo-500 text-sm font-semibold text-slate-700"
+                      >
+                        {events.map(ev => (
+                          <option key={ev.id} value={ev.id}>{ev.title}</option>
+                        ))}
+                      </select>
+                    )
+                  ) : (
+                    <div className="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                      <div>
+                        <input
+                          type="text"
+                          placeholder="Event Title *"
+                          value={inlineEventForm.title}
+                          onChange={(e) => setInlineEventForm(prev => ({ ...prev, title: e.target.value }))}
+                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-1 focus:ring-indigo-500"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <input
+                          type="text"
+                          placeholder="Description"
+                          value={inlineEventForm.description}
+                          onChange={(e) => setInlineEventForm(prev => ({ ...prev, description: e.target.value }))}
+                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-1 focus:ring-indigo-500"
+                        />
+                      </div>
+                      <div>
+                        <input
+                          type="text"
+                          placeholder="Address / Venue"
+                          value={inlineEventForm.address}
+                          onChange={(e) => setInlineEventForm(prev => ({ ...prev, address: e.target.value }))}
+                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-1 focus:ring-indigo-500"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <input
+                          type="datetime-local"
+                          value={inlineEventForm.startDate}
+                          onChange={(e) => setInlineEventForm(prev => ({ ...prev, startDate: e.target.value }))}
+                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-[10px] outline-none focus:ring-1 focus:ring-indigo-500"
+                          required
+                        />
+                        <input
+                          type="datetime-local"
+                          value={inlineEventForm.endDate}
+                          onChange={(e) => setInlineEventForm(prev => ({ ...prev, endDate: e.target.value }))}
+                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-[10px] outline-none focus:ring-1 focus:ring-indigo-500"
+                          required
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={!showCreateEventInline && events.length === 0}
+                    className="w-full py-3.5 bg-indigo-600 text-white font-bold rounded-xl shadow-md hover:bg-indigo-700 transition-all disabled:opacity-50"
+                  >
+                    Confirm Add to Event
+                  </button>
+                </form>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </PageTransition>
     </CloudsBackground>
   );

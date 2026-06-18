@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import apiClient from '../lib/apiClient';
 import { toast } from 'sonner';
@@ -9,7 +10,10 @@ import CustomLoader from './CustomLoader';
 import PageTransition from './PageTransition';
 
 export default function VendorDashboard() {
-  const { user, customerProfile } = useContext(AuthContext);
+  const { user, customerProfile, refreshUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [hasRefreshed, setHasRefreshed] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [loading, setLoading] = useState(true);
   const [vendorProfile, setVendorProfile] = useState(null);
   const [services, setServices] = useState([]);
@@ -52,8 +56,35 @@ export default function VendorDashboard() {
   };
 
   useEffect(() => {
-    fetchVendorData();
-  }, [customerProfile]);
+    const checkRole = async () => {
+      const roles = user?.roles
+        ? Array.isArray(user.roles)
+          ? user.roles
+          : [user.roles]
+        : [];
+      const isVendor = roles.some(role => role === "VENDOR" || role === "ROLE_VENDOR");
+
+      if (!isVendor) {
+        if (!hasRefreshed) {
+          setHasRefreshed(true);
+          await refreshUser();
+        } else {
+          toast.error("Unauthorized access. Only approved vendors can access the dashboard.");
+          navigate('/');
+        }
+        return;
+      }
+      setCheckingAuth(false);
+    };
+
+    checkRole();
+  }, [user, hasRefreshed]);
+
+  useEffect(() => {
+    if (!checkingAuth) {
+      fetchVendorData();
+    }
+  }, [checkingAuth, customerProfile]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

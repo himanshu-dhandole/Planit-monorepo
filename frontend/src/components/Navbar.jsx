@@ -1,6 +1,7 @@
 import React, { useState, useContext, useRef } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { CartContext } from "../context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CalendarDays,
@@ -15,6 +16,7 @@ import {
   Wallet,
   MessageSquare,
   LogOut,
+  ShoppingBag,
 } from "lucide-react";
 
 function DropdownItem({
@@ -98,6 +100,7 @@ export default function Navbar() {
   const [hoveredItem, setHoveredItem] = useState(null);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const { user, customerProfile, logout } = useContext(AuthContext);
+  const { cart } = useContext(CartContext);
   const timeoutRef = useRef(null);
 
   const roles = user?.roles
@@ -180,6 +183,17 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4 ml-4">
+            {user && (
+              <Link to="/cart" className="relative p-2 text-gray-700 hover:text-indigo-600 transition-all transform hover:scale-105 active:scale-95">
+                <ShoppingBag size={20} />
+                {cart && cart.length > 0 && (
+                  <span className="absolute top-0 right-0 bg-indigo-600 text-white text-[9px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-white">
+                    {cart.length}
+                  </span>
+                )}
+              </Link>
+            )}
+
             {user ? (
               <div
                 className="relative flex items-center gap-2 cursor-pointer py-2"
@@ -269,6 +283,21 @@ export default function Navbar() {
                     to="/admin"
                     onClick={() => setHoveredItem(null)}
                     disabled={!isAdmin}
+                  />
+                  <DropdownItem
+                    icon={<FileText size={20} />}
+                    title="My Bookings"
+                    desc="Track and cancel service bookings"
+                    to="/my-bookings"
+                    onClick={() => setHoveredItem(null)}
+                  />
+                  <DropdownItem
+                    icon={<CreditCard size={20} />}
+                    title="Vendor Bookings"
+                    desc="Manage incoming customer bookings"
+                    to="/vendor-bookings"
+                    onClick={() => setHoveredItem(null)}
+                    disabled={!isVendor}
                   />
                 </div>
 
