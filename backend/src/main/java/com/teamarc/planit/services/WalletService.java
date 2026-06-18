@@ -128,6 +128,9 @@ public class WalletService{
             orderRequest.put("currency", "INR");
             orderRequest.put("receipt", "wallet_deposit_" + user.getId() + "_" + System.currentTimeMillis());
 
+            System.out.println("DEBUG RAZORPAY KEY ID: '" + keyId + "'");
+            System.out.println("DEBUG RAZORPAY KEY SECRET: '" + keySecret + "'");
+            
             com.razorpay.Order razorpayOrder = razorpayClient.orders.create(orderRequest);
             String orderId = razorpayOrder.get("id");
 
@@ -135,7 +138,7 @@ public class WalletService{
                     .id(orderId)
                     .amount(amountInPaise)
                     .currency("INR")
-                    .keyId(keyId)
+                    .keyId(keyId.trim())
                     .bookingId(null)
                     .build();
         } catch (com.razorpay.RazorpayException e) {
@@ -151,7 +154,7 @@ public class WalletService{
             options.put("razorpay_payment_id", verificationDTO.getRazorpayPaymentId());
             options.put("razorpay_signature", verificationDTO.getRazorpaySignature());
 
-            boolean isValid = com.razorpay.Utils.verifyPaymentSignature(options, keySecret);
+            boolean isValid = com.razorpay.Utils.verifyPaymentSignature(options, keySecret.trim());
             if (!isValid) {
                 throw new IllegalArgumentException("Razorpay signature verification failed for wallet deposit");
             }

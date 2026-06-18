@@ -17,8 +17,10 @@ public class RazorpayConfig {
 
     @Bean
     public RazorpayClient razorpayClient() {
+        System.out.println("DEBUG INIT RAZORPAY CLIENT KEY ID: '" + keyId + "'");
+        System.out.println("DEBUG INIT RAZORPAY CLIENT KEY SECRET: '" + keySecret + "'");
         try {
-            return new RazorpayClient(keyId, keySecret);
+            return new RazorpayClient(keyId.trim(), keySecret.trim());
         } catch (RazorpayException e) {
             throw new RuntimeException("Failed to initialize RazorpayClient: " + e.getMessage(), e);
         }

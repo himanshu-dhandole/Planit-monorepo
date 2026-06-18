@@ -140,7 +140,7 @@ public class PaymentService {
                     .id(orderId)
                     .amount(amountInPaise)
                     .currency("INR")
-                    .keyId(keyId)
+                    .keyId(keyId.trim())
                     .bookingId(bookingId)
                     .build();
 
@@ -160,7 +160,7 @@ public class PaymentService {
             options.put("razorpay_payment_id", verificationDTO.getRazorpayPaymentId());
             options.put("razorpay_signature", verificationDTO.getRazorpaySignature());
 
-            boolean isValid = com.razorpay.Utils.verifyPaymentSignature(options, keySecret);
+            boolean isValid = com.razorpay.Utils.verifyPaymentSignature(options, keySecret.trim());
             if (!isValid) {
                 throw new IllegalArgumentException("Razorpay payment signature verification failed");
             }

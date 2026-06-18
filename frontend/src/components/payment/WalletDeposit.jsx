@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Wallet, Plus, IndianRupee, ArrowRight, ShieldCheck, X } from 'lucide-react';
 import { toast } from 'sonner';
 import RazorpayCheckout from './RazorpayCheckout';
@@ -32,9 +33,10 @@ const WalletDeposit = ({ onSuccess }) => {
 
   return (
     <>
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 z-40 flex items-center justify-center p-4 sm:p-6">
+      {createPortal(
+        <AnimatePresence>
+          {isModalOpen && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -51,20 +53,20 @@ const WalletDeposit = ({ onSuccess }) => {
               className="relative w-full max-w-md bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden"
             >
               {/* Header Decorative Background */}
-              <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-t-3xl -z-10" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full blur-3xl -mr-32 -mt-32 -z-10" />
 
               <div className="p-6 sm:p-8">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-8">
-                  <div className="text-white">
+                  <div className="text-slate-800">
                     <h3 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                      <Wallet size={24} /> Add Funds
+                      <Wallet size={24} className="text-indigo-600" /> Add Funds
                     </h3>
-                    <p className="text-blue-100 text-sm mt-1">Deposit money to your Planit Wallet</p>
+                    <p className="text-slate-500 text-sm mt-1">Deposit money to your Planit Wallet</p>
                   </div>
                   <button
                     onClick={() => setIsModalOpen(false)}
-                    className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-full backdrop-blur-md transition-colors"
+                    className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-full transition-colors"
                   >
                     <X size={18} />
                   </button>
@@ -144,8 +146,10 @@ const WalletDeposit = ({ onSuccess }) => {
               </div>
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
       {/* Razorpay Checkout Instance */}
       <RazorpayCheckout

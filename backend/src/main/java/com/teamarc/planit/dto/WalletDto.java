@@ -9,5 +9,5 @@ public class WalletDto {
     private long id;
     private UserDTO user;
     private double balance;
-    private List<WalletTransaction> transactions;
+    private List<WalletTransactionDto> transactions;
 }

@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { CreditCard, AlertCircle, Loader2, CheckCircle, ShieldCheck, X } from 'lucide-react';
 import { toast } from 'sonner';
 import apiClient from '../../lib/apiClient';
@@ -42,15 +43,7 @@ const RazorpayCheckout = ({
       // The guide implies wallet might use a generic deposit or a dummy bookingId, 
       // but let's assume it supports wallet with a different route or just standard if bookingId provided.
       if (!bookingId) {
-        // If it's a wallet deposit, there might be a different endpoint.
-        // The guide mentions `RazorpayCheckout` with `bookingId={null}` for wallet,
-        // let's adjust it to use the wallet specific route if there's one, or we need to pass a specific `isWallet` prop.
-        // Wait, the guide's wallet component uses: `bookingId={null}`. Let's see if the backend handles it.
-        // The backend guide says `/api/payments/{bookingId}/razorpay/order`. Let's assume bookingId = 'wallet' or similar if not present, but for now let's just make the request.
-        // I will assume the guide's wallet approach requires an endpoint for wallet order creation.
-        // Let's pass `wallet` as bookingId to the backend or use a specific route if needed. 
-        // For now, I'll fallback to `wallet/razorpay/order` if no bookingId.
-        orderUrl = `/api/wallet/razorpay/order?amount=${amount}`; 
+        orderUrl = `/api/wallet/deposit/order`; 
       }
 
       const orderResponse = await apiClient.post(orderUrl, !bookingId ? { amount } : undefined);
@@ -75,7 +68,7 @@ const RazorpayCheckout = ({
             // Step 3: Verify payment on backend
             let verifyUrl = `/api/payments/${bookingId}/razorpay/verify`;
             if (!bookingId) {
-                verifyUrl = `/api/wallet/razorpay/verify`;
+                verifyUrl = `/api/wallet/deposit/verify`;
             }
 
             const verifyResponse = await apiClient.post(
@@ -144,9 +137,11 @@ const RazorpayCheckout = ({
   }, [bookingId, amount, vendorName, onSuccess, onCancel]);
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+    <>
+      {createPortal(
+        <AnimatePresence>
+          {isOpen && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -268,7 +263,10 @@ const RazorpayCheckout = ({
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+      </AnimatePresence>,
+      document.body
+    )}
+    </>
   );
 };
 
