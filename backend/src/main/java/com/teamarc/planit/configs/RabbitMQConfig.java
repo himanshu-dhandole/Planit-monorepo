@@ -16,6 +16,8 @@ public class RabbitMQConfig {
     public static final String USER_NOTIFICATION_QUEUE = "user.notification.queue";
     public static final String VENDOR_APPROVAL_QUEUE = "vendor.approval.queue";
     public static final String CHAT_MESSAGE_QUEUE = "chat.message.queue";
+    public static final String DISPUTE_NOTIFICATION_QUEUE = "dispute.notification.queue";
+    public static final String DISPUTE_WS_QUEUE = "dispute.ws.queue";
 
     // Exchange Names
     public static final String EMAIL_EXCHANGE = "email.exchange";
@@ -27,6 +29,8 @@ public class RabbitMQConfig {
     public static final String USER_NOTIFICATION_ROUTING_KEY = "notification.user";
     public static final String VENDOR_APPROVAL_ROUTING_KEY = "notification.vendor.approval";
     public static final String CHAT_MESSAGE_ROUTING_KEY = "chat.message";
+    public static final String DISPUTE_NOTIFICATION_ROUTING_KEY = "notification.dispute";
+    public static final String DISPUTE_WS_ROUTING_KEY = "dispute.ws";
 
     // Declare Queues
     @Bean
@@ -47,6 +51,16 @@ public class RabbitMQConfig {
     @Bean
     public Queue chatMessageQueue() {
         return new Queue(CHAT_MESSAGE_QUEUE, true);
+    }
+
+    @Bean
+    public Queue disputeNotificationQueue() {
+        return new Queue(DISPUTE_NOTIFICATION_QUEUE, true);
+    }
+
+    @Bean
+    public Queue disputeWsQueue() {
+        return new Queue(DISPUTE_WS_QUEUE, true);
     }
 
     // Declare Exchanges
@@ -92,6 +106,20 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(chatMessageQueue)
                 .to(chatExchange)
                 .with(CHAT_MESSAGE_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding disputeNotificationBinding(Queue disputeNotificationQueue, TopicExchange notificationExchange) {
+        return BindingBuilder.bind(disputeNotificationQueue)
+                .to(notificationExchange)
+                .with(DISPUTE_NOTIFICATION_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding disputeWsBinding(Queue disputeWsQueue, TopicExchange notificationExchange) {
+        return BindingBuilder.bind(disputeWsQueue)
+                .to(notificationExchange)
+                .with(DISPUTE_WS_ROUTING_KEY);
     }
 
     // Message Converter
