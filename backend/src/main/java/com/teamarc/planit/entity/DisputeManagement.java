@@ -2,19 +2,24 @@ package com.teamarc.planit.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "dispute_management")
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class DisputeManagement {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
     
     @OneToOne
@@ -45,6 +50,17 @@ public class DisputeManagement {
     @Column(name = "resolution_note", columnDefinition = "TEXT")
     private String resolutionNote;
     
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DisputeType type;
+    
+    @Column(name = "resolved_at")
+    private LocalDateTime resolvedAt;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resolved_by_user_id")
+    private User resolvedBy;
+    
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -58,5 +74,10 @@ public class DisputeManagement {
     
     public enum DisputeStatus {
         OPEN, IN_REVIEW, RESOLVED, CLOSED
+    }
+    
+    public enum DisputeType {
+        PAYMENT_ISSUE, SERVICE_NOT_DELIVERED, QUALITY_ISSUE,
+        CANCELLATION_DISPUTE, VENDOR_NO_SHOW, OTHER
     }
 }

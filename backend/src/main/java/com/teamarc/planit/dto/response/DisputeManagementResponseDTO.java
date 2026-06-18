@@ -20,4 +20,7 @@ public class DisputeManagementResponseDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String resolutionNote;
+    private DisputeManagement.DisputeType type;
+    private LocalDateTime resolvedAt;
+    private Long resolvedByUserId;
 }
