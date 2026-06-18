@@ -6,6 +6,7 @@ import com.teamarc.planit.entity.*;
 import com.teamarc.planit.dto.PointDTO;
 import org.locationtech.jts.geom.Point;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -72,7 +73,15 @@ public interface BookingMapper {
     void updateComplaintFromDTO(ComplaintRequestDTO dto, @MappingTarget Complaint entity);
     
     // Dispute mappings
+    @Mapping(source = "bookingId", target = "booking.id")
     DisputeManagement toEntity(DisputeManagementRequestDTO dto);
+
+    @Mapping(source = "booking.id", target = "bookingId")
+    @Mapping(source = "raisedByUser.id", target = "raisedByUserId")
+    @Mapping(source = "againstUser.id", target = "againstUserId")
+    @Mapping(source = "resolvedBy.id", target = "resolvedByUserId")
     DisputeManagementResponseDTO toDisputeResponse(DisputeManagement entity);
+
+    @Mapping(source = "bookingId", target = "booking.id")
     void updateDisputeFromDTO(DisputeManagementRequestDTO dto, @MappingTarget DisputeManagement entity);
 }

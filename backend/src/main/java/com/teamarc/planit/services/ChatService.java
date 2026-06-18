@@ -28,14 +28,34 @@ public class ChatService {
 
     @Transactional
     public ConversationResponseDTO startConversation(Long currentUserId, StartConversationRequestDTO request) {
+        Services service = null;
+        if (request.getServiceId() != null) {
+            service = servicesRepository.findById(request.getServiceId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Service not found with id: " + request.getServiceId()));
+            if (request.getVendorId() == null && request.getCustomerId() == null) {
+                Customer currentCust = customerRepository.findByUserId(currentUserId);
+                if (currentCust != null) {
+                    request.setCustomerId(currentCust.getId());
+                    request.setVendorId(service.getVendor().getId());
+                } else {
+                    request.setVendorId(service.getVendor().getId());
+                }
+            }
+        }
+
         Customer customer = null;
         Vendor vendor = null;
 
         if (request.getCustomerId() != null) {
             customer = customerRepository.findById(request.getCustomerId())
                     .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + request.getCustomerId()));
-            vendor = vendorRepository.findByUser_Id(currentUserId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Vendor profile not found for current user: " + currentUserId));
+            if (request.getVendorId() != null) {
+                vendor = vendorRepository.findById(request.getVendorId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Vendor not found with id: " + request.getVendorId()));
+            } else {
+                vendor = vendorRepository.findByUser_Id(currentUserId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Vendor profile not found for current user: " + currentUserId));
+            }
         } else if (request.getVendorId() != null) {
             vendor = vendorRepository.findById(request.getVendorId())
                     .orElseThrow(() -> new ResourceNotFoundException("Vendor not found with id: " + request.getVendorId()));
@@ -47,21 +67,42 @@ public class ChatService {
             throw new IllegalArgumentException("Either vendorId or customerId must be provided");
         }
 
-        Services service = null;
-        if (request.getServiceId() != null) {
-            service = servicesRepository.findById(request.getServiceId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Service not found with id: " + request.getServiceId()));
-        }
-
-        Optional<Conversation> existingOpt;
+        Optional<Conversation> existingOpt = Optional.empty();
         if (service != null) {
+            // 1. Search for conversation with the specific service
             existingOpt = conversationRepository.findByCustomer_IdAndVendor_IdAndService_Id(
                     customer.getId(), vendor.getId(), service.getId()
             );
+            
+            // 2. Fallback: Search for any general conversation between customer & vendor
+            if (existingOpt.isEmpty()) {
+                existingOpt = conversationRepository.findByCustomer_IdAndVendor_IdAndServiceIsNull(
+                        customer.getId(), vendor.getId()
+                );
+            }
+            
+            // 3. Fallback: Search for any conversation between this customer and vendor
+            if (existingOpt.isEmpty()) {
+                List<Conversation> anyConvs = conversationRepository.findByCustomer_Id(customer.getId());
+                final Vendor finalVendor = vendor;
+                existingOpt = anyConvs.stream()
+                        .filter(c -> c.getVendor().getId().equals(finalVendor.getId()))
+                        .findFirst();
+            }
         } else {
+            // 1. Search for general conversation between customer & vendor
             existingOpt = conversationRepository.findByCustomer_IdAndVendor_IdAndServiceIsNull(
                     customer.getId(), vendor.getId()
             );
+            
+            // 2. Fallback: Search for any conversation (with any service) between them
+            if (existingOpt.isEmpty()) {
+                List<Conversation> anyConvs = conversationRepository.findByCustomer_Id(customer.getId());
+                final Vendor finalVendor = vendor;
+                existingOpt = anyConvs.stream()
+                        .filter(c -> c.getVendor().getId().equals(finalVendor.getId()))
+                        .findFirst();
+            }
         }
 
         Conversation conversation;

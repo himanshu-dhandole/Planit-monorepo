@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planit Dispute Update</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #E3F2FC;
+        }
+        .wrapper {
+            background: linear-gradient(180deg, #CBE4F9 0%, #E3F2FC 100%);
+            min-height: 100%;
+            width: 100%;
+            padding: 40px 0;
+        }
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 32px;
+            padding: 40px 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+            text-align: center;
+        }
+        .header {
+            margin-bottom: 24px;
+        }
+        .logo {
+            font-family: Georgia, serif;
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: #111111;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0 0 16px 0;
+        }
+        .content {
+            font-size: 15px;
+            color: #555555;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            text-align: left;
+        }
+        .dispute-box {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 24px 0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02);
+        }
+        .info-row {
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #888888;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+        .info-value {
+            color: #111111;
+            font-size: 15px;
+            margin-top: 2px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .badge-open {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        .badge-in_review {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .badge-resolved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .badge-closed {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+        .footer {
+            margin-top: 32px;
+            font-size: 12px;
+            color: #888888;
+            line-height: 1.5;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="header">
+                <!-- SVG Cloud Logo Header -->
+                <svg width="80" height="50" viewBox="0 0 400 250" style="margin: 0 auto 12px auto; display: block;">
+                    <path d="M 120 130 C 120 80, 180 70, 210 100 C 240 50, 330 60, 330 120 C 380 120, 380 180, 330 180 L 120 180 C 60 180, 60 130, 120 130 Z" fill="#8BA4F9" opacity="0.8" />
+                </svg>
+                <div class="logo">Planit</div>
+            </div>
+            
+            <h2 class="title" th:text="${eventType == 'RAISED_CONFIRMATION' ? 'Dispute Raised Successfully' : (eventType == 'RAISED' ? 'New Dispute Notification' : 'Dispute Status Update')}">Dispute Update</h2>
+            
+            <div class="content">
+                <p>Hi <strong th:text="${recipientName}">User</strong>,</p>
+                
+                <p th:if="${eventType == 'RAISED_CONFIRMATION'}">We have received your dispute request for booking <strong th:text="'#' + ${bookingId}">#123</strong>. Our administrators are currently reviewing the case. You can find the details of the filed dispute below:</p>
+                <p th:if="${eventType == 'RAISED'}">A dispute has been raised against you for booking <strong th:text="'#' + ${bookingId}">#123</strong>. Please review the details below. Our support team may contact you shortly for additional details.</p>
+                <p th:if="${eventType == 'STATUS_UPDATED'}">The dispute status for booking <strong th:text="'#' + ${bookingId}">#123</strong> has been updated. Please review the current state of the dispute below:</p>
+
+                <div class="dispute-box">
+                    <div class="info-row">
+                        <div class="info-label">Booking ID</div>
+                        <div class="info-value" th:text="'#' + ${bookingId}">#123</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">Current Status</div>
+                        <div class="info-value">
+                            <span th:class="'badge badge-' + ${#strings.toLowerCase(newStatus)}" th:text="${newStatus}">OPEN</span>
+                        </div>
+                    </div>
+
+                    <div class="info-row" th:if="${reason != null}">
+                        <div class="info-label">Reason / Complaint</div>
+                        <div class="info-value" th:text="${reason}">Reason details...</div>
+                    </div>
+
+                    <div class="info-row" th:if="${resolutionNote != null && resolutionNote != ''}">
+                        <div class="info-label">Resolution Note</div>
+                        <div class="info-value" th:text="${resolutionNote}">Resolution details...</div>
+                    </div>
+                </div>
+
+                <p style="font-size: 13px; color: #777;">If you have any questions or would like to submit additional evidence, please reply directly to this email or contact our customer support.</p>
+            </div>
+            
+            <div class="footer">
+                <p style="margin: 0 0 4px 0;">© <span th:text="${currentYear}">2026</span> Planit. All rights reserved.</p>
+                <p style="margin: 0;">This is an automated email. Please do not reply.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
