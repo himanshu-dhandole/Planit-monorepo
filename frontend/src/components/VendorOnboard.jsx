@@ -276,11 +276,15 @@ export default function VendorOnboard() {
                   <div className="relative">
                     <span className="absolute left-4 top-3.5 text-gray-400"><Tag size={18} /></span>
                     <select name="category" value={formData.category} onChange={handleChange} required className="w-full bg-white pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-gray-800 shadow-sm appearance-none">
-                      <option value="VENUE">Venue</option>
-                      <option value="CATERING">Catering</option>
                       <option value="DECORATION">Decoration</option>
-                      <option value="PHOTOGRAPHY">Photography</option>
+                      <option value="CATERING">Catering</option>
+                      <option value="VENUE">Venue</option>
                       <option value="ENTERTAINMENT">Entertainment</option>
+                      <option value="PHOTOGRAPHY">Photography</option>
+                      <option value="TRANSPORTATION">Transportation</option>
+                      <option value="MUSIC">Music</option>
+                      <option value="MAKEUP">Makeup</option>
+                      <option value="TRANSPORT">Transport</option>
                       <option value="LOGISTICS">Logistics</option>
                       <option value="OTHER">Other</option>
                     </select>

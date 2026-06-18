@@ -24,6 +24,7 @@ import CartPage from './components/CartPage';
 import MyEventsPage from './components/MyEventsPage';
 import MyBookingsPage from './components/MyBookingsPage';
 import VendorBookingsPage from './components/VendorBookingsPage';
+import MyDisputesPage from './components/MyDisputesPage';
 
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
             <Route path="/my-events" element={<Protected><Layout><MyEventsPage /></Layout></Protected>} />
             <Route path="/my-bookings" element={<Protected><Layout><MyBookingsPage /></Layout></Protected>} />
             <Route path="/vendor-bookings" element={<Protected><Layout><VendorBookingsPage /></Layout></Protected>} />
+            <Route path="/disputes" element={<Protected><Layout><MyDisputesPage /></Layout></Protected>} />
             <Route path="/admin" element={<Protected><Layout><AdminDashboard /></Layout></Protected>} />
             <Route path="/sandbox" element={<Protected><Sandbox /></Protected>} />
             

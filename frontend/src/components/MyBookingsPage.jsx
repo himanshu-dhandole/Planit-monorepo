@@ -13,7 +13,8 @@ import {
   Loader2,
   CheckCircle,
   MessageSquare,
-  IndianRupee
+  IndianRupee,
+  ArrowRight
 } from 'lucide-react';
 import CloudsBackground from './CloudsBackground';
 import PageTransition from './PageTransition';
@@ -33,9 +34,18 @@ export default function MyBookingsPage() {
   const [cancelLoading, setCancelLoading] = useState(false);
   const [chatLoading, setChatLoading] = useState(false);
 
+  // Dispute States
+  const [disputes, setDisputes] = useState([]);
+  const [showDisputeModal, setShowDisputeModal] = useState(false);
+  const [disputeBooking, setDisputeBooking] = useState(null);
+  const [disputeType, setDisputeType] = useState('PAYMENT_ISSUE');
+  const [disputeReason, setDisputeReason] = useState('');
+  const [disputeLoading, setDisputeLoading] = useState(false);
+
   useEffect(() => {
     if (customerProfile?.id) {
       fetchBookings();
+      fetchDisputes();
     }
   }, [customerProfile]);
 
@@ -50,6 +60,25 @@ export default function MyBookingsPage() {
       toast.error("Failed to load your bookings");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchDisputes = async () => {
+    try {
+      const res = await apiClient.get('/api/disputes/my');
+      let dataList = [];
+      if (res.data?.data && Array.isArray(res.data.data)) {
+        dataList = res.data.data;
+      } else if (res.data?.data?.content && Array.isArray(res.data.data.content)) {
+        dataList = res.data.data.content;
+      } else if (res.data?.content && Array.isArray(res.data.content)) {
+        dataList = res.data.content;
+      } else if (Array.isArray(res.data)) {
+        dataList = res.data;
+      }
+      setDisputes(dataList);
+    } catch (err) {
+      console.error("Error fetching disputes:", err);
     }
   };
 
@@ -82,6 +111,32 @@ export default function MyBookingsPage() {
       toast.error(err.response?.data?.message || "Failed to cancel booking");
     } finally {
       setCancelLoading(false);
+    }
+  };
+
+  const handleRaiseDispute = async (e) => {
+    e.preventDefault();
+    if (!disputeReason.trim()) {
+      toast.error("Please enter a reason for the dispute");
+      return;
+    }
+    try {
+      setDisputeLoading(true);
+      const payload = {
+        bookingId: disputeBooking.id,
+        type: disputeType,
+        reason: disputeReason
+      };
+      await apiClient.post('/api/disputes', payload);
+      toast.success("Dispute raised successfully! Our admins will review it.");
+      setShowDisputeModal(false);
+      setDisputeReason('');
+      fetchDisputes();
+    } catch (err) {
+      console.error("Error raising dispute:", err);
+      toast.error(err.response?.data?.message || "Failed to raise dispute");
+    } finally {
+      setDisputeLoading(false);
     }
   };
 
@@ -350,6 +405,33 @@ export default function MyBookingsPage() {
                   </div>
                 )}
 
+                {(() => {
+                  const bookingDispute = disputes.find(d => d.bookingId === selectedBooking.id);
+                  if (bookingDispute) {
+                    return (
+                      <div className="bg-rose-50 border border-rose-100 p-4 rounded-2xl text-xs font-semibold text-rose-700">
+                        <span className="text-[10px] text-rose-400 uppercase tracking-wide block mb-1">Dispute Filed ({bookingDispute.status})</span>
+                        <div className="font-bold text-slate-800">Reason: {bookingDispute.reason}</div>
+                        {bookingDispute.resolutionNote && (
+                          <div className="mt-2 pt-2 border-t border-rose-200">
+                            <strong>Resolution Note:</strong> {bookingDispute.resolutionNote}
+                          </div>
+                        )}
+                        <button
+                          onClick={() => {
+                            setShowModal(false);
+                            navigate('/disputes');
+                          }}
+                          className="mt-3 text-xs text-indigo-600 hover:underline font-extrabold flex items-center gap-1"
+                        >
+                          View in Disputes Center <ArrowRight size={12} />
+                        </button>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+
                 <div className="flex gap-4 pt-4">
                   <button
                     onClick={() => handleStartChat(selectedBooking.services?.id)}
@@ -357,17 +439,129 @@ export default function MyBookingsPage() {
                   >
                     <MessageSquare size={16} /> Chat Vendor
                   </button>
-                  {(selectedBooking.status === "PENDING" || selectedBooking.status === "CONFIRMED") && (
-                    <button
-                      onClick={() => handleCancelBooking(selectedBooking.id, selectedBooking.status)}
-                      disabled={cancelLoading}
-                      className="flex-1 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center"
-                    >
-                      {cancelLoading ? "Processing..." : "Cancel Booking"}
-                    </button>
-                  )}
+                  {(() => {
+                    const bookingDispute = disputes.find(d => d.bookingId === selectedBooking.id);
+                    if (bookingDispute) return null;
+
+                    if (selectedBooking.status === "CONFIRMED" || selectedBooking.status === "COMPLETED") {
+                      return (
+                        <button
+                          onClick={() => {
+                            setDisputeBooking(selectedBooking);
+                            setShowModal(false);
+                            setShowDisputeModal(true);
+                          }}
+                          className="flex-1 py-3.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5"
+                        >
+                          <AlertCircle size={16} /> Raise Dispute
+                        </button>
+                      );
+                    }
+
+                    if (selectedBooking.status === "PENDING") {
+                      return (
+                        <button
+                          onClick={() => handleCancelBooking(selectedBooking.id, selectedBooking.status)}
+                          disabled={cancelLoading}
+                          className="flex-1 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center"
+                        >
+                          {cancelLoading ? "Processing..." : "Cancel Booking"}
+                        </button>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Raise Dispute Modal */}
+      <AnimatePresence>
+        {showDisputeModal && disputeBooking && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+              onClick={() => setShowDisputeModal(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-lg bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2.5rem] p-8 md:p-10"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+                  <AlertCircle className="text-rose-600" size={24} /> Raise a Dispute
+                </h3>
+                <button 
+                  onClick={() => setShowDisputeModal(false)}
+                  className="p-1.5 hover:bg-slate-100 rounded-xl transition-colors text-slate-500"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <form onSubmit={handleRaiseDispute} className="space-y-6">
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs font-semibold text-slate-600">
+                  <div>Booking ID: <strong className="text-slate-800">#{disputeBooking.id}</strong></div>
+                  <div className="mt-1">Service: <strong className="text-slate-800">{disputeBooking.services?.name}</strong></div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-700">Dispute Type *</label>
+                  <select 
+                    value={disputeType}
+                    onChange={(e) => setDisputeType(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm font-semibold"
+                  >
+                    <option value="PAYMENT_ISSUE">Payment Issue</option>
+                    <option value="SERVICE_NOT_DELIVERED">Service Not Delivered</option>
+                    <option value="QUALITY_ISSUE">Quality Issue</option>
+                    <option value="CANCELLATION_DISPUTE">Cancellation Dispute</option>
+                    <option value="VENDOR_NO_SHOW">Vendor No Show</option>
+                    <option value="OTHER">Other / Miscellaneous</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-700">Reason / Explanation *</label>
+                  <textarea 
+                    value={disputeReason}
+                    onChange={(e) => setDisputeReason(e.target.value)}
+                    required
+                    maxLength={1000}
+                    rows="4"
+                    placeholder="Describe the issue in detail..."
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm font-medium resize-none"
+                  />
+                  <div className="text-[10px] text-slate-400 text-right">{disputeReason.length}/1000 characters</div>
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowDisputeModal(false)}
+                    className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl transition-all shadow-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={disputeLoading}
+                    className="flex-1 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 disabled:opacity-75"
+                  >
+                    {disputeLoading ? <Loader2 className="animate-spin" size={16} /> : null}
+                    Submit Dispute
+                  </button>
+                </div>
+              </form>
             </motion.div>
           </div>
         )}

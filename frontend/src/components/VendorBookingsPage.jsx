@@ -17,7 +17,8 @@ import {
   Mail,
   Phone,
   Check,
-  Ban
+  Ban,
+  ArrowRight
 } from 'lucide-react';
 import CloudsBackground from './CloudsBackground';
 import PageTransition from './PageTransition';
@@ -37,10 +38,12 @@ export default function VendorBookingsPage() {
   const [showModal, setShowModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [chatLoading, setChatLoading] = useState(false);
+  const [disputes, setDisputes] = useState([]);
 
   useEffect(() => {
     if (customerProfile?.id) {
       fetchVendorAndBookings();
+      fetchDisputes();
     }
   }, [customerProfile]);
 
@@ -63,6 +66,25 @@ export default function VendorBookingsPage() {
       toast.error("Failed to load your vendor dashboard bookings");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchDisputes = async () => {
+    try {
+      const res = await apiClient.get('/api/disputes/my');
+      let dataList = [];
+      if (res.data?.data && Array.isArray(res.data.data)) {
+        dataList = res.data.data;
+      } else if (res.data?.data?.content && Array.isArray(res.data.data.content)) {
+        dataList = res.data.data.content;
+      } else if (res.data?.content && Array.isArray(res.data.content)) {
+        dataList = res.data.content;
+      } else if (Array.isArray(res.data)) {
+        dataList = res.data;
+      }
+      setDisputes(dataList);
+    } catch (err) {
+      console.error("Error fetching vendor disputes:", err);
     }
   };
 
@@ -210,6 +232,17 @@ export default function VendorBookingsPage() {
                         <h3 className="font-extrabold text-slate-800 text-lg leading-tight">
                           {booking.services?.name || "Service Item"}
                         </h3>
+                        {(() => {
+                          const bookingDispute = disputes.find(d => d.bookingId === booking.id);
+                          if (bookingDispute) {
+                            return (
+                              <span className="inline-block mt-2 px-2 py-0.5 bg-rose-50 border border-rose-100 text-rose-600 text-[10px] font-bold rounded-md uppercase tracking-wider animate-pulse">
+                                Dispute Raised ({bookingDispute.status})
+                              </span>
+                            );
+                          }
+                          return null;
+                        })()}
                       </div>
                       <span className={`px-2.5 py-0.5 border text-[10px] font-extrabold rounded-md uppercase tracking-wider ${getStatusStyle(booking.status)}`}>
                         {booking.status}
@@ -405,6 +438,33 @@ export default function VendorBookingsPage() {
                     {selectedBooking.cancellationReason}
                   </div>
                 )}
+
+                {(() => {
+                  const bookingDispute = disputes.find(d => d.bookingId === selectedBooking.id);
+                  if (bookingDispute) {
+                    return (
+                      <div className="bg-rose-50 border border-rose-100 p-4 rounded-2xl text-xs font-semibold text-rose-700">
+                        <span className="text-[10px] text-rose-400 uppercase tracking-wide block mb-1">Dispute Filed ({bookingDispute.status})</span>
+                        <div className="font-bold text-slate-800">Reason: {bookingDispute.reason}</div>
+                        {bookingDispute.resolutionNote && (
+                          <div className="mt-2 pt-2 border-t border-rose-200">
+                            <strong>Resolution Note:</strong> {bookingDispute.resolutionNote}
+                          </div>
+                        )}
+                        <button
+                          onClick={() => {
+                            setShowModal(false);
+                            navigate('/disputes');
+                          }}
+                          className="mt-3 text-xs text-indigo-600 hover:underline font-extrabold flex items-center gap-1"
+                        >
+                          View in Disputes Center <ArrowRight size={12} />
+                        </button>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
 
                 <div className="flex gap-4 pt-4">
                   <button

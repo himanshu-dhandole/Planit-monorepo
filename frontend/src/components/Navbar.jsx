@@ -299,6 +299,20 @@ export default function Navbar() {
                     onClick={() => setHoveredItem(null)}
                     disabled={!isVendor}
                   />
+                  <DropdownItem
+                    icon={<AlertCircle size={20} />}
+                    title="Disputes Center"
+                    desc="File and track service disputes"
+                    to="/disputes"
+                    onClick={() => setHoveredItem(null)}
+                  />
+                  <DropdownItem
+                    icon={<HelpCircle size={20} />}
+                    title="Support Help"
+                    desc="Get customer support and help"
+                    to="/support"
+                    onClick={() => setHoveredItem(null)}
+                  />
                 </div>
 
                 {/* Right Column (Secondary Links) */}

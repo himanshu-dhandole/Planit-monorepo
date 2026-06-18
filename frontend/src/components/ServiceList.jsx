@@ -23,13 +23,16 @@ export default function ServiceList() {
   const [categoryFilter, setCategoryFilter] = useState("");
 
   const categories = [
-    "PHOTOGRAPHY",
+    "DECORATION",
     "CATERING",
     "VENUE",
-    "DECORATION",
+    "ENTERTAINMENT",
+    "PHOTOGRAPHY",
+    "TRANSPORTATION",
     "MUSIC",
     "MAKEUP",
     "TRANSPORT",
+    "LOGISTICS",
     "OTHER",
   ];
 

@@ -276,13 +276,16 @@ export default function VendorDashboard() {
                     <label className="text-sm font-semibold text-gray-700">Category *</label>
                     <select required name="category" value={formData.category} onChange={handleInputChange} className="w-full px-4 py-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
                       <option value="">Select Category</option>
-                      <option value="PHOTOGRAPHY">Photography</option>
+                      <option value="DECORATION">Decoration</option>
                       <option value="CATERING">Catering</option>
                       <option value="VENUE">Venue</option>
-                      <option value="DECORATION">Decoration</option>
-                      <option value="MUSIC">Music/DJ</option>
-                      <option value="MAKEUP">Makeup Artist</option>
+                      <option value="ENTERTAINMENT">Entertainment</option>
+                      <option value="PHOTOGRAPHY">Photography</option>
+                      <option value="TRANSPORTATION">Transportation</option>
+                      <option value="MUSIC">Music</option>
+                      <option value="MAKEUP">Makeup</option>
                       <option value="TRANSPORT">Transport</option>
+                      <option value="LOGISTICS">Logistics</option>
                       <option value="OTHER">Other</option>
                     </select>
                   </div>
