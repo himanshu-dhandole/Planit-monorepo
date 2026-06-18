@@ -53,11 +53,17 @@ public class Event {
     @Column(name = "is_deleted")
     @ColumnDefault("false")
     private Boolean isDeleted;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private com.teamarc.planit.entity.enums.EventStatus status;
     
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (isDeleted == null) isDeleted = false;
+        if (status == null) status = com.teamarc.planit.entity.enums.EventStatus.DRAFT;
     }
     
     @PreUpdate

@@ -30,4 +30,6 @@ public class EventRequestDTO {
     
     @NotNull(message = "End date is required")
     private LocalDateTime endDate;
+    
+    private String status;
 }

@@ -6,6 +6,7 @@ import com.teamarc.planit.dto.response.BookingResponseDTO;
 import com.teamarc.planit.dto.response.EventResponseDTO;
 import com.teamarc.planit.entity.Customer;
 import com.teamarc.planit.entity.Event;
+import com.teamarc.planit.repository.BookingRepository;
 import com.teamarc.planit.repository.CustomerRepository;
 import com.teamarc.planit.repository.EventRepository;
 import jakarta.transaction.Transactional;
@@ -22,6 +23,7 @@ public class EventService {
     private final EventRepository eventRepository;
     private final ModelMapper modelMapper;
     private final CustomerRepository customerRepository;
+    private final BookingRepository bookingRepository;
 
     @Transactional
     public EventResponseDTO createNewEvent(EventRequestDTO eventRequestDTO) {
@@ -33,6 +35,8 @@ public class EventService {
                 .startDate(eventRequestDTO.getStartDate())
                 .endDate(eventRequestDTO.getEndDate())
                 .address(eventRequestDTO.getAddress())
+                .isDeleted(false)
+                .status(com.teamarc.planit.entity.enums.EventStatus.DRAFT)
                 .build();
 
         return modelMapper.map(eventRepository.save(event), EventResponseDTO.class);
@@ -46,7 +50,10 @@ public class EventService {
         Event existingEvent = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found with id: " + eventId));
         existingEvent.setTitle(eventRequestDTO.getTitle());
         existingEvent.setDescription(eventRequestDTO.getDescription());
-        if(existingEvent.getBookings().isEmpty()) {
+        if (eventRequestDTO.getStatus() != null) {
+            existingEvent.setStatus(com.teamarc.planit.entity.enums.EventStatus.valueOf(eventRequestDTO.getStatus()));
+        }
+        if(existingEvent.getBookings() == null || existingEvent.getBookings().isEmpty()) {
             existingEvent.setStartDate(eventRequestDTO.getStartDate());
             existingEvent.setEndDate(eventRequestDTO.getEndDate());
             existingEvent.setAddress(eventRequestDTO.getAddress());
@@ -65,14 +72,18 @@ public class EventService {
     }
 
     public Page<BookingResponseDTO> getAllBookingsByEventId(Long eventId, int page, int size) {
-        Event event = eventRepository.findByIdAndIsDeleted(eventId, Boolean.FALSE).orElseThrow(() -> new RuntimeException("Event not found with id: " + eventId));
-        return event.getBookings().stream()
-                .map(booking -> modelMapper.map(booking, BookingResponseDTO.class))
-                .collect(java.util.stream.Collectors.collectingAndThen(java.util.stream.Collectors.toList(), list -> new org.springframework.data.domain.PageImpl<>(list, PageRequest.of(page, size), list.size())));
+        return bookingRepository.findAllByEvent_Id(eventId, PageRequest.of(page, size))
+                .map(booking -> modelMapper.map(booking, BookingResponseDTO.class));
     }
     
 
-    // TODO_Delete_Event
+    @Transactional
+    public void deleteEvent(Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found with id: " + eventId));
+        event.setIsDeleted(true);
+        eventRepository.save(event);
+    }
 
 
 

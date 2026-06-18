@@ -189,6 +189,64 @@ public class BookingService {
         return modelMapper.map(saved, BookingResponseDTO.class);
     }
 
+    @Transactional
+    public java.util.List<BookingResponseDTO> createBatchBookings(java.util.List<BookingRequestDTO> dtos) {
+        if (dtos == null || dtos.isEmpty()) {
+            throw new IllegalArgumentException("Booking requests list cannot be empty");
+        }
+
+        Long customerId = dtos.get(0).getCustomerId();
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + customerId));
+
+        Wallet wallet = walletRepository.findByUser_Id(customer.getUser().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Wallet not found for customer with id: " + customerId));
+
+        BigDecimal totalAmount = dtos.stream()
+                .map(BookingRequestDTO::getBookingAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (BigDecimal.valueOf(wallet.getBalance()).compareTo(totalAmount) < 0) {
+            throw new RuntimeException("Insufficient balance in wallet for total booking amount. Required: " + totalAmount + ", Available: " + wallet.getBalance());
+        }
+
+        java.util.List<BookingResponseDTO> responses = new java.util.ArrayList<>();
+        for (BookingRequestDTO dto : dtos) {
+            if (!dto.getCustomerId().equals(customerId)) {
+                throw new IllegalArgumentException("All bookings in a batch must belong to the same customer");
+            }
+
+            Event event = eventRepository.findById(dto.getEventId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + dto.getEventId()));
+            Services services = servicesRepository.findById(dto.getServiceId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Service not found with id: " + dto.getServiceId()));
+
+            Booking booking = new Booking();
+            booking.setEvent(event);
+            booking.setServices(services);
+            booking.setCustomer(customer);
+            booking.setStatus(BookingStatus.PENDING);
+            booking.setBookingAmount(dto.getBookingAmount());
+            booking.setStartDt(dto.getStartDt());
+            booking.setEndDt(dto.getEndDt());
+
+            Booking savedBooking = bookingRepository.save(booking);
+
+            paymentService.createPayment(savedBooking.getId(), "PAY_" + savedBooking.getId() + "_" + System.currentTimeMillis(), PaymentStatus.PENDING);
+
+            responses.add(modelMapper.map(savedBooking, BookingResponseDTO.class));
+        }
+
+        // Update event status to CONFIRMED
+        Long eventId = dtos.get(0).getEventId();
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + eventId));
+        event.setStatus(com.teamarc.planit.entity.enums.EventStatus.CONFIRMED);
+        eventRepository.save(event);
+
+        return responses;
+    }
+
     public Page<BookingResponseDTO> getAllCustomerBookings(Long id, int page, int size) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + id));

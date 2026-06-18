@@ -19,4 +19,5 @@ public class EventResponseDTO {
     private LocalDateTime endDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String status;
 }

@@ -15,13 +15,44 @@ public class BookingController {
 
     private final BookingService bookingService;
 
-//    @PostMapping
-//    public ResponseEntity<BookingResponseDTO> createBooking(@RequestBody @Valid BookingRequestDTO bookingRequestDTO) {
-//        return ResponseEntity.ok(bookingService.createBookingRequest(bookingRequestDTO));
-//    }
+    @PostMapping
+    public ResponseEntity<BookingResponseDTO> createBooking(@RequestBody @jakarta.validation.Valid BookingRequestDTO bookingRequestDTO) {
+        return ResponseEntity.ok(bookingService.createBookingRequest(bookingRequestDTO));
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<java.util.List<BookingResponseDTO>> createBatchBookings(@RequestBody @jakarta.validation.Valid java.util.List<BookingRequestDTO> bookingRequests) {
+        return ResponseEntity.ok(bookingService.createBatchBookings(bookingRequests));
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<BookingResponseDTO> getBookingById(@PathVariable Long id) {
         return ResponseEntity.ok(bookingService.getBookingById(id));
     }
+
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<BookingResponseDTO> acceptBooking(@PathVariable Long id) {
+        return ResponseEntity.ok(bookingService.acceptBookingRequest(id));
+    }
+
+    @PostMapping("/{id}/reject")
+    public ResponseEntity<BookingResponseDTO> rejectBooking(@PathVariable Long id) {
+        return ResponseEntity.ok(bookingService.rejectBookingRequest(id));
+    }
+
+    @PostMapping("/{id}/cancel/before")
+    public ResponseEntity<BookingResponseDTO> cancelBeforeAccepting(@PathVariable Long id) {
+        return ResponseEntity.ok(bookingService.cancelBookingRequestBeforeAccepting(id));
+    }
+
+    @PostMapping("/{id}/cancel/after")
+    public ResponseEntity<BookingResponseDTO> cancelAfterAccepting(@PathVariable Long id) {
+        return ResponseEntity.ok(bookingService.cancelBookingRequestAfterAccepting(id));
+    }
+
+    @PostMapping("/{id}/cancel/vendor")
+    public ResponseEntity<BookingResponseDTO> cancelByVendor(@PathVariable Long id) {
+        return ResponseEntity.ok(bookingService.cancelBookingRequestByVendor(id));
+    }
 }
+

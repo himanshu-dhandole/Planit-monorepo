@@ -18,17 +18,17 @@ public class EventController {
     private final EventService eventService;
 
     @PostMapping(path = "/create")
-    public ResponseEntity<EventResponseDTO> createEvent(EventRequestDTO eventRequestDTO) {
+    public ResponseEntity<EventResponseDTO> createEvent(@RequestBody @jakarta.validation.Valid EventRequestDTO eventRequestDTO) {
         return ResponseEntity.ok(eventService.createNewEvent(eventRequestDTO));
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<EventResponseDTO> getEventById(Long id) {
+    public ResponseEntity<EventResponseDTO> getEventById(@PathVariable Long id) {
         return ResponseEntity.ok(eventService.getEventById(id));
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<EventResponseDTO> updateEventDetails(Long id, EventRequestDTO eventRequestDTO) {
+    public ResponseEntity<EventResponseDTO> updateEventDetails(@PathVariable Long id, @RequestBody @jakarta.validation.Valid EventRequestDTO eventRequestDTO) {
         return ResponseEntity.ok(eventService.updateEventDetails(id, eventRequestDTO));
     }
 
@@ -40,5 +40,11 @@ public class EventController {
     @GetMapping(path = "/booking/{eventId}")
     public ResponseEntity<Page<BookingResponseDTO>> getBookingsByEventId(@PathVariable Long eventId, @RequestParam int page, @RequestParam int size) {
         return ResponseEntity.ok(eventService.getAllBookingsByEventId(eventId, page, size));
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+        eventService.deleteEvent(id);
+        return ResponseEntity.ok().build();
     }
 }

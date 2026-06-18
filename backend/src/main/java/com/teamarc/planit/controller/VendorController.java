@@ -30,12 +30,18 @@ public class VendorController {
     }
 
     @GetMapping("/bookings/{vendorId}")
-    public ResponseEntity<Page<BookingResponseDTO>> getAllVendorBookings(@PathVariable Long vendorId, @RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<Page<BookingResponseDTO>> getAllVendorBookings(
+            @PathVariable Long vendorId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "100") int size) {
         return ResponseEntity.ok(vendorService.getAllVendorBookings(vendorId, page, size));
     }
 
     @GetMapping("/services/{vendorId}")
-    public ResponseEntity<Page<ServiceResponseDTO>> getAllVendorServices(@PathVariable Long vendorId, @RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<Page<ServiceResponseDTO>> getAllVendorServices(
+            @PathVariable Long vendorId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "100") int size) {
         return ResponseEntity.ok(vendorService.getAllVendorServices(vendorId, page, size));
     }
 

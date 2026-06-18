@@ -26,4 +26,10 @@ public class BookingResponseDTO {
     private LocalDateTime bookedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String clientName;
+    private String clientEmail;
+    private String clientPhone;
+    private ServiceResponseDTO services;
 }
+
+

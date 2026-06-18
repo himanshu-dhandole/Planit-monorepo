@@ -5,10 +5,7 @@ import com.teamarc.planit.services.VendorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,12 +22,12 @@ public class PublicController {
     }
 
     @GetMapping(path = "vendor/{vendorid}")
-    public ResponseEntity<VendorResponseDTO> getVendorById(@RequestParam Long vendorid) {
+    public ResponseEntity<VendorResponseDTO> getVendorById(@PathVariable("vendorid") Long vendorid) {
         return ResponseEntity.ok(vendorService.getVendorById(vendorid));
     }
 
     @GetMapping(path = "vendor/customer/{customerId}")
-    public ResponseEntity<VendorResponseDTO> getVendorByCustomerId(@RequestParam Long customerId) {
+    public ResponseEntity<VendorResponseDTO> getVendorByCustomerId(@PathVariable("customerId") Long customerId) {
         return ResponseEntity.ok(vendorService.getVendorByCustomerId(customerId));
     }
 
