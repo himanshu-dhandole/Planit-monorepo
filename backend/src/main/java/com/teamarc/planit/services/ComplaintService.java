@@ -148,9 +148,24 @@ public class ComplaintService {
         return bookingMapper.toComplaintResponse(saved);
     }
 
+    private ComplaintResponseDTO mapToDtoWithOffenderFlag(Complaint complaint) {
+        ComplaintResponseDTO dto = bookingMapper.toComplaintResponse(complaint);
+        if (dto.getAgainstUserId() != null) {
+            long resolvedCount = complaintRepository.findByAgainstUser_Id(dto.getAgainstUserId()).stream()
+                    .filter(c -> c.getStatus() == Complaint.ComplaintStatus.RESOLVED)
+                    .count();
+            dto.setAgainstUserResolvedComplaintsCount((int) resolvedCount);
+            dto.setIsAgainstUserRepeatOffender(resolvedCount >= 3);
+        } else {
+            dto.setAgainstUserResolvedComplaintsCount(0);
+            dto.setIsAgainstUserRepeatOffender(false);
+        }
+        return dto;
+    }
+
     public List<ComplaintResponseDTO> getAllComplaints() {
         return complaintRepository.findAll().stream()
-                .map(bookingMapper::toComplaintResponse)
+                .map(this::mapToDtoWithOffenderFlag)
                 .toList();
     }
 
@@ -165,7 +180,7 @@ public class ComplaintService {
 
         return all.stream()
                 .distinct()
-                .map(bookingMapper::toComplaintResponse)
+                .map(this::mapToDtoWithOffenderFlag)
                 .toList();
     }
 

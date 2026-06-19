@@ -20,4 +20,6 @@ public class ComplaintResponseDTO {
     private String description;
     private LocalDateTime raisedAt;
     private LocalDateTime updatedAt;
+    private Integer againstUserResolvedComplaintsCount;
+    private Boolean isAgainstUserRepeatOffender;
 }
