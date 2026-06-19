@@ -68,8 +68,19 @@ public interface BookingMapper {
     void updateReviewFromDTO(ReviewRequestDTO dto, @MappingTarget Review entity);
     
     // Complaint mappings
+    @Mapping(source = "bookingId", target = "booking.id")
+    @Mapping(source = "raisedByUserId", target = "raisedByUser.id")
+    @Mapping(source = "againstUserId", target = "againstUser.id")
     Complaint toEntity(ComplaintRequestDTO dto);
+
+    @Mapping(source = "booking.id", target = "bookingId")
+    @Mapping(source = "raisedByUser.id", target = "raisedByUserId")
+    @Mapping(source = "againstUser.id", target = "againstUserId")
     ComplaintResponseDTO toComplaintResponse(Complaint entity);
+
+    @Mapping(source = "bookingId", target = "booking.id")
+    @Mapping(source = "raisedByUserId", target = "raisedByUser.id")
+    @Mapping(source = "againstUserId", target = "againstUser.id")
     void updateComplaintFromDTO(ComplaintRequestDTO dto, @MappingTarget Complaint entity);
     
     // Dispute mappings
@@ -84,6 +95,9 @@ public interface BookingMapper {
 
     @Mapping(source = "bookingId", target = "booking.id")
     void updateDisputeFromDTO(DisputeManagementRequestDTO dto, @MappingTarget DisputeManagement entity);
+
+    // Karma mappings
+    com.teamarc.planit.dto.response.KarmaTransactionResponseDTO toKarmaTransactionResponse(com.teamarc.planit.entity.KarmaTransaction entity);
 
     // Testimonial mappings
     @Mapping(source = "vendorId", target = "vendor.id")

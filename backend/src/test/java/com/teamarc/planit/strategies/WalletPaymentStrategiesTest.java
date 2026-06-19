@@ -107,11 +107,11 @@ class WalletPaymentStrategiesTest {
 
         assertEquals(PaymentStatus.PAID, payment.getStatus());
         verify(walletService, times(1)).deductMoney(
-                eq(customerUser), eq(BigDecimal.valueOf(100.0)), anyString(), eq(booking)
+                eq(customerUser), argThat(a -> a.compareTo(new BigDecimal("100.0")) == 0), anyString(), eq(booking)
         );
         // Business share: 100 * (1 - 0.05) = 95.0
         verify(walletService, times(1)).addMoney(
-                eq(vendorUser), eq(BigDecimal.valueOf(95.0)), anyString(), eq(booking)
+                eq(vendorUser), argThat(a -> a.compareTo(new BigDecimal("95.0")) == 0), anyString(), eq(booking)
         );
         verify(paymentRepository, times(1)).save(payment);
     }
@@ -171,10 +171,10 @@ class WalletPaymentStrategiesTest {
 
         assertEquals(PaymentStatus.REFUNDED, payment.getStatus());
         verify(walletService, times(1)).deductMoney(
-                eq(vendorUser), eq(BigDecimal.valueOf(100.0)), anyString(), eq(booking)
+                eq(vendorUser), argThat(a -> a.compareTo(new BigDecimal("100.0")) == 0), anyString(), eq(booking)
         );
         verify(walletService, times(1)).addMoney(
-                eq(customerUser), eq(BigDecimal.valueOf(100.0)), anyString(), eq(booking)
+                eq(customerUser), argThat(a -> a.compareTo(new BigDecimal("100.0")) == 0), anyString(), eq(booking)
         );
         verify(paymentRepository, times(1)).save(payment);
     }
@@ -208,11 +208,11 @@ class WalletPaymentStrategiesTest {
         assertEquals(PaymentStatus.REFUNDED, payment.getStatus());
         // refund amount = 100.0 * (1 - 0.05 * 2) = 100.0 * 0.90 = 90.0
         verify(walletService, times(1)).deductMoney(
-                eq(vendorUser), eq(BigDecimal.valueOf(90.0)), anyString(), eq(booking)
+                eq(vendorUser), argThat(a -> a.compareTo(new BigDecimal("90.0")) == 0), anyString(), eq(booking)
         );
         // customer gets full 100.0 refund
         verify(walletService, times(1)).addMoney(
-                eq(customerUser), eq(BigDecimal.valueOf(100.0)), anyString(), eq(booking)
+                eq(customerUser), argThat(a -> a.compareTo(new BigDecimal("100.0")) == 0), anyString(), eq(booking)
         );
         verify(paymentRepository, times(1)).save(payment);
     }

@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
+    java.util.List<Complaint> findByRaisedByUser_Id(Long raisedByUserId);
+    java.util.List<Complaint> findByAgainstUser_Id(Long againstUserId);
 }

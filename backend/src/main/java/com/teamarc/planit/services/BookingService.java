@@ -5,6 +5,7 @@ import com.teamarc.planit.dto.response.BookingResponseDTO;
 import com.teamarc.planit.entity.*;
 import com.teamarc.planit.entity.enums.BookingStatus;
 import com.teamarc.planit.entity.enums.PaymentStatus;
+import com.teamarc.planit.entity.enums.Role;
 import com.teamarc.planit.exceptions.ResourceNotFoundException;
 import com.teamarc.planit.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @org.springframework.stereotype.Service
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class BookingService {
     private final WalletRepository walletRepository;
     private final PaymentService paymentService;
     private final PaymentRepository paymentRepository;
+    private final KarmaService karmaService;
 
     public Page<BookingResponseDTO> getAllVendorBookings(Long id, int page, int size) {
         return bookingRepository.findAllByServices_Vendor_Id(id, PageRequest.of(page, size))
@@ -146,6 +149,30 @@ public class BookingService {
 
         paymentService.refundPayment(booking);
 
+        // Apply time-dependent customer karma penalty
+        LocalDateTime now = LocalDateTime.now();
+        java.time.Duration duration = java.time.Duration.between(now, booking.getStartDt());
+        double penalty = -0.10;
+        String urgency = "STANDARD";
+        if (duration.isNegative() || duration.toHours() <= 24) {
+            penalty = -1.00;
+            urgency = "CRITICAL";
+        } else if (duration.toDays() <= 7) {
+            penalty = -0.50;
+            urgency = "URGENT";
+        }
+
+        karmaService.applyKarmaChange(
+                booking.getCustomer().getUser().getId(),
+                Role.CUSTOMER,
+                penalty,
+                "BOOKING_CANCELLED_BY_CUSTOMER_" + urgency,
+                booking.getId(),
+                null,
+                null,
+                "Booking cancelled by customer. Urgency: " + urgency + ". Time remaining: " + duration.toHours() + " hours."
+        );
+
         // TODO Notify Vendor
 
         return modelMapper.map(saved, BookingResponseDTO.class);
@@ -163,6 +190,30 @@ public class BookingService {
 
         paymentService.refundBookedServicePayment(booking);
 
+        // Apply time-dependent vendor karma penalty
+        LocalDateTime now = LocalDateTime.now();
+        java.time.Duration duration = java.time.Duration.between(now, booking.getStartDt());
+        double penalty = -0.10;
+        String urgency = "STANDARD";
+        if (duration.isNegative() || duration.toHours() <= 24) {
+            penalty = -1.00;
+            urgency = "CRITICAL";
+        } else if (duration.toDays() <= 7) {
+            penalty = -0.50;
+            urgency = "URGENT";
+        }
+
+        karmaService.applyKarmaChange(
+                booking.getServices().getVendor().getUser().getId(),
+                Role.VENDOR,
+                penalty,
+                "BOOKING_CANCELLED_BY_VENDOR_" + urgency,
+                booking.getId(),
+                null,
+                null,
+                "Booking cancelled by vendor. Urgency: " + urgency + ". Time remaining: " + duration.toHours() + " hours."
+        );
+
         // TODO Notify Customer
 
         return modelMapper.map(saved, BookingResponseDTO.class);
@@ -173,8 +224,35 @@ public class BookingService {
     @Transactional
     public BookingResponseDTO updateBookingStatus(Long id, BookingStatus status) {
         Booking booking = getBookingEntityById(id);
+        BookingStatus oldStatus = booking.getStatus();
         booking.setStatus(status);
         Booking saved = bookingRepository.save(booking);
+
+        if (status == BookingStatus.COMPLETED && oldStatus != BookingStatus.COMPLETED) {
+            // Reward Vendor
+            karmaService.applyKarmaChange(
+                    booking.getServices().getVendor().getUser().getId(),
+                    Role.VENDOR,
+                    0.10,
+                    "BOOKING_COMPLETED",
+                    booking.getId(),
+                    null,
+                    null,
+                    "Booking completed successfully."
+            );
+            // Reward Customer
+            karmaService.applyKarmaChange(
+                    booking.getCustomer().getUser().getId(),
+                    Role.CUSTOMER,
+                    0.05,
+                    "BOOKING_COMPLETED",
+                    booking.getId(),
+                    null,
+                    null,
+                    "Booking completed successfully."
+            );
+        }
+
         return modelMapper.map(saved, BookingResponseDTO.class);
     }
 
