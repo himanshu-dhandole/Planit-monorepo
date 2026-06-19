@@ -4,14 +4,113 @@ import {
   Search,
   MapPin,
   IndianRupee,
-  Filter,
   Star,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
+  Filter
 } from "lucide-react";
 import apiClient from "../lib/apiClient";
 import { useNavigate } from "react-router-dom";
 import CloudsBackground from "./CloudsBackground";
 import PageTransition from "./PageTransition";
+
+const categories = [
+  "ALL",
+  "DECORATION",
+  "CATERING",
+  "VENUE",
+  "ENTERTAINMENT",
+  "PHOTOGRAPHY",
+  "TRANSPORTATION",
+  "MUSIC",
+  "MAKEUP",
+  "TRANSPORT",
+  "LOGISTICS",
+  "OTHER",
+];
+
+// Carousel Component for Service Cards
+const ImageCarousel = ({ photos, name }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    let interval;
+    if (isHovered && photos && photos.length > 1) {
+      interval = setInterval(() => {
+        setCurrentIndex((prev) => (prev === photos.length - 1 ? 0 : prev + 1));
+      }, 1500);
+    }
+    return () => clearInterval(interval);
+  }, [isHovered, photos]);
+  
+  const handlePrev = (e) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === 0 ? photos.length - 1 : prev - 1));
+  };
+
+  const handleNext = (e) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === photos.length - 1 ? 0 : prev + 1));
+  };
+
+  if (!photos || photos.length === 0) {
+    return (
+      <div className="w-full h-full bg-indigo-50 flex items-center justify-center">
+        <span className="text-indigo-200 font-medium text-sm">No photos</span>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      className="relative w-full h-full group overflow-hidden"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {photos.map((photo, index) => (
+        <img
+          key={index}
+          src={photo}
+          alt={`${name} photo ${index + 1}`}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out ${
+            index === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+          }`}
+          loading="lazy"
+        />
+      ))}
+      
+      {photos.length > 1 && (
+        <>
+          <button
+            onClick={handlePrev}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/70 backdrop-blur text-slate-800 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white shadow-sm z-10"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <button
+            onClick={handleNext}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/70 backdrop-blur text-slate-800 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white shadow-sm z-10"
+          >
+            <ChevronRight size={18} />
+          </button>
+          
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+            {photos.map((_, idx) => (
+              <div
+                key={idx}
+                className={`h-1.5 rounded-full transition-all ${
+                  idx === currentIndex ? "w-4 bg-white" : "w-1.5 bg-white/50"
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
 
 export default function ServiceList() {
   const navigate = useNavigate();
@@ -20,21 +119,7 @@ export default function ServiceList() {
 
   // Filters
   const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("");
-
-  const categories = [
-    "DECORATION",
-    "CATERING",
-    "VENUE",
-    "ENTERTAINMENT",
-    "PHOTOGRAPHY",
-    "TRANSPORTATION",
-    "MUSIC",
-    "MAKEUP",
-    "TRANSPORT",
-    "LOGISTICS",
-    "OTHER",
-  ];
+  const [categoryFilter, setCategoryFilter] = useState("ALL");
 
   const fetchServices = async () => {
     setLoading(true);
@@ -58,68 +143,84 @@ export default function ServiceList() {
       service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (service.description &&
         service.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = categoryFilter
-      ? service.category === categoryFilter
-      : true;
+    const matchesCategory =
+      categoryFilter === "ALL" ? true : service.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
 
   return (
     <CloudsBackground>
-      <PageTransition className="flex-1 pt-32 relative font-sans w-full min-h-screen py-12 px-4 sm:px-6 lg:px-8 z-10">
+      <PageTransition className="flex-1 pt-24 relative font-sans w-full min-h-screen py-12 px-4 sm:px-6 lg:px-8 z-10">
         <div className="max-w-7xl mx-auto space-y-10">
-          {/* Header & Search Bar */}
-          <div className="bg-white/70 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full blur-3xl -mr-32 -mt-32 -z-10" />
+          
+          {/* Header & Search Bar (Wallet Theme Inspired) */}
+          <div className="text-center pt-12 mb-10 relative">
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full blur-3xl -z-10 opacity-60" />
+            
+            <motion.h1
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight"
+            >
+              Discover Services
+            </motion.h1>
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="mt-4 text-lg text-slate-600 font-medium max-w-2xl mx-auto mb-10"
+            >
+              Find the perfect vendors, venues, and experiences for your next unforgettable event.
+            </motion.p>
 
-            <div className="text-center mb-8">
-              <motion.h1
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight"
-              >
-                Discover Services
-              </motion.h1>
-              <p className="mt-3 text-lg text-slate-600 font-medium">
-                Find the perfect vendors and services for your next event.
-              </p>
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-4 items-center max-w-4xl mx-auto">
-              <div className="relative w-full flex-1">
-                <Search
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                  size={20}
-                />
-                <input
+            {/* Floating Search Bar */}
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="max-w-3xl mx-auto bg-white/80 backdrop-blur-xl p-3 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-white flex items-center gap-2"
+            >
+               <div className="pl-4 text-slate-400 shrink-0">
+                  <Search size={22} />
+               </div>
+               <input
                   type="text"
-                  placeholder="Search services by name or description..."
+                  placeholder="What are you looking for?"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all shadow-sm text-slate-700"
+                  className="w-full bg-transparent border-none py-3 px-2 text-lg focus:ring-0 outline-none text-slate-700 placeholder-slate-400 font-medium"
                 />
-              </div>
-
-              <div className="relative w-full md:w-64 shrink-0">
-                <Filter
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                  size={20}
-                />
-                <select
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all shadow-sm text-slate-700 appearance-none cursor-pointer"
-                >
-                  <option value="">All Categories</option>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat.charAt(0) + cat.slice(1).toLowerCase()}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+               <div className="shrink-0 pr-2">
+                 <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-full font-bold transition-colors shadow-md">
+                    Search
+                 </button>
+               </div>
+            </motion.div>
           </div>
+
+          {/* Categories Horizontal Scroll */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="flex items-center gap-3 overflow-x-auto pb-4 no-scrollbar max-w-7xl mx-auto px-2"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+             {categories.map((cat) => (
+               <button
+                 key={cat}
+                 onClick={() => setCategoryFilter(cat)}
+                 className={`whitespace-nowrap px-6 py-3 rounded-full text-sm font-bold transition-all ${
+                   categoryFilter === cat 
+                   ? 'bg-slate-900 text-white shadow-lg' 
+                   : 'bg-white/80 backdrop-blur-md text-slate-600 hover:bg-white hover:shadow border border-white'
+                 }`}
+               >
+                 {cat === 'ALL' ? 'All Services' : cat.charAt(0) + cat.slice(1).toLowerCase()}
+               </button>
+             ))}
+          </motion.div>
 
           {/* Services Grid */}
           {loading ? (
@@ -134,98 +235,91 @@ export default function ServiceList() {
                     <motion.div
                       key={service.id}
                       layout
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ duration: 0.3, delay: index * 0.05 }}
                       onClick={() => navigate(`/services/${service.id}`)}
-                      className="bg-white/80 backdrop-blur-md border border-white rounded-3xl p-5 shadow-[0_8px_20px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all group flex flex-col h-full cursor-pointer"
+                      className="bg-white/80 backdrop-blur-xl border border-white rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.12)] transition-all group cursor-pointer flex flex-col"
                     >
-                      {/* Funky Stacked Photos */}
-                      <div className="relative h-48 w-full mb-6 mt-2 perspective-1000">
-                        {service.photos && service.photos.length > 0 ? (
-                          <div className="relative w-full h-full group-hover:scale-105 transition-transform duration-500">
-                            {service.photos.slice(0, 3).map((photo, i) => {
-                              const isTop = i === 0;
-                              const rotation = isTop
-                                ? 0
-                                : (i % 2 === 0 ? 6 : -6) * i;
-                              return (
-                                <img
-                                  key={i}
-                                  src={photo}
-                                  alt={`${service.name} preview ${i}`}
-                                  className={`absolute inset-0 w-full h-full object-cover rounded-2xl border-4 border-white shadow-md transition-all duration-500 ${isTop ? "z-30" : i === 1 ? "z-20" : "z-10"}`}
-                                  style={{
-                                    transform: `rotate(${rotation}deg) scale(${1 - i * 0.05}) translateY(${i * 8}px)`,
-                                    transformOrigin: "bottom center",
-                                  }}
-                                />
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          <div className="w-full h-full bg-indigo-50 rounded-2xl border-4 border-white shadow-sm flex items-center justify-center">
-                            <span className="text-indigo-200 font-medium">
-                              No photos
-                            </span>
-                          </div>
-                        )}
-
-                        {/* Price Badge */}
-                        <div className="absolute -top-3 -right-3 z-40 bg-indigo-600 text-white px-3 py-1.5 rounded-xl shadow-lg font-bold flex items-center transform rotate-3 group-hover:rotate-0 transition-transform">
-                          <IndianRupee size={14} className="mr-0.5" />
-                          {service.price}
-                        </div>
+                      {/* Carousel Top Section */}
+                      <div className="relative h-60 w-full p-3 pb-0">
+                         <div className="w-full h-full rounded-2xl overflow-hidden relative shadow-sm">
+                            <ImageCarousel photos={service.photos} name={service.name} />
+                         </div>
                       </div>
 
-                      <div className="flex-1 flex flex-col">
-                        <div className="flex justify-between items-start mb-2">
-                          <span className="inline-block px-2.5 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-lg uppercase tracking-wider">
-                            {service.category}
-                          </span>
-                          <div className="flex items-center gap-1 text-amber-500 bg-amber-50 px-2 py-0.5 rounded-md text-xs font-bold">
-                            <Star size={12} fill="currentColor" />
-                            <span>
-                              {service.rating > 0
-                                ? service.rating.toFixed(1)
-                                : "New"}
-                            </span>
-                          </div>
+                      {/* Content Section */}
+                      <div className="p-5 flex-1 flex flex-col">
+                        <div className="flex justify-between items-start mb-2 gap-2">
+                           <div>
+                              <h3 className="font-extrabold text-slate-900 text-lg leading-tight line-clamp-1 group-hover:text-indigo-600 transition-colors">
+                                {service.name}
+                              </h3>
+                           </div>
+                           <div className="flex items-center gap-1 text-slate-700 bg-slate-100/80 px-2 py-1 rounded-lg text-xs font-bold shrink-0">
+                             <Star size={12} className="text-amber-500" fill="currentColor" />
+                             <span>
+                               {service.rating > 0
+                                 ? service.rating.toFixed(1)
+                                 : "New"}
+                             </span>
+                           </div>
                         </div>
-
-                        <h3 className="font-extrabold text-slate-900 text-xl mb-2 line-clamp-1 group-hover:text-indigo-600 transition-colors">
-                          {service.name}
-                        </h3>
 
                         <p className="text-slate-500 text-sm line-clamp-2 mb-4 flex-1">
                           {service.description}
                         </p>
 
-                        {service.availableLocations &&
-                        service.availableLocations.length > 0 ? (
-                          <div className="flex items-center gap-1 text-slate-400 text-xs font-semibold mt-auto pt-4 border-t border-slate-100">
-                            <MapPin size={14} className="text-indigo-400" />
-                            <span className="truncate">
-                              {service.availableLocations
-                                .map((l) => l.city)
-                                .join(", ")}
+                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
+                          <div className="flex flex-col">
+                            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                               Starting at
                             </span>
+                            <div className="flex items-center text-slate-900 font-extrabold text-lg">
+                              <IndianRupee size={16} strokeWidth={3} className="mr-0.5 text-slate-400" />
+                              {service.price}
+                            </div>
                           </div>
-                        ) : (
-                          <div className="flex items-center gap-1 text-slate-400 text-xs font-semibold mt-auto pt-4 border-t border-slate-100">
-                            <MapPin size={14} className="text-indigo-400" />
-                            <span className="truncate">
-                              {service.location || "Location varies"}
-                            </span>
+
+                          <div className="flex flex-col items-end">
+                             <span className="inline-block px-2.5 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-lg uppercase tracking-wider mb-1.5">
+                               {service.category}
+                             </span>
+                             {service.availableLocations &&
+                             service.availableLocations.length > 0 ? (
+                               <div className="flex items-center gap-1 text-slate-500 text-xs font-medium">
+                                 <MapPin size={12} className="text-indigo-400 shrink-0" />
+                                 <span className="truncate max-w-[100px]">
+                                   {service.availableLocations[0].city}
+                                   {service.availableLocations.length > 1 && "..."}
+                                 </span>
+                               </div>
+                             ) : (
+                               <div className="flex items-center gap-1 text-slate-500 text-xs font-medium">
+                                 <MapPin size={12} className="text-indigo-400 shrink-0" />
+                                 <span className="truncate max-w-[100px]">
+                                   {service.location || "Multiple"}
+                                 </span>
+                               </div>
+                             )}
                           </div>
-                        )}
+                        </div>
                       </div>
                     </motion.div>
                   ))
                 ) : (
-                  <div className="col-span-full py-12 text-center text-slate-500 font-medium bg-white/50 rounded-3xl border border-white">
-                    No services found matching your criteria.
+                  <div className="col-span-full py-20 text-center text-slate-500 font-medium bg-white/50 backdrop-blur-sm rounded-3xl border border-white shadow-sm">
+                    <div className="mx-auto w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                       <Search size={24} className="text-slate-400" />
+                    </div>
+                    <p className="text-lg">No services found matching your criteria.</p>
+                    <button 
+                       onClick={() => { setSearchTerm(""); setCategoryFilter("ALL"); }}
+                       className="mt-4 text-indigo-600 font-bold hover:text-indigo-700"
+                    >
+                       Clear Filters
+                    </button>
                   </div>
                 )}
               </AnimatePresence>
@@ -233,6 +327,12 @@ export default function ServiceList() {
           )}
         </div>
       </PageTransition>
+
+      <style dangerouslySetInnerHTML={{__html: `
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}} />
     </CloudsBackground>
   );
 }

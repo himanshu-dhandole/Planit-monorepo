@@ -11,12 +11,15 @@ import {
   AlertCircle, 
   Plus, 
   X, 
-  Info,
   CalendarDays,
   Loader2,
   CheckCircle,
-  Tag,
-  IndianRupee
+  IndianRupee,
+  ChevronDown,
+  Sparkles,
+  ChevronUp,
+  CreditCard,
+  Crown
 } from 'lucide-react';
 import CloudsBackground from './CloudsBackground';
 import PageTransition from './PageTransition';
@@ -91,13 +94,17 @@ export default function MyEventsPage() {
     }
   };
 
-  const handleOpenBookingModal = (booking, eventId) => {
+  const handleOpenBookingModal = (booking, eventId, e) => {
+    e.stopPropagation();
     setSelectedBooking({ ...booking, eventId });
     setShowBookingModal(true);
   };
 
   const handleCancelBooking = async () => {
     if (!selectedBooking) return;
+    
+    // We don't need a browser window.confirm anymore since the design is ultra-premium,
+    // but to prevent accidents we'll keep it for now.
     if (!window.confirm("Are you sure you want to cancel this booking?")) return;
 
     const isPending = selectedBooking.status === "PENDING";
@@ -153,7 +160,8 @@ export default function MyEventsPage() {
     setShowModal(true);
   };
 
-  const openEditModal = (event) => {
+  const openEditModal = (event, e) => {
+    e.stopPropagation();
     setModalMode('edit');
     setSelectedEventId(event.id);
     setFormData({
@@ -189,7 +197,7 @@ export default function MyEventsPage() {
         const res = await apiClient.post('/api/events/create', payload);
         toast.success("Event created successfully!");
         const created = res.data?.data || res.data;
-        setEvents(prev => [...prev, created]);
+        setEvents(prev => [created, ...prev]);
       } else {
         const res = await apiClient.put(`/api/events/${selectedEventId}`, payload);
         toast.success("Event updated successfully!");
@@ -273,168 +281,235 @@ export default function MyEventsPage() {
   return (
     <CloudsBackground>
       <PageTransition className="flex-1 pt-32 pb-12 px-4 sm:px-6 lg:px-8 relative font-sans w-full min-h-screen z-10">
-        <div className="max-w-5xl mx-auto space-y-8">
+        <div className="max-w-4xl mx-auto space-y-10">
           
-          {/* Header */}
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/50 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/80 shadow-sm">
-                <CalendarDays className="text-indigo-600" size={24} />
-              </div>
-              <div>
-                <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">My Events</h1>
-                <p className="text-slate-500 font-medium text-sm mt-0.5">Manage and monitor details of your curated events.</p>
-              </div>
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-6 border-b border-slate-200/60 pb-6">
+            <div className="text-left relative">
+              <motion.h1
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.1 }}
+                className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight flex items-center gap-4"
+              >
+                <div className="w-14 h-14 bg-white/80 backdrop-blur-xl rounded-2xl shadow-sm flex items-center justify-center -rotate-3 border border-slate-200 shrink-0">
+                  <CalendarDays size={28} className="text-indigo-600" />
+                </div>
+                My Events
+              </motion.h1>
+              <motion.p
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="mt-4 text-base md:text-lg text-slate-600 font-medium max-w-xl"
+              >
+                Create, monitor, and manage your curated events perfectly.
+              </motion.p>
             </div>
-            <button 
-              onClick={openCreateModal}
-              className="bg-indigo-600 text-white font-bold px-5 py-3 rounded-2xl hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-md hover:shadow-lg hover:-translate-y-0.5"
-            >
-              <Plus size={18} /> Create Event
-            </button>
+
+            <div className="flex flex-col items-end gap-4">
+              <button 
+                onClick={openCreateModal}
+                className="bg-slate-900 text-white font-bold px-6 py-3.5 rounded-2xl hover:bg-black transition-all flex items-center gap-2 shadow-lg hover:-translate-y-0.5 hover:shadow-xl"
+              >
+                <Plus size={18} /> New Event
+              </button>
+            </div>
           </div>
 
           {events.length === 0 ? (
-            <div className="bg-white/60 backdrop-blur-xl border border-white rounded-[2rem] p-12 text-center shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
-              <h2 className="text-xl font-bold text-slate-800 mb-2">No Events Scheduled</h2>
-              <p className="text-slate-500 max-w-sm mx-auto mb-6">Create an event to start custom booking wedding organizers, caterers, decorators, or photographers.</p>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white/80 backdrop-blur-2xl border border-white rounded-[3rem] p-16 text-center shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+            >
+              <div className="w-24 h-24 bg-indigo-50 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-white shadow-sm rotate-3">
+                <CalendarDays size={40} className="text-indigo-400 -rotate-3" />
+              </div>
+              <h2 className="text-2xl font-extrabold text-slate-800 mb-4 tracking-tight">No Events Scheduled</h2>
+              <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">
+                Create an event to start custom booking wedding organizers, caterers, decorators, or photographers.
+              </p>
               <button 
                 onClick={openCreateModal}
-                className="px-5 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-md hover:bg-indigo-700 transition-all"
+                className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all inline-flex items-center gap-2 shadow-md hover:-translate-y-0.5"
               >
-                Create First Event
+                Create First Event <Plus size={16} />
               </button>
-            </div>
+            </motion.div>
           ) : (
-            <div className="space-y-4">
-              {events.map((event) => {
-                const isExpanded = expandedEventId === event.id;
-                const bookings = eventBookings[event.id] || [];
-                const isBookingsLoading = bookingsLoading[event.id];
+            <div className="space-y-8">
+              <AnimatePresence>
+                {events.map((event, index) => {
+                  const isExpanded = expandedEventId === event.id;
+                  const bookings = eventBookings[event.id] || [];
+                  const isBookingsLoading = bookingsLoading[event.id];
 
-                return (
-                  <motion.div
-                    key={event.id}
-                    layout="position"
-                    className="bg-white/80 backdrop-blur-xl border border-white rounded-3xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] transition-all group overflow-hidden"
-                  >
-                    <div 
-                      onClick={() => handleToggleExpand(event.id)}
-                      className="flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer"
+                  return (
+                    <motion.div
+                      key={event.id}
+                      layout
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ delay: index * 0.05, duration: 0.4 }}
+                      className="bg-white/90 backdrop-blur-xl border border-slate-200 rounded-[2.5rem] p-6 md:p-8 shadow-[0_12px_40px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgb(0,0,0,0.06)] transition-all overflow-hidden group/container"
                     >
-                      <div className="space-y-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="font-extrabold text-slate-800 text-xl group-hover:text-indigo-600 transition-colors">
-                            {event.title}
-                          </h3>
-                          <span className={`px-2.5 py-0.5 border text-[10px] font-extrabold rounded-md uppercase tracking-wider ${getStatusStyle(event.status)}`}>
-                            {event.status}
-                          </span>
-                        </div>
-                        <p className="text-slate-500 text-sm">{event.description || "No description provided."}</p>
-                        
-                        <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-400 pt-1">
-                          <span className="flex items-center gap-1">
-                            <Calendar size={14} className="text-indigo-400" />
-                            {new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}
-                          </span>
-                          {event.address && (
-                            <span className="flex items-center gap-1">
-                              <MapPin size={14} className="text-indigo-400" />
-                              {event.address}
+                      {/* Event Header & Actions */}
+                      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 cursor-pointer" onClick={() => handleToggleExpand(event.id)}>
+                        <div className="flex gap-5 flex-1">
+                          <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center border border-indigo-100 shadow-sm shrink-0">
+                            <Sparkles size={24} className="text-indigo-500" />
+                          </div>
+                          <div className="space-y-1">
+                            <span className={`inline-block px-2.5 py-0.5 border text-[10px] font-extrabold rounded-md uppercase tracking-wider mb-2 ${getStatusStyle(event.status)}`}>
+                              {event.status}
                             </span>
+                            <h2 className="text-2xl font-black text-slate-900 tracking-tight group-hover/container:text-indigo-600 transition-colors">
+                              {event.title}
+                            </h2>
+                            <p className="text-slate-500 text-sm font-medium mt-2 max-w-xl leading-relaxed">
+                              {event.description || "No description provided."}
+                            </p>
+                            
+                            <div className="flex flex-wrap items-center gap-6 pt-4 text-xs font-bold text-slate-400">
+                              <span className="flex items-center gap-1.5">
+                                <Calendar size={14} className="text-indigo-400" />
+                                {new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}
+                              </span>
+                              {event.address && (
+                                <span className="flex items-center gap-1.5">
+                                  <MapPin size={14} className="text-indigo-400" />
+                                  {event.address}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Top Right Actions */}
+                        <div className="flex items-center gap-2 md:self-start self-end shrink-0" onClick={e => e.stopPropagation()}>
+                          <button
+                            onClick={(e) => openEditModal(event, e)}
+                            className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                            title="Edit Event"
+                          >
+                            <Edit size={18} />
+                          </button>
+                          {event.status !== 'CANCELLED' && event.status !== 'CONFIRMED' && (
+                            <button
+                              onClick={(e) => handleCancelEvent(event, e)}
+                              className="p-2.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+                              title="Cancel Event"
+                            >
+                              <X size={18} />
+                            </button>
                           )}
+                          <button
+                            onClick={(e) => handleDeleteEvent(event.id, e)}
+                            className="p-2.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+                            title="Delete Event"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                          
+                          {/* Expand chevron */}
+                          <div className="w-px h-6 bg-slate-200 mx-2 hidden md:block"></div>
+                          
+                          <button
+                            onClick={() => handleToggleExpand(event.id)}
+                            className="p-2.5 text-slate-400 hover:text-slate-800 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-100 transition-all hidden md:flex"
+                          >
+                            {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                          </button>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 self-start md:self-center">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); openEditModal(event); }}
-                          className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition-colors"
-                          title="Edit Event"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        {event.status !== 'CANCELLED' && event.status !== 'CONFIRMED' && (
-                          <button
-                            onClick={(e) => handleCancelEvent(event, e)}
-                            className="p-2.5 bg-rose-50 hover:bg-rose-100 text-rose-500 border border-rose-100 rounded-xl transition-colors"
-                            title="Cancel Event"
+                      {/* Expandable Bookings Grid */}
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                            animate={{ opacity: 1, height: 'auto', marginTop: 24 }}
+                            exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                            className="border-t border-slate-100/80 pt-6 overflow-hidden"
                           >
-                            <X size={16} />
-                          </button>
-                        )}
-                        <button
-                          onClick={(e) => handleDeleteEvent(event.id, e)}
-                          className="p-2.5 bg-slate-100 hover:bg-red-50 hover:text-red-500 rounded-xl transition-colors"
-                          title="Delete Event"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Bookings / Services Expanded Area */}
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="mt-6 border-t border-slate-100 pt-6"
-                        >
-                          <h4 className="text-sm font-bold text-slate-600 uppercase tracking-wide mb-4">Booked Services</h4>
-                          
-                          {isBookingsLoading ? (
-                            <div className="flex justify-center py-6">
-                              <Loader2 className="animate-spin text-indigo-500" size={24} />
+                            <div className="flex items-center justify-between mb-6">
+                              <h4 className="text-sm font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
+                                <CreditCard size={18} className="text-indigo-500" /> Booked Services
+                              </h4>
+                              {bookings.length > 0 && !isBookingsLoading && (
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+                                  {bookings.length} Items
+                                </span>
+                              )}
                             </div>
-                          ) : bookings.length === 0 ? (
-                            <div className="text-center py-6 bg-slate-50 border border-dashed border-slate-100 rounded-2xl">
-                              <p className="text-xs text-slate-400">No bookings associated with this event yet.</p>
-                            </div>
-                          ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              {bookings.map((booking) => (
-                                <div 
-                                  key={booking.id}
-                                  onClick={() => handleOpenBookingModal(booking, event.id)}
-                                  className="bg-white border border-slate-100 p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-indigo-300 hover:shadow-[0_4px_15px_rgb(0,0,0,0.02)] transition-all"
+                            
+                            {isBookingsLoading ? (
+                              <div className="flex justify-center py-12">
+                                <Loader2 className="animate-spin text-indigo-500" size={32} />
+                              </div>
+                            ) : bookings.length === 0 ? (
+                              <div className="text-center py-12 bg-slate-50/50 border border-slate-100 rounded-[2rem]">
+                                <Crown size={32} className="text-slate-300 mx-auto mb-3" />
+                                <p className="text-sm font-semibold text-slate-500">No services booked for this event yet.</p>
+                                <button 
+                                  onClick={(e) => { e.stopPropagation(); navigate('/services'); }}
+                                  className="mt-4 px-4 py-2 bg-white text-indigo-600 font-bold border border-slate-200 rounded-xl shadow-sm hover:border-indigo-200 text-xs transition-all"
                                 >
-                                  <div>
-                                    <span className="inline-block px-2.5 py-0.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-bold rounded-md uppercase tracking-wider mb-1">
-                                      {booking.services?.category || "SERVICE"}
-                                    </span>
-                                    <h5 className="font-bold text-slate-800 text-sm">{booking.services?.name || "Service Item"}</h5>
-                                    <p className="text-[10px] text-slate-400 font-semibold mt-1">Status: {booking.status}</p>
-                                  </div>
-                                  <div className="text-right">
-                                    <div className="font-bold text-slate-800 text-sm flex items-center justify-end">
-                                      <IndianRupee size={12} className="text-slate-400 mr-0.5" />
-                                      {booking.bookingAmount}
+                                  Browse Services
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {bookings.map((booking) => (
+                                  <motion.div 
+                                    key={booking.id}
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    onClick={(e) => handleOpenBookingModal(booking, event.id, e)}
+                                    className="bg-slate-50 hover:bg-white border border-slate-100 hover:border-indigo-100 p-5 rounded-[1.5rem] flex items-center justify-between cursor-pointer hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all group/booking"
+                                  >
+                                    <div>
+                                      <span className="inline-block px-2 py-0.5 bg-white border border-slate-200 text-slate-600 text-[9px] font-extrabold rounded-md uppercase tracking-wider mb-2">
+                                        {booking.services?.category || "SERVICE"}
+                                      </span>
+                                      <h5 className="font-extrabold text-slate-800 text-base leading-tight group-hover/booking:text-indigo-600 transition-colors">
+                                        {booking.services?.name || "Service Item"}
+                                      </h5>
+                                      <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-wider">
+                                        Status: <span className={booking.status === 'CONFIRMED' ? 'text-emerald-500' : 'text-slate-600'}>{booking.status}</span>
+                                      </p>
                                     </div>
-                                    <span className="text-[10px] text-slate-400 font-semibold">
-                                      {new Date(booking.startDt).toLocaleDateString()}
-                                    </span>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                                    <div className="text-right shrink-0">
+                                      <div className="font-black text-slate-900 text-lg flex items-center justify-end mb-1">
+                                        <IndianRupee size={14} className="text-slate-400 mr-0.5" />
+                                        {booking.bookingAmount.toLocaleString('en-IN')}
+                                      </div>
+                                      <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1 justify-end">
+                                        <Calendar size={10} />
+                                        {new Date(booking.startDt).toLocaleDateString()}
+                                      </span>
+                                    </div>
+                                  </motion.div>
+                                ))}
+                              </div>
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
 
-                  </motion.div>
-                );
-              })}
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
           )}
 
         </div>
       </PageTransition>
 
-      {/* Create / Edit Modal */}
+      {/* Modern Planit Style Create/Edit Modal */}
       <AnimatePresence>
         {showModal && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -442,77 +517,78 @@ export default function MyEventsPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
               onClick={() => setShowModal(false)}
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-lg bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2.5rem] p-8 md:p-10"
+              className="relative w-full max-w-lg bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] p-8 md:p-10"
             >
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                  {modalMode === 'create' ? <Plus className="text-indigo-600"/> : <Edit className="text-indigo-600"/>}
                   {modalMode === 'create' ? 'Create New Event' : 'Edit Event Details'}
                 </h3>
                 <button 
                   onClick={() => setShowModal(false)}
-                  className="p-1.5 hover:bg-slate-100 rounded-xl transition-colors text-slate-500"
+                  className="p-1.5 hover:bg-slate-100 rounded-xl transition-colors text-slate-400"
                 >
                   <X size={20} />
                 </button>
               </div>
 
-              <form onSubmit={handleFormSubmit} className="space-y-4">
+              <form onSubmit={handleFormSubmit} className="space-y-5">
                 <div>
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1 block">Title *</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1 block">Title *</label>
                   <input
                     type="text"
-                    placeholder="E.g. Wedding Reception"
+                    placeholder="E.g. The Grand Wedding Reception"
                     value={formData.title}
                     onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                    className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-indigo-500 text-sm font-medium"
+                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-semibold text-slate-800 transition-all"
                     required
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1 block">Description</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1 block">Description</label>
                   <textarea
-                    placeholder="Short description of the event details..."
+                    placeholder="Brief details about the event theme, expectations, etc."
                     value={formData.description}
                     onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                     rows="3"
-                    className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-indigo-500 text-sm font-medium resize-none"
+                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-semibold text-slate-800 resize-none transition-all"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1 block">Address / Venue</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1 block">Address / Venue</label>
                   <input
                     type="text"
                     placeholder="E.g. Grand Palace Hall, Mumbai"
                     value={formData.address}
                     onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                    className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-indigo-500 text-sm font-medium"
+                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-semibold text-slate-800 transition-all"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1 block">Start Date & Time *</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1 block">Start Date & Time *</label>
                     <input
                       type="datetime-local"
                       value={formData.startDate}
                       onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-indigo-500 text-xs font-semibold"
+                      className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold text-slate-800 transition-all"
                       required
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1 block">End Date & Time *</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1 block">End Date & Time *</label>
                     <input
                       type="datetime-local"
                       value={formData.endDate}
                       onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
-                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-indigo-500 text-xs font-semibold"
+                      className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold text-slate-800 transition-all"
                       required
                     />
                   </div>
@@ -520,11 +596,11 @@ export default function MyEventsPage() {
 
                 {modalMode === 'edit' && (
                   <div>
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1 block">Status</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1 block">Status</label>
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
-                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-indigo-500 text-sm font-semibold text-slate-700"
+                      className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-bold text-slate-800 transition-all"
                     >
                       <option value="DRAFT">Draft</option>
                       <option value="PENDING_BOOKING">Pending Booking</option>
@@ -535,19 +611,19 @@ export default function MyEventsPage() {
                   </div>
                 )}
 
-                <div className="flex gap-4 pt-4">
+                <div className="flex gap-4 pt-6">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 py-3.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 font-bold rounded-xl transition-all shadow-sm"
+                    className="flex-1 py-4 bg-white border border-slate-200 hover:border-slate-300 text-slate-600 font-bold rounded-xl transition-all shadow-sm"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all shadow-md"
+                    className="flex-[1.5] py-4 bg-slate-900 hover:bg-black text-white font-bold rounded-xl transition-all shadow-md hover:-translate-y-0.5 flex justify-center items-center gap-2"
                   >
-                    Save Event
+                    <CheckCircle size={18} /> {modalMode === 'create' ? 'Create Event' : 'Save Changes'}
                   </button>
                 </div>
               </form>
@@ -564,22 +640,22 @@ export default function MyEventsPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
               onClick={() => setShowBookingModal(false)}
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-lg bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2.5rem] p-8 md:p-10"
+              className="relative w-full max-w-lg bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] p-8 md:p-10"
             >
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
                   <CheckCircle className="text-indigo-600" size={24} /> Booking Details
                 </h3>
                 <button 
                   onClick={() => setShowBookingModal(false)}
-                  className="p-1.5 hover:bg-slate-100 rounded-xl transition-colors text-slate-500"
+                  className="p-1.5 hover:bg-slate-100 rounded-xl transition-colors text-slate-400"
                 >
                   <X size={20} />
                 </button>
@@ -587,23 +663,23 @@ export default function MyEventsPage() {
 
               <div className="space-y-6">
                 {/* Service Info Header */}
-                <div className="flex gap-4 items-center bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                  <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-200 border border-slate-300 flex-shrink-0">
+                <div className="flex gap-5 items-center bg-slate-50 p-5 rounded-[1.5rem] border border-slate-100 shadow-sm">
+                  <div className="w-16 h-16 rounded-xl overflow-hidden bg-white border border-slate-200 flex-shrink-0 shadow-sm">
                     {selectedBooking.services?.photos && selectedBooking.services.photos.length > 0 ? (
                       <img src={selectedBooking.services.photos[0]} alt={selectedBooking.services.name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-indigo-50 flex items-center justify-center text-indigo-300 font-bold text-xs">
-                        No Photo
+                      <div className="w-full h-full flex items-center justify-center text-slate-300 font-bold text-xs">
+                        <Crown size={24} />
                       </div>
                     )}
                   </div>
                   <div>
-                    <span className="inline-block px-2.5 py-0.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-extrabold rounded-md uppercase tracking-wider mb-1">
+                    <span className="inline-block px-2.5 py-0.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-[9px] font-extrabold rounded-md uppercase tracking-wider mb-1">
                       {selectedBooking.services?.category || "SERVICE"}
                     </span>
-                    <h4 className="font-extrabold text-slate-800 text-base">{selectedBooking.services?.name || "Service Item"}</h4>
+                    <h4 className="font-extrabold text-slate-900 text-lg leading-tight">{selectedBooking.services?.name || "Service Item"}</h4>
                     {selectedBooking.services?.location && (
-                      <p className="text-xs text-slate-400 font-semibold flex items-center gap-1 mt-0.5">
+                      <p className="text-xs text-slate-500 font-bold flex items-center gap-1 mt-1">
                         <MapPin size={12} className="text-indigo-400" /> {selectedBooking.services.location}
                       </p>
                     )}
@@ -612,40 +688,39 @@ export default function MyEventsPage() {
 
                 {/* Details list */}
                 <div className="grid grid-cols-2 gap-4 text-xs font-semibold text-slate-500">
-                  <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wide block mb-0.5">Booking ID</span>
-                    <span className="text-slate-800 text-sm font-bold"># {selectedBooking.id}</span>
+                  <div className="bg-white border border-slate-200 p-4 rounded-[1.25rem] shadow-sm">
+                    <span className="text-[10px] text-slate-400 uppercase tracking-widest block mb-1">Booking ID</span>
+                    <span className="text-slate-800 text-sm font-black"># {selectedBooking.id}</span>
                   </div>
-                  <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wide block mb-0.5">Status</span>
+                  <div className="bg-white border border-slate-200 p-4 rounded-[1.25rem] shadow-sm">
+                    <span className="text-[10px] text-slate-400 uppercase tracking-widest block mb-1">Status</span>
                     <span className={`inline-block px-2.5 py-0.5 border text-[10px] font-extrabold rounded-md uppercase tracking-wider ${getStatusStyle(selectedBooking.status)}`}>
                       {selectedBooking.status}
                     </span>
                   </div>
-                  <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wide block mb-0.5">Start Date & Time</span>
+                  <div className="bg-white border border-slate-200 p-4 rounded-[1.25rem] shadow-sm">
+                    <span className="text-[10px] text-slate-400 uppercase tracking-widest block mb-1">Start Date</span>
                     <span className="text-slate-800 text-xs font-bold">{new Date(selectedBooking.startDt).toLocaleString()}</span>
                   </div>
-                  <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wide block mb-0.5">End Date & Time</span>
+                  <div className="bg-white border border-slate-200 p-4 rounded-[1.25rem] shadow-sm">
+                    <span className="text-[10px] text-slate-400 uppercase tracking-widest block mb-1">End Date</span>
                     <span className="text-slate-800 text-xs font-bold">{new Date(selectedBooking.endDt).toLocaleString()}</span>
                   </div>
-                  <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wide block mb-0.5">Booked At</span>
-                    <span className="text-slate-800 text-xs font-bold">{new Date(selectedBooking.bookedAt).toLocaleString()}</span>
-                  </div>
-                  <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-wide block mb-0.5">Amount</span>
-                    <span className="text-slate-900 text-sm font-extrabold flex items-center">
-                      <IndianRupee size={12} className="text-slate-400 mr-0.5" />
-                      {selectedBooking.bookingAmount}
+                  <div className="col-span-2 bg-slate-50 border border-slate-200 p-5 rounded-[1.25rem] shadow-sm flex justify-between items-center">
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase tracking-widest block mb-1">Total Amount Paid</span>
+                      <span className="text-[10px] text-slate-400 block">Booked At: {new Date(selectedBooking.bookedAt).toLocaleDateString()}</span>
+                    </div>
+                    <span className="text-slate-900 text-2xl font-black flex items-center">
+                      <IndianRupee size={18} className="text-slate-500 mr-0.5" />
+                      {selectedBooking.bookingAmount.toLocaleString('en-IN')}
                     </span>
                   </div>
                 </div>
 
                 {selectedBooking.cancellationReason && (
-                  <div className="bg-rose-50 border border-rose-100 p-4 rounded-2xl text-xs font-semibold text-rose-600">
-                    <span className="text-[10px] text-rose-400 uppercase tracking-wide block mb-1">Cancellation Reason</span>
+                  <div className="bg-rose-50 border border-rose-100 p-5 rounded-2xl text-xs font-semibold text-rose-600">
+                    <span className="text-[10px] text-rose-400 uppercase tracking-widest block mb-1.5">Cancellation Reason</span>
                     {selectedBooking.cancellationReason}
                   </div>
                 )}
@@ -655,9 +730,9 @@ export default function MyEventsPage() {
                   <button
                     onClick={handleCancelBooking}
                     disabled={cancelLoading}
-                    className="w-full py-3.5 bg-rose-50 border border-rose-200 hover:border-rose-300 text-rose-600 font-bold rounded-2xl hover:bg-rose-100 transition-all text-xs uppercase tracking-wider flex items-center justify-center gap-1.5"
+                    className="w-full py-4 mt-2 bg-white border border-rose-200 hover:border-rose-300 text-rose-600 font-bold rounded-xl hover:bg-rose-50 transition-all text-sm flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
                   >
-                    {cancelLoading ? "Processing..." : "Cancel Booking Request"}
+                    {cancelLoading ? <><Loader2 size={16} className="animate-spin"/> Processing</> : "Cancel Booking Request"}
                   </button>
                 )}
               </div>

@@ -37,7 +37,7 @@ export function CartProvider({ children }) {
         (item) => item.service.id === serviceId && item.eventId === eventId
       );
       if (itemToRemove) {
-        toast.error(`Removed "${itemToRemove.service.name}" from event "${itemToRemove.eventTitle}".`);
+        // Silently remove without toast
       }
       return prevCart.filter(
         (item) => !(item.service.id === serviceId && item.eventId === eventId)

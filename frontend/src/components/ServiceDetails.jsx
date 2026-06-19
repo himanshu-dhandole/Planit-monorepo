@@ -32,6 +32,8 @@ import {
   CarouselPrevious,
 } from "./ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function ServiceDetails() {
   const { id } = useParams();
@@ -51,31 +53,32 @@ export default function ServiceDetails() {
   const [selectedEventId, setSelectedEventId] = useState("");
   const [showCreateEventInline, setShowCreateEventInline] = useState(false);
   const [pendingAction, setPendingAction] = useState(""); // 'book' or 'cart'
+  const [modalStep, setModalStep] = useState("dates"); // 'dates' or 'event'
+  const getTodayDate = (daysOffset = 0, hour = 9) => {
+    const d = new Date();
+    d.setDate(d.getDate() + daysOffset);
+    d.setHours(hour, 0, 0, 0);
+    return d;
+  };
+
   const [inlineEventForm, setInlineEventForm] = useState({
     title: "",
     description: "",
     address: "",
-    startDate: "",
-    endDate: ""
+    startDate: getTodayDate(1, 9),
+    endDate: getTodayDate(1, 18),
   });
 
-  const getTodayString = (daysOffset = 0, hour = 9) => {
-    const d = new Date();
-    d.setDate(d.getDate() + daysOffset);
-    d.setHours(hour, 0, 0, 0);
-    const tzoffset = d.getTimezoneOffset() * 60000;
-    const localISOTime = (new Date(d.getTime() - tzoffset)).toISOString().slice(0, 16);
-    return localISOTime;
-  };
-
-  const [startDt, setStartDt] = useState(() => getTodayString(1, 9));
-  const [endDt, setEndDt] = useState(() => getTodayString(1, 18));
+  const [startDt, setStartDt] = useState(() => getTodayDate(1, 9));
+  const [endDt, setEndDt] = useState(() => getTodayDate(1, 18));
 
   // Load events
   const fetchEvents = async () => {
     try {
       setEventsLoading(true);
-      const res = await apiClient.get(`/api/events/customer/${customerProfile.id}?page=0&size=100`);
+      const res = await apiClient.get(
+        `/api/events/customer/${customerProfile.id}?page=0&size=100`,
+      );
       const eventsData = res.data?.data?.content || res.data?.content || [];
       setEvents(eventsData);
       if (eventsData.length > 0) {
@@ -95,56 +98,123 @@ export default function ServiceDetails() {
     }
   }, [showEventModal, customerProfile]);
 
+  const handleDatesSubmit = async (e) => {
+    e.preventDefault();
+    if (!startDt || !endDt) {
+      toast.error("Please select both start and end dates.");
+      return;
+    }
+    if (new Date(startDt) >= new Date(endDt)) {
+      toast.error("End date must be after start date.");
+      return;
+    }
+
+    if (pendingAction === "book") {
+      // Direct booking: create "Single Booking" event and add to cart
+      try {
+        setEventsLoading(true);
+        const payload = {
+          customerId: customerProfile.id,
+          title: `Single Booking - ${service.name}`,
+          description: "Auto-generated event for single booking.",
+          address: service.location || "",
+          startDate: startDt.toISOString(),
+          endDate: endDt.toISOString(),
+        };
+        const res = await apiClient.post("/api/events/create", payload);
+        const created = res.data?.data || res.data;
+        
+        addToCart(
+          service,
+          startDt.toISOString(),
+          endDt.toISOString(),
+          parseInt(created.id),
+          created.title,
+        );
+        setShowEventModal(false);
+        navigate("/cart");
+        toast.success("Added to bookings!");
+      } catch (err) {
+        console.error("Error creating direct booking:", err);
+        toast.error("Failed to process booking.");
+      } finally {
+        setEventsLoading(false);
+      }
+    } else {
+      // Add to event: perform addToCart using the selected event
+      try {
+        const found = events.find((ev) => ev.id.toString() === selectedEventId);
+        if (!found) {
+          toast.error("Please select a valid event.");
+          return;
+        }
+
+        addToCart(
+          service,
+          startDt.toISOString(),
+          endDt.toISOString(),
+          parseInt(found.id),
+          found.title,
+        );
+        setShowEventModal(false);
+        setModalStep("dates"); // Reset for next time
+        toast.success("Added to event successfully!");
+      } catch (err) {
+        console.error("Error adding to cart:", err);
+        toast.error("Failed to associate service with event.");
+      }
+    }
+  };
+
   const handleEventSelectionSubmit = async (e) => {
     e.preventDefault();
-    let finalEventId = selectedEventId;
-    let finalEventTitle = "";
 
     try {
       if (showCreateEventInline) {
-        if (!inlineEventForm.title || !inlineEventForm.startDate || !inlineEventForm.endDate) {
+        if (
+          !inlineEventForm.title ||
+          !inlineEventForm.startDate ||
+          !inlineEventForm.endDate
+        ) {
           toast.error("Please fill in required fields to create the event.");
           return;
         }
+        setEventsLoading(true);
         const payload = {
           customerId: customerProfile.id,
           title: inlineEventForm.title,
           description: inlineEventForm.description,
           address: inlineEventForm.address,
-          startDate: inlineEventForm.startDate,
-          endDate: inlineEventForm.endDate
+          startDate: inlineEventForm.startDate.toISOString(),
+          endDate: inlineEventForm.endDate.toISOString(),
         };
-        const res = await apiClient.post('/api/events/create', payload);
+        const res = await apiClient.post("/api/events/create", payload);
         const created = res.data?.data || res.data;
-        finalEventId = created.id.toString();
-        finalEventTitle = created.title;
-        setEvents(prev => [...prev, created]);
+        setEvents((prev) => [...prev, created]);
+        setSelectedEventId(created.id.toString());
+        setShowCreateEventInline(false);
+        setInlineEventForm({
+          title: "",
+          description: "",
+          address: "",
+          startDate: getTodayDate(1, 9),
+          endDate: getTodayDate(1, 18),
+        });
+        setEventsLoading(false);
       } else {
-        const found = events.find(ev => ev.id.toString() === selectedEventId);
+        const found = events.find((ev) => ev.id.toString() === selectedEventId);
         if (!found) {
           toast.error("Please select a valid event.");
           return;
         }
-        finalEventTitle = found.title;
       }
 
-      addToCart(service, startDt, endDt, parseInt(finalEventId), finalEventTitle);
-      setShowEventModal(false);
-      setShowCreateEventInline(false);
-      setInlineEventForm({
-        title: "",
-        description: "",
-        address: "",
-        startDate: "",
-        endDate: ""
-      });
-
-      if (pendingAction === 'book') {
-        navigate('/cart');
-      }
+      // Move to dates step
+      setModalStep("dates");
     } catch (err) {
-      console.error("Error handling event selection:", err);
-      toast.error("Failed to associate service with event.");
+      console.error("Error creating event:", err);
+      toast.error("Failed to create event.");
+      setEventsLoading(false);
     }
   };
 
@@ -496,82 +566,48 @@ export default function ServiceDetails() {
                   </div>
                 </div>
 
-                <div className="space-y-4 mb-6">
-                  <div>
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1 mb-1.5">
-                      <Calendar size={12} className="text-indigo-500" /> Start Date & Time
-                    </label>
-                    <input
-                      type="datetime-local"
-                      value={startDt}
-                      onChange={(e) => setStartDt(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1 mb-1.5">
-                      <Calendar size={12} className="text-indigo-500" /> End Date & Time
-                    </label>
-                    <input
-                      type="datetime-local"
-                      value={endDt}
-                      onChange={(e) => setEndDt(e.target.value)}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                    />
-                  </div>
-                </div>
-
                 <div className="space-y-4">
                   <button
                     onClick={() => {
                       if (!user) {
-                        navigate('/signin');
+                        navigate("/signin");
                         return;
                       }
                       if (!customerProfile) {
-                        toast.error("Please set up your customer profile first.");
-                        return;
-                      }
-                      if (!startDt || !endDt) {
-                        toast.error("Please select booking dates.");
-                        return;
-                      }
-                      if (new Date(startDt) >= new Date(endDt)) {
-                        toast.error("End date must be after start date.");
+                        toast.error(
+                          "Please set up your customer profile first.",
+                        );
                         return;
                       }
                       setPendingAction("book");
+                      setModalStep("dates");
                       setShowEventModal(true);
                     }}
                     className="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
                   >
-                    Book Now
+                    <CalendarCheck size={20} className="text-white" />
+                    Book Separately
                   </button>
 
                   <button
                     onClick={() => {
                       if (!user) {
-                        navigate('/signin');
+                        navigate("/signin");
                         return;
                       }
                       if (!customerProfile) {
-                        toast.error("Please set up your customer profile first.");
-                        return;
-                      }
-                      if (!startDt || !endDt) {
-                        toast.error("Please select booking dates.");
-                        return;
-                      }
-                      if (new Date(startDt) >= new Date(endDt)) {
-                        toast.error("End date must be after start date.");
+                        toast.error(
+                          "Please set up your customer profile first.",
+                        );
                         return;
                       }
                       setPendingAction("cart");
+                      setModalStep("event");
                       setShowEventModal(true);
                     }}
-                    className="w-full py-4 bg-white border border-slate-200 text-slate-700 font-bold rounded-2xl shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 flex items-center justify-center gap-2"
+                    className="w-full py-4 bg-white border border-slate-200 text-slate-700 font-bold rounded-2xl shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 flex items-center justify-center gap-2 group"
                   >
-                    <CalendarCheck size={20} className="text-indigo-500" />
+                    <Sparkles size={20} className="text-indigo-500 group-hover:scale-110 transition-transform" />
                     Add to Event
                   </button>
                 </div>
@@ -590,7 +626,7 @@ export default function ServiceDetails() {
           </div>
         </div>
 
-        {/* Event Selection Modal */}
+        {/* Event / Dates Selection Modal - Light Wallet Theme Styled */}
         <AnimatePresence>
           {showEventModal && (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -599,124 +635,261 @@ export default function ServiceDetails() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-                onClick={() => { setShowEventModal(false); setShowCreateEventInline(false); }}
+                onClick={() => {
+                  setShowEventModal(false);
+                  setShowCreateEventInline(false);
+                  setModalStep("dates");
+                }}
               />
               <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                className="relative w-full max-w-md bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2.5rem] p-8 md:p-10"
+                className="relative w-full max-w-md bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2.5rem] p-8 md:p-10 overflow-visible"
               >
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">
-                    Add Service to Event
+                {/* Decorative background elements */}
+                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-indigo-100/50 to-purple-100/50 rounded-full blur-2xl -mr-24 -mt-24 pointer-events-none" />
+
+                <div className="relative z-10 flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+                    {modalStep === "dates" ? (
+                      <>
+                        <CalendarCheck size={24} className="text-indigo-500" /> 
+                        Select Dates
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles size={24} className="text-indigo-500" />
+                        Choose Event
+                      </>
+                    )}
                   </h3>
-                  <button 
-                    onClick={() => { setShowEventModal(false); setShowCreateEventInline(false); }}
+                  <button
+                    onClick={() => {
+                      setShowEventModal(false);
+                      setShowCreateEventInline(false);
+                      setModalStep("dates");
+                    }}
                     className="p-1.5 hover:bg-slate-100 rounded-xl transition-colors text-slate-500"
                   >
                     <X size={20} />
                   </button>
                 </div>
 
-                <form onSubmit={handleEventSelectionSubmit} className="space-y-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <label className="text-xs font-bold text-slate-600 uppercase tracking-wide">
-                      {showCreateEventInline ? "Event Details" : "Select Event"}
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => setShowCreateEventInline(!showCreateEventInline)}
-                      className="text-xs font-bold text-indigo-600 hover:text-indigo-800"
-                    >
-                      {showCreateEventInline ? "Select Existing" : "Create New Inline"}
-                    </button>
-                  </div>
-
-                  {!showCreateEventInline ? (
-                    eventsLoading ? (
-                      <div className="w-full h-12 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-xs text-slate-400">
-                        <Loader2 className="animate-spin text-indigo-500 mr-2" size={16} /> Loading events...
+                <div className="relative z-10">
+                  {modalStep === "dates" ? (
+                    <form onSubmit={handleDatesSubmit} className="space-y-6">
+                      <div className="space-y-4">
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                            <Calendar size={14} className="text-indigo-500" /> 
+                            Start Date & Time
+                          </label>
+                          <DatePicker
+                            selected={startDt}
+                            onChange={(date) => setStartDt(date)}
+                            showTimeSelect
+                            timeFormat="HH:mm"
+                            timeIntervals={30}
+                            timeCaption="Time"
+                            dateFormat="MMMM d, yyyy h:mm aa"
+                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-sm"
+                            wrapperClassName="w-full"
+                          />
+                        </div>
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                          <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                            <Calendar size={14} className="text-indigo-500" /> 
+                            End Date & Time
+                          </label>
+                          <DatePicker
+                            selected={endDt}
+                            onChange={(date) => setEndDt(date)}
+                            showTimeSelect
+                            timeFormat="HH:mm"
+                            timeIntervals={30}
+                            timeCaption="Time"
+                            dateFormat="MMMM d, yyyy h:mm aa"
+                            minDate={startDt}
+                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500 transition-all shadow-sm"
+                            wrapperClassName="w-full"
+                          />
+                        </div>
                       </div>
-                    ) : events.length === 0 ? (
-                      <div className="text-center p-4 border border-dashed border-slate-200 rounded-2xl">
-                        <p className="text-xs text-slate-400 mb-2">No events found. Create one to continue.</p>
+
+                      <button
+                        type="submit"
+                        disabled={eventsLoading}
+                        className="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 text-lg"
+                      >
+                        {eventsLoading ? (
+                          <Loader2 className="animate-spin" size={20} />
+                        ) : pendingAction === "book" ? (
+                          "Confirm Booking"
+                        ) : (
+                          "Confirm Add to Event"
+                        )}
+                      </button>
+                    </form>
+                  ) : (
+                    <form onSubmit={handleEventSelectionSubmit} className="space-y-5">
+                      <div className="flex justify-between items-center mb-2">
+                        <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                          {showCreateEventInline ? "New Event Details" : "Your Events"}
+                        </label>
                         <button
                           type="button"
-                          onClick={() => setShowCreateEventInline(true)}
-                          className="px-3 py-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-bold rounded-lg"
+                          onClick={() => setShowCreateEventInline(!showCreateEventInline)}
+                          className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full hover:bg-indigo-100 transition-colors"
                         >
-                          Create Event
+                          {showCreateEventInline ? "Select Existing" : "+ Create New"}
                         </button>
                       </div>
-                    ) : (
-                      <select
-                        value={selectedEventId}
-                        onChange={(e) => setSelectedEventId(e.target.value)}
-                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-indigo-500 text-sm font-semibold text-slate-700"
-                      >
-                        {events.map(ev => (
-                          <option key={ev.id} value={ev.id}>{ev.title}</option>
-                        ))}
-                      </select>
-                    )
-                  ) : (
-                    <div className="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-200">
-                      <div>
-                        <input
-                          type="text"
-                          placeholder="Event Title *"
-                          value={inlineEventForm.title}
-                          onChange={(e) => setInlineEventForm(prev => ({ ...prev, title: e.target.value }))}
-                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-1 focus:ring-indigo-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <input
-                          type="text"
-                          placeholder="Description"
-                          value={inlineEventForm.description}
-                          onChange={(e) => setInlineEventForm(prev => ({ ...prev, description: e.target.value }))}
-                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-1 focus:ring-indigo-500"
-                        />
-                      </div>
-                      <div>
-                        <input
-                          type="text"
-                          placeholder="Address / Venue"
-                          value={inlineEventForm.address}
-                          onChange={(e) => setInlineEventForm(prev => ({ ...prev, address: e.target.value }))}
-                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-1 focus:ring-indigo-500"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <input
-                          type="datetime-local"
-                          value={inlineEventForm.startDate}
-                          onChange={(e) => setInlineEventForm(prev => ({ ...prev, startDate: e.target.value }))}
-                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-[10px] outline-none focus:ring-1 focus:ring-indigo-500"
-                          required
-                        />
-                        <input
-                          type="datetime-local"
-                          value={inlineEventForm.endDate}
-                          onChange={(e) => setInlineEventForm(prev => ({ ...prev, endDate: e.target.value }))}
-                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-[10px] outline-none focus:ring-1 focus:ring-indigo-500"
-                          required
-                        />
-                      </div>
-                    </div>
-                  )}
 
-                  <button
-                    type="submit"
-                    disabled={!showCreateEventInline && events.length === 0}
-                    className="w-full py-3.5 bg-indigo-600 text-white font-bold rounded-xl shadow-md hover:bg-indigo-700 transition-all disabled:opacity-50"
-                  >
-                    Confirm Add to Event
-                  </button>
-                </form>
+                      {!showCreateEventInline ? (
+                        eventsLoading ? (
+                          <div className="w-full h-16 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-sm font-medium text-slate-500">
+                            <Loader2 className="animate-spin text-indigo-500 mr-2" size={18} /> 
+                            Loading events...
+                          </div>
+                        ) : events.length === 0 ? (
+                          <div className="text-center p-6 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50">
+                            <p className="text-sm font-medium text-slate-600 mb-4">
+                              You haven't created any events yet.
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => setShowCreateEventInline(true)}
+                              className="px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-md hover:scale-105 transition-transform"
+                            >
+                              Create Your First Event
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="bg-slate-50 p-2 rounded-2xl border border-slate-200">
+                            <select
+                              value={selectedEventId}
+                              onChange={(e) => setSelectedEventId(e.target.value)}
+                              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-base font-semibold text-slate-800 appearance-none cursor-pointer shadow-sm"
+                            >
+                              {events.map((ev) => (
+                                <option key={ev.id} value={ev.id}>
+                                  {ev.title}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        )
+                      ) : (
+                        <div className="space-y-3 p-5 bg-slate-50 rounded-2xl border border-slate-200">
+                          <div>
+                            <input
+                              type="text"
+                              placeholder="Event Title *"
+                              value={inlineEventForm.title}
+                              onChange={(e) =>
+                                setInlineEventForm((prev) => ({
+                                  ...prev,
+                                  title: e.target.value,
+                                }))
+                              }
+                              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500 font-medium shadow-sm"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <input
+                              type="text"
+                              placeholder="Short Description"
+                              value={inlineEventForm.description}
+                              onChange={(e) =>
+                                setInlineEventForm((prev) => ({
+                                  ...prev,
+                                  description: e.target.value,
+                                }))
+                              }
+                              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500 font-medium shadow-sm"
+                            />
+                          </div>
+                          <div>
+                            <input
+                              type="text"
+                              placeholder="Address / Venue"
+                              value={inlineEventForm.address}
+                              onChange={(e) =>
+                                setInlineEventForm((prev) => ({
+                                  ...prev,
+                                  address: e.target.value,
+                                }))
+                              }
+                              className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-indigo-500 font-medium shadow-sm"
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="text-[9px] font-bold text-slate-500 uppercase ml-1 mb-1 block">Start Date</label>
+                              <DatePicker
+                                selected={inlineEventForm.startDate}
+                                onChange={(date) =>
+                                  setInlineEventForm((prev) => ({
+                                    ...prev,
+                                    startDate: date,
+                                  }))
+                                }
+                                showTimeSelect
+                                timeFormat="HH:mm"
+                                timeIntervals={30}
+                                dateFormat="MMM d, yyyy h:mm aa"
+                                className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                                wrapperClassName="w-full"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[9px] font-bold text-slate-500 uppercase ml-1 mb-1 block">End Date</label>
+                              <DatePicker
+                                selected={inlineEventForm.endDate}
+                                onChange={(date) =>
+                                  setInlineEventForm((prev) => ({
+                                    ...prev,
+                                    endDate: date,
+                                  }))
+                                }
+                                showTimeSelect
+                                timeFormat="HH:mm"
+                                timeIntervals={30}
+                                minDate={inlineEventForm.startDate}
+                                dateFormat="MMM d, yyyy h:mm aa"
+                                className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
+                                wrapperClassName="w-full"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex gap-3 pt-2">
+                        <button
+                          type="button"
+                          onClick={() => setShowEventModal(false)}
+                          className="px-4 py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl transition-all"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={(!showCreateEventInline && events.length === 0) || eventsLoading}
+                          className="flex-1 py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 transition-all disabled:opacity-50 text-lg flex items-center justify-center"
+                        >
+                          {eventsLoading ? (
+                            <Loader2 className="animate-spin" size={20} />
+                          ) : (
+                            "Continue to Dates"
+                          )}
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </div>
               </motion.div>
             </div>
           )}

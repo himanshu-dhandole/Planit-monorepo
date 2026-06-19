@@ -17,6 +17,7 @@ import {
   MessageSquare,
   LogOut,
   ShoppingBag,
+  CalendarCheck,
 } from "lucide-react";
 
 function DropdownItem({
@@ -184,8 +185,12 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4 ml-4">
             {user && (
-              <Link to="/cart" className="relative p-2 text-gray-700 hover:text-indigo-600 transition-all transform hover:scale-105 active:scale-95">
-                <ShoppingBag size={20} />
+              <Link
+                to="/cart"
+                className="relative p-2 text-gray-700 hover:text-indigo-600 transition-all transform hover:scale-105 active:scale-95"
+                title="Event Checkout"
+              >
+                <CalendarCheck size={20} />
                 {cart && cart.length > 0 && (
                   <span className="absolute top-0 right-0 bg-indigo-600 text-white text-[9px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-white">
                     {cart.length}
@@ -218,7 +223,6 @@ export default function Navbar() {
                     <User size={18} className="text-gray-400" />
                   )}
                 </div>
-
               </div>
             ) : (
               <>
