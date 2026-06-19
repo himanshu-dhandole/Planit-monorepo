@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import apiClient from '../lib/apiClient';
 import { toast } from 'sonner';
-import { Camera, FileText, User, MapPin, Phone, CheckCircle, Clock, AlertCircle, Loader2, Shield, Briefcase } from 'lucide-react';
+import { Camera, FileText, User, MapPin, Phone, CheckCircle, Clock, AlertCircle, Loader2, Shield, Briefcase, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CloudsBackground from './CloudsBackground';
 import 'leaflet/dist/leaflet.css';
@@ -13,9 +13,31 @@ export default function Profile() {
   const [saving, setSaving] = useState(false);
   const [customerId, setCustomerId] = useState(null);
   const [status, setStatus] = useState('PENDING'); // PENDING, VERIFIED, NOT_VERIFIED
+  const [karma, setKarma] = useState(null);
   const [isEditing, setIsEditing] = useState(true);
   const navigate = useNavigate();
   const isVendor = user?.roles && (Array.isArray(user.roles) ? user.roles : [user.roles]).some(role => role === 'VENDOR' || role === 'ROLE_VENDOR');
+
+  const getTrustBadge = (score) => {
+    if (score === null || score === undefined) return null;
+    let badgeText = 'STANDARD';
+    let badgeStyle = 'bg-slate-100 text-slate-700 border-slate-200';
+    
+    if (score >= 4.5) {
+      badgeText = 'GOLD';
+      badgeStyle = 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white border-amber-600 shadow-sm';
+    } else if (score >= 4.0) {
+      badgeText = 'SILVER';
+      badgeStyle = 'bg-gradient-to-r from-slate-400 to-slate-350 text-white border-slate-500 shadow-sm';
+    }
+    
+    return (
+      <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${badgeStyle}`}>
+        <Star size={12} fill={score >= 4.0 ? 'white' : 'transparent'} />
+        {badgeText}
+      </span>
+    );
+  };
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -61,6 +83,7 @@ export default function Profile() {
         if (profile && profile.id) {
           setCustomerId(profile.id);
           setStatus(profile.verificationStatus || 'PENDING');
+          setKarma(profile.karma !== undefined && profile.karma !== null ? profile.karma : 5.0);
           setFormData({
             firstName: profile.firstName || '',
             middleName: profile.middleName || '',
@@ -394,14 +417,36 @@ export default function Profile() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/70 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
           <div className="flex items-center gap-6">
             <div className="relative group">
-              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gray-100 flex items-center justify-center">
-                {preview.profilePic ? (
-                  <img src={preview.profilePic} alt="Profile" className="w-full h-full object-cover" />
-                ) : (
-                  <User size={48} className="text-gray-300" />
-                )}
+              {/* Badge ring wrapper */}
+              <div className={`rounded-full ${
+                karma >= 4.5 
+                  ? 'bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-500 p-1 shadow-[0_0_20px_rgba(245,158,11,0.5)]'
+                  : karma >= 4.0 
+                    ? 'bg-gradient-to-tr from-slate-400 via-slate-200 to-slate-400 p-1 shadow-[0_0_15px_rgba(148,163,184,0.4)]'
+                    : 'border-4 border-white shadow-lg'
+              }`}>
+                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border-4 border-white">
+                  {preview.profilePic ? (
+                    <img src={preview.profilePic} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <User size={48} className="text-gray-300" />
+                  )}
+                </div>
               </div>
-              <label className={`absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 transition-colors text-white p-2.5 rounded-full shadow-lg cursor-pointer transform translate-x-2 -translate-y-2 group-hover:scale-110 ${!isEditing && 'hidden'}`}>
+              
+              {/* LinkedIn-style badge overlay at the bottom */}
+              {karma !== null && karma >= 4.0 && (
+                <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1 px-3 py-0.5 rounded-full text-[9px] font-black tracking-wider uppercase border border-white shadow flex items-center gap-0.5 whitespace-nowrap ${
+                  karma >= 4.5
+                    ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white'
+                    : 'bg-gradient-to-r from-slate-500 to-slate-400 text-white'
+                }`}>
+                  <Star size={8} fill="currentColor" />
+                  {karma >= 4.5 ? 'GOLD TRUSTED' : 'SILVER TRUSTED'}
+                </div>
+              )}
+
+              <label className={`absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 transition-colors text-white p-2.5 rounded-full shadow-lg cursor-pointer transform translate-x-2 -translate-y-2 group-hover:scale-110 ${(!isEditing && 'hidden') || (karma !== null && karma >= 4.0 && 'translate-y-[-8px] translate-x-[8px]')}`}>
                 <Camera size={18} />
                 <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileChange(e, 'profilePic')} disabled={!isEditing} />
               </label>
@@ -427,9 +472,22 @@ export default function Profile() {
                 </div>
               )}
 
-              <div className="mt-3">
+              <div className="mt-3 flex flex-wrap gap-2 items-center">
                 {getStatusBadge()}
+                {karma !== null && (
+                  <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold border border-indigo-100 shadow-sm">
+                    <Star size={12} fill="currentColor" className="text-indigo-500" />
+                    Karma: {karma.toFixed(2)}
+                  </span>
+                )}
+                {karma !== null && getTrustBadge(karma)}
               </div>
+              {karma !== null && karma < 3.0 && (
+                <div className="mt-2.5 flex items-center gap-1.5 text-rose-600 text-xs font-semibold bg-rose-50/50 border border-rose-100 px-3 py-1.5 rounded-xl w-fit">
+                  <AlertCircle size={14} />
+                  <span>Stricter refund verification checks apply due to low karma (&lt; 3.0)</span>
+                </div>
+              )}
             </div>
           </div>
           

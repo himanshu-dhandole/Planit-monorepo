@@ -371,12 +371,22 @@ export default function VendorList() {
                       </div>
 
                       <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                           <div className="flex items-center gap-1 text-amber-500 bg-amber-50 px-2 py-0.5 rounded-md text-[10px] font-bold">
                             <Star size={10} fill="currentColor" />
-                            <span>{vendor.karma > 0 ? vendor.karma.toFixed(1) : "New"}</span>
+                            <span>{vendor.karma > 0 ? vendor.karma.toFixed(2) : "5.00"}</span>
                           </div>
-                          <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                          {vendor.karma >= 4.5 && (
+                            <span className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                              GOLD
+                            </span>
+                          )}
+                          {vendor.karma >= 4.0 && vendor.karma < 4.5 && (
+                            <span className="bg-gradient-to-r from-slate-400 to-slate-300 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                              SILVER
+                            </span>
+                          )}
+                          <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1">
                             {vendor.totalBookings || 0} bookings
                           </div>
                         </div>
