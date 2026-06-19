@@ -224,8 +224,39 @@ export default function ServiceList() {
 
           {/* Services Grid */}
           {loading ? (
-            <div className="flex justify-center items-center py-20">
-              <Loader2 className="animate-spin text-indigo-500" size={48} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                <div
+                  key={n}
+                  className="bg-white/60 backdrop-blur-xl border border-slate-200/60 rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.02)] animate-pulse flex flex-col h-[420px]"
+                >
+                  {/* Carousel Placeholder */}
+                  <div className="relative h-60 w-full p-3 pb-0">
+                    <div className="w-full h-full rounded-2xl bg-slate-200" />
+                  </div>
+                  {/* Content Section */}
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="w-2/3 h-5 bg-slate-200 rounded" />
+                        <div className="w-12 h-5 bg-slate-200 rounded-lg" />
+                      </div>
+                      <div className="w-full h-4 bg-slate-200 rounded" />
+                      <div className="w-5/6 h-4 bg-slate-200 rounded" />
+                    </div>
+                    <div className="flex justify-between items-end pt-4 border-t border-slate-100/60 mt-4">
+                      <div className="space-y-1">
+                        <div className="w-12 h-3 bg-slate-200 rounded" />
+                        <div className="w-20 h-5 bg-slate-200 rounded" />
+                      </div>
+                      <div className="space-y-1 text-right flex flex-col items-end">
+                        <div className="w-16 h-4.5 bg-slate-200 rounded-lg" />
+                        <div className="w-12 h-3.5 bg-slate-200 rounded" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -238,7 +269,7 @@ export default function ServiceList() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      transition={{ duration: 0.75, delay: index * 0.05 }}
                       onClick={() => navigate(`/services/${service.id}`)}
                       className="bg-white/80 backdrop-blur-xl border border-white rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.12)] transition-all group cursor-pointer flex flex-col"
                     >

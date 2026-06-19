@@ -136,15 +136,7 @@ export default function MyDisputesPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <CloudsBackground>
-        <div className="flex-1 flex justify-center items-center h-screen">
-          <Loader2 className="animate-spin text-indigo-500" size={48} />
-        </div>
-      </CloudsBackground>
-    );
-  }
+
 
   return (
     <CloudsBackground>
@@ -181,8 +173,49 @@ export default function MyDisputesPage() {
             ))}
           </div>
 
-          {filteredDisputes.length === 0 ? (
-            <div className="bg-white/60 backdrop-blur-xl border border-white rounded-[2rem] p-12 text-center shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
+          {loading ? (
+            <div className="grid grid-cols-1 gap-6">
+              {[1, 2, 3].map((n) => (
+                <div
+                  key={n}
+                  className="bg-white/60 backdrop-blur-xl border border-slate-200/60 rounded-[1.8rem] p-6 shadow-[0_4px_20px_rgb(0,0,0,0.02)] animate-pulse flex flex-col justify-between h-[260px]"
+                >
+                  <div className="space-y-4">
+                    {/* Top Section */}
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-100/60">
+                      <div className="space-y-2 flex-1">
+                        <div className="w-1/4 h-5 bg-slate-200 rounded" />
+                        <div className="w-1/3 h-4 bg-slate-200 rounded" />
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="w-20 h-5 bg-slate-200 rounded-md" />
+                        <div className="w-20 h-5 bg-slate-200 rounded-md" />
+                      </div>
+                    </div>
+                    {/* Grid Info */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                      <div className="bg-slate-50/45 p-4 rounded-2xl border border-slate-100/60 h-24 flex flex-col justify-between">
+                        <div className="w-12 h-3 bg-slate-200 rounded" />
+                        <div className="w-20 h-4 bg-slate-200 rounded" />
+                        <div className="w-28 h-3 bg-slate-200 rounded" />
+                      </div>
+                      <div className="md:col-span-2 space-y-3">
+                        <div className="w-28 h-3.5 bg-slate-200 rounded" />
+                        <div className="w-full h-12 bg-slate-200 rounded-xl" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75 }}
+            >
+              {filteredDisputes.length === 0 ? (
+                <div className="bg-white/60 backdrop-blur-xl border border-white rounded-[2rem] p-12 text-center shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
               <Scale className="text-slate-300 mx-auto mb-4" size={48} />
               <h2 className="text-xl font-bold text-slate-800 mb-2">No Disputes Found</h2>
               <p className="text-slate-500 max-w-sm mx-auto mb-6">If you have issues with bookings, you can file disputes directly from the My Bookings page.</p>
@@ -278,6 +311,8 @@ export default function MyDisputesPage() {
               })}
             </div>
           )}
+        </motion.div>
+      )}
 
         </div>
       </PageTransition>

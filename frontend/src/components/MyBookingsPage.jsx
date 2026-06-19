@@ -246,15 +246,7 @@ export default function MyBookingsPage() {
     return booking.status === filter;
   });
 
-  if (loading) {
-    return (
-      <CloudsBackground>
-        <div className="flex-1 flex justify-center items-center h-screen">
-          <Loader2 className="animate-spin text-indigo-500" size={48} />
-        </div>
-      </CloudsBackground>
-    );
-  }
+
 
   return (
     <CloudsBackground>
@@ -291,8 +283,47 @@ export default function MyBookingsPage() {
             ))}
           </div>
 
-          {filteredBookings.length === 0 ? (
-            <div className="bg-white/60 backdrop-blur-xl border border-white rounded-[2rem] p-12 text-center shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map((n) => (
+                <div
+                  key={n}
+                  className="bg-white/60 backdrop-blur-xl border border-slate-200/60 rounded-[1.8rem] p-6 shadow-[0_4px_20px_rgb(0,0,0,0.02)] animate-pulse flex flex-col justify-between h-[220px]"
+                >
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="space-y-2 flex-1">
+                        <div className="w-16 h-4 bg-slate-200 rounded" />
+                        <div className="w-2/3 h-6 bg-slate-200 rounded" />
+                      </div>
+                      <div className="w-20 h-5 bg-slate-200 rounded" />
+                    </div>
+                    <div className="space-y-2 pt-2">
+                      <div className="w-1/2 h-3.5 bg-slate-200 rounded" />
+                      <div className="w-1/3 h-3.5 bg-slate-200 rounded" />
+                    </div>
+                  </div>
+                  <div className="pt-4 border-t border-slate-100/80 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="w-12 h-3 bg-slate-200 rounded" />
+                      <div className="w-16 h-5 bg-slate-200 rounded" />
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="w-9 h-9 bg-slate-200 rounded-xl" />
+                      <div className="w-9 h-9 bg-slate-200 rounded-xl" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75 }}
+            >
+              {filteredBookings.length === 0 ? (
+                <div className="bg-white/60 backdrop-blur-xl border border-white rounded-[2rem] p-12 text-center shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
               <h2 className="text-xl font-bold text-slate-800 mb-2">No Bookings Found</h2>
               <p className="text-slate-500 max-w-sm mx-auto mb-6">Explore our services directory to hire professional catering, music, decoration, or venues for your events.</p>
               <button 
@@ -388,8 +419,10 @@ export default function MyBookingsPage() {
                       {(booking.status === "PENDING" || booking.status === "CONFIRMED") && (
                         <button
                           onClick={() => handleCancelBooking(booking.id, booking.status)}
-                          className="px-3 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-100 text-rose-500 text-xs font-bold rounded-xl transition-colors"
+                          disabled={cancelLoading}
+                          className="px-3 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-100 text-rose-500 text-xs font-bold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                         >
+                          {cancelLoading ? <Loader2 size={12} className="animate-spin" /> : null}
                           Cancel
                         </button>
                       )}
@@ -399,6 +432,8 @@ export default function MyBookingsPage() {
               ))}
             </div>
           )}
+        </motion.div>
+      )}
 
         </div>
       </PageTransition>
@@ -555,8 +590,9 @@ export default function MyBookingsPage() {
                         <button
                           onClick={() => handleCancelBooking(selectedBooking.id, selectedBooking.status)}
                           disabled={cancelLoading}
-                          className="flex-1 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center"
+                          className="flex-1 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
                         >
+                          {cancelLoading ? <Loader2 className="animate-spin" size={16} /> : null}
                           {cancelLoading ? "Processing..." : "Cancel Booking"}
                         </button>
                       );

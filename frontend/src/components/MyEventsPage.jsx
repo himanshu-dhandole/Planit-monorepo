@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import apiClient from '../lib/apiClient';
 import { toast } from 'sonner';
+import 'leaflet/dist/leaflet.css';
 import { 
   Calendar, 
   MapPin, 
@@ -48,10 +50,182 @@ export default function MyEventsPage() {
     status: 'DRAFT'
   });
 
+  const [mapContainer, setMapContainer] = useState(null);
+  const mapRef = (node) => {
+    setMapContainer(node);
+  };
+  const mapInstance = useRef(null);
+  const markerInstance = useRef(null);
+
+  const fetchAddressFromCoords = async (lat, lng) => {
+    const toastId = toast.loading("Fetching address details for this location...");
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`,
+        {
+          headers: {
+            "Accept-Language": "en",
+            "User-Agent": "Planit-App-Geocoding"
+          }
+        }
+      );
+      
+      if (!response.ok) throw new Error("Failed to fetch address");
+      
+      const data = await response.json();
+      if (data && data.display_name) {
+        setFormData(prev => ({
+          ...prev,
+          address: data.display_name
+        }));
+
+        toast.success("Address details auto-filled successfully!", {
+          id: toastId,
+          duration: 3000
+        });
+      } else {
+        toast.dismiss(toastId);
+      }
+    } catch (err) {
+      console.error("Reverse geocoding error:", err);
+      toast.error("Could not fetch address details for this coordinate. Please type manually.", {
+        id: toastId
+      });
+    }
+  };
+
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          if (mapInstance.current && markerInstance.current) {
+            mapInstance.current.setView([latitude, longitude], 14);
+            markerInstance.current.setLatLng([latitude, longitude]);
+          }
+          fetchAddressFromCoords(latitude, longitude);
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          toast.error("Unable to retrieve GPS coordinates. Please select on the map manually.");
+        }
+      );
+    } else {
+      toast.error("Geolocation is not supported by your browser.");
+    }
+  };
+
+  // Clean up map instance when modal closes
+  useEffect(() => {
+    if (!showModal && mapInstance.current) {
+      mapInstance.current.remove();
+      mapInstance.current = null;
+      markerInstance.current = null;
+    }
+  }, [showModal]);
+
+  // Leaflet Map Initialization
+  useEffect(() => {
+    let active = true;
+
+    if (!showModal || !mapContainer) return;
+
+    import('leaflet').then((L) => {
+      if (!active || !mapContainer) return;
+
+      import('leaflet/dist/images/marker-icon.png').then((icon) => {
+        import('leaflet/dist/images/marker-icon-2x.png').then((icon2x) => {
+          import('leaflet/dist/images/marker-shadow.png').then((shadow) => {
+            if (!active) return;
+            delete L.default.Icon.Default.prototype._getIconUrl;
+            L.default.Icon.Default.mergeOptions({
+              iconUrl: icon.default,
+              iconRetinaUrl: icon2x.default,
+              shadowUrl: shadow.default,
+            });
+          });
+        });
+      });
+
+      let lat = 20.5937;
+      let lng = 78.9629;
+      let zoom = 5;
+
+      const initializeMap = (startLat, startLng, startZoom) => {
+        if (!mapInstance.current && mapContainer) {
+          const map = L.default.map(mapContainer).setView([startLat, startLng], startZoom);
+          L.default.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+          }).addTo(map);
+
+          mapInstance.current = map;
+
+          // Force layout recalculation for map inside modal container
+          setTimeout(() => {
+            if (map) map.invalidateSize();
+          }, 200);
+
+          const marker = L.default.marker([startLat, startLng], {
+            draggable: true
+          }).addTo(map);
+
+          markerInstance.current = marker;
+
+          marker.on('dragend', () => {
+            const position = marker.getLatLng();
+            fetchAddressFromCoords(position.lat, position.lng);
+          });
+
+          map.on('click', (e) => {
+            const { lat, lng } = e.latlng;
+            marker.setLatLng([lat, lng]);
+            fetchAddressFromCoords(lat, lng);
+          });
+        }
+      };
+
+      if (formData.address) {
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(formData.address)}&limit=1`)
+          .then(res => res.json())
+          .then(data => {
+            if (active && data && data.length > 0) {
+              const addressLat = parseFloat(data[0].lat);
+              const addressLng = parseFloat(data[0].lon);
+              initializeMap(addressLat, addressLng, 14);
+            } else {
+              initializeMap(lat, lng, zoom);
+            }
+          })
+          .catch(() => {
+            initializeMap(lat, lng, zoom);
+          });
+      } else {
+        initializeMap(lat, lng, zoom);
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [showModal, mapContainer]);
+
   // Booking Details Modal State
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
+  const [formSaving, setFormSaving] = useState(false);
+
+  // Disable body scroll when modal is active
+  useEffect(() => {
+    if (showModal || showBookingModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showModal, showBookingModal]);
 
   const getTodayString = (daysOffset = 0, hour = 9) => {
     const d = new Date();
@@ -183,6 +357,7 @@ export default function MyEventsPage() {
     }
 
     try {
+      setFormSaving(true);
       const payload = {
         customerId: customerProfile.id,
         title: formData.title,
@@ -208,6 +383,8 @@ export default function MyEventsPage() {
     } catch (err) {
       console.error("Error saving event:", err);
       toast.error(err.response?.data?.message || "Failed to save event");
+    } finally {
+      setFormSaving(false);
     }
   };
 
@@ -268,15 +445,7 @@ export default function MyEventsPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <CloudsBackground>
-        <div className="flex-1 flex justify-center items-center h-screen">
-          <Loader2 className="animate-spin text-indigo-500" size={48} />
-        </div>
-      </CloudsBackground>
-    );
-  }
+
 
   return (
     <CloudsBackground>
@@ -310,14 +479,39 @@ export default function MyEventsPage() {
             <div className="flex flex-col items-end gap-4">
               <button 
                 onClick={openCreateModal}
-                className="bg-slate-900 text-white font-bold px-6 py-3.5 rounded-2xl hover:bg-black transition-all flex items-center gap-2 shadow-lg hover:-translate-y-0.5 hover:shadow-xl"
+                disabled={loading}
+                className="bg-slate-900 text-white font-bold px-6 py-3.5 rounded-2xl hover:bg-black transition-all flex items-center gap-2 shadow-lg hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Plus size={18} /> New Event
               </button>
             </div>
           </div>
 
-          {events.length === 0 ? (
+          {loading ? (
+            <div className="space-y-8">
+              {[1, 2, 3].map((n) => (
+                <div key={n} className="bg-white/60 backdrop-blur-xl border border-slate-200/60 rounded-[2.5rem] p-6 md:p-8 shadow-[0_12px_40px_rgb(0,0,0,0.02)] animate-pulse space-y-6">
+                  <div className="flex gap-5">
+                    <div className="w-14 h-14 bg-slate-200 rounded-2xl shrink-0" />
+                    <div className="space-y-3 flex-1">
+                      <div className="w-20 h-4 bg-slate-200 rounded" />
+                      <div className="w-1/3 h-7 bg-slate-200 rounded" />
+                      <div className="w-full h-4 bg-slate-200 rounded" />
+                      <div className="w-5/6 h-4 bg-slate-200 rounded" />
+                    </div>
+                  </div>
+                  <div className="h-[1px] bg-slate-100/60 w-full" />
+                  <div className="flex justify-between items-center">
+                    <div className="flex gap-6">
+                      <div className="w-24 h-4 bg-slate-200 rounded" />
+                      <div className="w-24 h-4 bg-slate-200 rounded" />
+                    </div>
+                    <div className="w-24 h-8 bg-slate-200 rounded-xl" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : events.length === 0 ? (
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -352,7 +546,7 @@ export default function MyEventsPage() {
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ delay: index * 0.05, duration: 0.4 }}
+                      transition={{ delay: index * 0.05, duration: 0.75 }}
                       className="bg-white/90 backdrop-blur-xl border border-slate-200 rounded-[2.5rem] p-6 md:p-8 shadow-[0_12px_40px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgb(0,0,0,0.06)] transition-all overflow-hidden group/container"
                     >
                       {/* Event Header & Actions */}
@@ -510,21 +704,22 @@ export default function MyEventsPage() {
       </PageTransition>
 
       {/* Modern Planit Style Create/Edit Modal */}
-      <AnimatePresence>
-        {showModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-              onClick={() => setShowModal(false)}
-            />
+      {createPortal(
+        <AnimatePresence>
+          {showModal && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/60 backdrop-blur-md"
+                onClick={() => setShowModal(false)}
+              />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-lg bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] p-8 md:p-10"
+              className="relative w-full max-w-lg bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] p-8 md:p-10 max-h-[90vh] overflow-y-auto custom-scrollbar"
             >
               <div className="flex justify-between items-center mb-8">
                 <h3 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -571,6 +766,25 @@ export default function MyEventsPage() {
                     className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-semibold text-slate-800 transition-all"
                   />
                 </div>
+
+                <div className="flex justify-start">
+                  <button
+                    type="button"
+                    onClick={getCurrentLocation}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-sm font-semibold transition-all border border-rose-100 shadow-sm"
+                  >
+                    <MapPin size={16} /> Use Current GPS Location
+                  </button>
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1 block">Pinpoint Venue on Map</label>
+                  <div 
+                    ref={mapRef} 
+                    className="w-full h-48 rounded-2xl border border-slate-200 overflow-hidden shadow-inner z-0 relative"
+                    style={{ minHeight: '180px' }}
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 ml-1 block">Start Date & Time *</label>
@@ -615,39 +829,54 @@ export default function MyEventsPage() {
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="flex-1 py-4 bg-white border border-slate-200 hover:border-slate-300 text-slate-600 font-bold rounded-xl transition-all shadow-sm"
+                    disabled={formSaving}
+                    className="flex-1 py-4 bg-white border border-slate-200 hover:border-slate-300 text-slate-600 font-bold rounded-xl transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-[1.5] py-4 bg-slate-900 hover:bg-black text-white font-bold rounded-xl transition-all shadow-md hover:-translate-y-0.5 flex justify-center items-center gap-2"
+                    disabled={formSaving}
+                    className="flex-[1.5] py-4 bg-slate-900 hover:bg-black text-white font-bold rounded-xl transition-all shadow-md hover:-translate-y-0.5 flex justify-center items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <CheckCircle size={18} /> {modalMode === 'create' ? 'Create Event' : 'Save Changes'}
+                    {formSaving ? (
+                      <>
+                        <Loader2 className="animate-spin text-white" size={18} />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle size={18} />
+                        {modalMode === 'create' ? 'Create Event' : 'Save Changes'}
+                      </>
+                    )}
                   </button>
                 </div>
               </form>
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
       {/* Booking Details Modal */}
-      <AnimatePresence>
-        {showBookingModal && selectedBooking && (
-          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-              onClick={() => setShowBookingModal(false)}
-            />
+      {createPortal(
+        <AnimatePresence>
+          {showBookingModal && selectedBooking && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-black/60 backdrop-blur-md"
+                onClick={() => setShowBookingModal(false)}
+              />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-lg bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] p-8 md:p-10"
+              className="relative w-full max-w-lg bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2rem] p-8 md:p-10 max-h-[90vh] overflow-y-auto custom-scrollbar"
             >
               <div className="flex justify-between items-center mb-8">
                 <h3 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -738,8 +967,10 @@ export default function MyEventsPage() {
               </div>
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
     </CloudsBackground>
   );

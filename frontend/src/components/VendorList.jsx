@@ -306,9 +306,30 @@ export default function VendorList() {
             
             {/* Left Column: Vendor List */}
             <div className="lg:col-span-7 space-y-6">
-              {loading && vendors.length === 0 ? (
-                <div className="flex justify-center items-center py-24 bg-white/50 backdrop-blur rounded-3xl border border-white">
-                  <Loader2 className="animate-spin text-indigo-500" size={48} />
+              {loading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-6">
+                  {[1, 2, 3, 4].map((n) => (
+                    <div
+                      key={n}
+                      className="bg-white/60 backdrop-blur-md border border-slate-200/60 rounded-3xl p-6 shadow-[0_8px_20px_rgb(0,0,0,0.02)] animate-pulse flex flex-col h-[200px] justify-between"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="w-16 h-16 rounded-2xl bg-slate-200 flex-shrink-0" />
+                        <div className="flex-1 min-w-0 pt-1 space-y-2">
+                          <div className="w-2/3 h-5 bg-slate-200 rounded" />
+                          <div className="w-1/2 h-3.5 bg-slate-200 rounded" />
+                        </div>
+                      </div>
+                      <div className="w-full h-8 bg-slate-200 rounded-lg mt-4" />
+                      <div className="flex items-center justify-between pt-4 border-t border-slate-100/60 mt-4">
+                        <div className="flex gap-2">
+                          <div className="w-14 h-4 bg-slate-200 rounded" />
+                          <div className="w-10 h-4 bg-slate-200 rounded" />
+                        </div>
+                        <div className="w-16 h-5 bg-slate-200 rounded-full" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : error ? (
                 <div className="text-center text-rose-500 font-medium py-12 bg-white/50 backdrop-blur rounded-3xl border border-white">

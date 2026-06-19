@@ -317,9 +317,56 @@ export default function ServiceDetails() {
   if (loading) {
     return (
       <CloudsBackground>
-        <div className="flex-1 flex justify-center items-center min-h-screen pt-20">
-          <Loader2 className="animate-spin text-indigo-500" size={48} />
-        </div>
+        <PageTransition className="flex-1 pt-32 pb-12 px-4 sm:px-6 lg:px-8 relative font-sans w-full min-h-screen z-10">
+          <div className="max-w-6xl mx-auto space-y-8 animate-pulse">
+            {/* Top Bar Navigation */}
+            <div className="flex justify-between items-center mb-4">
+              <div className="w-24 h-10 bg-white/50 border border-white rounded-xl" />
+              <div className="flex gap-3">
+                <div className="w-10 h-10 bg-white/50 border border-white rounded-xl" />
+                <div className="w-10 h-10 bg-white/50 border border-white rounded-xl" />
+              </div>
+            </div>
+
+            {/* Header Section */}
+            <div className="text-center mb-8 flex flex-col items-center">
+              <div className="w-1/2 h-10 bg-slate-200 rounded mb-4" />
+              <div className="flex gap-4">
+                <div className="w-20 h-6 bg-slate-200 rounded-full" />
+                <div className="w-24 h-6 bg-slate-200 rounded-full" />
+                <div className="w-32 h-6 bg-slate-200 rounded-full" />
+              </div>
+            </div>
+
+            {/* Image Slider Placeholder */}
+            <div className="w-full max-w-5xl mx-auto mt-8 h-[40vh] md:h-[50vh] max-h-[500px] rounded-3xl bg-slate-200 border-4 border-white shadow-sm" />
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
+              {/* Left Column: Info */}
+              <div className="lg:col-span-2 space-y-8">
+                <div className="bg-white/60 border border-white rounded-3xl p-8 space-y-4">
+                  <div className="w-1/4 h-6 bg-slate-200 rounded" />
+                  <div className="w-full h-4 bg-slate-200 rounded" />
+                  <div className="w-5/6 h-4 bg-slate-200 rounded" />
+                  <div className="w-2/3 h-4 bg-slate-200 rounded" />
+                </div>
+                <div className="bg-slate-200 rounded-3xl p-8 h-64" />
+              </div>
+
+              {/* Right Column: Pricing & Actions */}
+              <div className="space-y-6">
+                <div className="bg-white/60 border border-white rounded-3xl p-8 space-y-6">
+                  <div className="text-center pb-6 border-b border-slate-100/60">
+                    <div className="w-24 h-4 bg-slate-200 rounded mx-auto mb-2" />
+                    <div className="w-36 h-10 bg-slate-200 rounded mx-auto" />
+                  </div>
+                  <div className="w-full h-12 bg-slate-200 rounded-2xl" />
+                  <div className="w-full h-12 bg-slate-200 rounded-2xl" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </PageTransition>
       </CloudsBackground>
     );
   }
@@ -351,7 +398,12 @@ export default function ServiceDetails() {
   return (
     <CloudsBackground>
       <PageTransition className="flex-1 pt-32 pb-12 px-4 sm:px-6 lg:px-8 relative font-sans w-full min-h-screen z-10">
-        <div className="max-w-6xl mx-auto space-y-8">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.75 }}
+          className="max-w-6xl mx-auto space-y-8"
+        >
           {/* Top Bar Navigation */}
           <div className="flex justify-between items-center mb-4">
             <button
@@ -885,7 +937,7 @@ export default function ServiceDetails() {
               </motion.div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Event / Dates Selection Modal - Light Wallet Theme Styled */}
         <AnimatePresence>

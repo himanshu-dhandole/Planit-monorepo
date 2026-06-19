@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { Camera, FileText, User, MapPin, Phone, CheckCircle, Clock, AlertCircle, Loader2, Shield, Briefcase, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CloudsBackground from './CloudsBackground';
+import { motion } from 'framer-motion';
 import 'leaflet/dist/leaflet.css';
 
 export default function Profile() {
@@ -401,8 +402,69 @@ export default function Profile() {
   if (loading) {
     return (
       <CloudsBackground>
-        <div className="flex-1 flex justify-center items-center">
-          <Loader2 className="animate-spin text-blue-500" size={48} />
+        <div className="flex-1 pt-32 pb-12 px-4 sm:px-6 lg:px-8 relative font-sans w-full min-h-screen z-10 animate-pulse">
+          <div className="max-w-5xl mx-auto space-y-8">
+            {/* Header Skeleton */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/60 backdrop-blur-xl p-8 rounded-3xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+              <div className="flex items-center gap-6">
+                <div className="w-24 h-24 bg-slate-200 rounded-full shrink-0" />
+                <div className="space-y-3">
+                  <div className="w-48 h-8 bg-slate-200 rounded" />
+                  <div className="w-32 h-4 bg-slate-200 rounded" />
+                  <div className="w-24 h-5 bg-slate-200 rounded-md" />
+                </div>
+              </div>
+              <div className="w-32 h-10 bg-slate-200 rounded-xl" />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Profile Details Cards */}
+              <div className="lg:col-span-2 space-y-8">
+                {/* Details Form Card */}
+                <div className="bg-white/60 backdrop-blur-md p-8 rounded-3xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-6">
+                  <div className="w-36 h-6 bg-slate-200 rounded" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="space-y-2">
+                        <div className="w-24 h-4 bg-slate-200 rounded" />
+                        <div className="w-full h-12 bg-slate-200 rounded-xl" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Address Form Card */}
+                <div className="bg-white/60 backdrop-blur-md p-8 rounded-3xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-6">
+                  <div className="w-36 h-6 bg-slate-200 rounded" />
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <div className="w-32 h-4 bg-slate-200 rounded" />
+                      <div className="w-full h-12 bg-slate-200 rounded-xl" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <div className="w-20 h-4 bg-slate-200 rounded" />
+                        <div className="w-full h-12 bg-slate-200 rounded-xl" />
+                      </div>
+                      <div className="space-y-2">
+                        <div className="w-20 h-4 bg-slate-200 rounded" />
+                        <div className="w-full h-12 bg-slate-200 rounded-xl" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Side Card Skeleton */}
+              <div className="space-y-8">
+                <div className="bg-white/60 backdrop-blur-md p-8 rounded-3xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.02)] space-y-6">
+                  <div className="w-36 h-6 bg-slate-200 rounded" />
+                  <div className="w-full h-40 bg-slate-200 rounded-2xl" />
+                  <div className="w-full h-12 bg-slate-200 rounded-xl" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </CloudsBackground>
     );
@@ -411,7 +473,12 @@ export default function Profile() {
   return (
     <CloudsBackground>
       <div className="flex-1 pt-32 relative font-sans w-full py-12 px-4 sm:px-6 lg:px-8 overflow-y-auto z-10">
-        <div className="max-w-5xl mx-auto space-y-8">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.75 }}
+          className="max-w-5xl mx-auto space-y-8"
+        >
         
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/70 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white">
@@ -662,7 +729,7 @@ export default function Profile() {
           </div>
           
         </div>
-      </div>
+        </motion.div>
       </div>
     </CloudsBackground>
   );

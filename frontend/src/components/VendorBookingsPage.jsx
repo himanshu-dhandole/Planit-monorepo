@@ -165,15 +165,7 @@ export default function VendorBookingsPage() {
     return booking.status === filter;
   });
 
-  if (loading) {
-    return (
-      <CloudsBackground>
-        <div className="flex-1 flex justify-center items-center h-screen">
-          <Loader2 className="animate-spin text-indigo-500" size={48} />
-        </div>
-      </CloudsBackground>
-    );
-  }
+
 
   return (
     <CloudsBackground>
@@ -210,8 +202,47 @@ export default function VendorBookingsPage() {
             ))}
           </div>
 
-          {filteredBookings.length === 0 ? (
-            <div className="bg-white/60 backdrop-blur-xl border border-white rounded-[2rem] p-12 text-center shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map((n) => (
+                <div
+                  key={n}
+                  className="bg-white/60 backdrop-blur-xl border border-slate-200/60 rounded-[1.8rem] p-6 shadow-[0_4px_20px_rgb(0,0,0,0.02)] animate-pulse flex flex-col justify-between h-[240px]"
+                >
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="space-y-2 flex-1">
+                        <div className="w-16 h-4 bg-slate-200 rounded" />
+                        <div className="w-2/3 h-6 bg-slate-200 rounded" />
+                      </div>
+                      <div className="w-20 h-5 bg-slate-200 rounded" />
+                    </div>
+                    <div className="bg-slate-50/50 border border-slate-100/50 p-3 rounded-2xl space-y-2">
+                      <div className="w-1/2 h-3.5 bg-slate-200 rounded" />
+                      <div className="w-2/3 h-3.5 bg-slate-200 rounded" />
+                    </div>
+                  </div>
+                  <div className="pt-4 border-t border-slate-100/80 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="w-12 h-3 bg-slate-200 rounded" />
+                      <div className="w-16 h-5 bg-slate-200 rounded" />
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="w-9 h-9 bg-slate-200 rounded-xl" />
+                      <div className="w-9 h-9 bg-slate-200 rounded-xl" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75 }}
+            >
+              {filteredBookings.length === 0 ? (
+                <div className="bg-white/60 backdrop-blur-xl border border-white rounded-[2rem] p-12 text-center shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
               <h2 className="text-xl font-bold text-slate-800 mb-2">No Bookings Found</h2>
               <p className="text-slate-500 max-w-sm mx-auto">No customer service bookings fit the selected status filter at the moment.</p>
             </div>
@@ -290,18 +321,18 @@ export default function VendorBookingsPage() {
                           <button
                             onClick={() => handleUpdateStatus(booking.id, "ACCEPT")}
                             disabled={actionLoading}
-                            className="p-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-100 rounded-xl transition-colors"
+                            className="p-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-100 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             title="Accept Request"
                           >
-                            <Check size={16} />
+                            {actionLoading ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
                           </button>
                           <button
                             onClick={() => handleUpdateStatus(booking.id, "REJECT")}
                             disabled={actionLoading}
-                            className="p-2.5 bg-rose-50 hover:bg-rose-100 text-rose-500 border border-rose-100 rounded-xl transition-colors"
+                            className="p-2.5 bg-rose-50 hover:bg-rose-100 text-rose-500 border border-rose-100 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                             title="Reject Request"
                           >
-                            <Ban size={16} />
+                            {actionLoading ? <Loader2 size={16} className="animate-spin" /> : <Ban size={16} />}
                           </button>
                         </>
                       )}
@@ -309,8 +340,9 @@ export default function VendorBookingsPage() {
                         <button
                           onClick={() => handleUpdateStatus(booking.id, "CANCEL")}
                           disabled={actionLoading}
-                          className="px-3 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-100 text-rose-500 text-xs font-bold rounded-xl transition-colors"
+                          className="px-3 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-100 text-rose-500 text-xs font-bold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
                         >
+                          {actionLoading ? <Loader2 size={12} className="animate-spin" /> : null}
                           Cancel & Refund
                         </button>
                       )}
@@ -320,6 +352,8 @@ export default function VendorBookingsPage() {
               ))}
             </div>
           )}
+        </motion.div>
+      )}
 
         </div>
       </PageTransition>
@@ -479,15 +513,17 @@ export default function VendorBookingsPage() {
                       <button
                         onClick={() => handleUpdateStatus(selectedBooking.id, "ACCEPT")}
                         disabled={actionLoading}
-                        className="flex-1 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center"
+                        className="flex-1 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
                       >
+                        {actionLoading ? <Loader2 className="animate-spin" size={16} /> : null}
                         {actionLoading ? "Accepting..." : "Accept"}
                       </button>
                       <button
                         onClick={() => handleUpdateStatus(selectedBooking.id, "REJECT")}
                         disabled={actionLoading}
-                        className="flex-1 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center"
+                        className="flex-1 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
                       >
+                        {actionLoading ? <Loader2 className="animate-spin" size={16} /> : null}
                         {actionLoading ? "Rejecting..." : "Reject"}
                       </button>
                     </>
@@ -497,8 +533,9 @@ export default function VendorBookingsPage() {
                     <button
                       onClick={() => handleUpdateStatus(selectedBooking.id, "CANCEL")}
                       disabled={actionLoading}
-                      className="flex-1 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center"
+                      className="flex-1 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5"
                     >
+                      {actionLoading ? <Loader2 className="animate-spin" size={16} /> : null}
                       {actionLoading ? "Cancelling..." : "Cancel & Refund"}
                     </button>
                   )}

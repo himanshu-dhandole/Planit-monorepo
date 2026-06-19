@@ -213,7 +213,7 @@ export default function CartPage() {
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
-                      transition={{ delay: index * 0.1, duration: 0.4 }}
+                      transition={{ delay: index * 0.1, duration: 0.75 }}
                       className="space-y-6"
                     >
                       {/* Floating Event Header */}

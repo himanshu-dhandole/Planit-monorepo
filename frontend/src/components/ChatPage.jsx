@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Send, MessageSquare, Tag, User } from 'lucide-react';
+import { Send, MessageSquare, Tag, User, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Client } from '@stomp/stompjs';
+import PageTransition from './PageTransition';
 import { AuthContext } from '../context/AuthContext';
 import apiClient from '../lib/apiClient';
 import CustomLoader from './CustomLoader';
@@ -287,7 +288,7 @@ export default function ChatPage() {
     : '';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#CBE4F9] to-[#E3F2FC] pt-28 pb-10 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans flex items-center justify-center">
+    <PageTransition className="min-h-screen bg-gradient-to-b from-[#CBE4F9] to-[#E3F2FC] pt-28 pb-10 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans flex items-center justify-center">
       <div className="absolute inset-0 bg-noise pointer-events-none z-0"></div>
       
       <div className="w-full max-w-5xl h-[80vh] bg-white/40 backdrop-blur-xl border border-white/50 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.06)] flex overflow-hidden relative z-10">
@@ -307,14 +308,31 @@ export default function ChatPage() {
               <button
                 type="submit"
                 disabled={searching}
-                className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition disabled:opacity-50 shadow-sm"
+                className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition disabled:opacity-50 shadow-sm flex items-center justify-center gap-1"
               >
-                {searching ? '...' : 'Search'}
+                {searching ? <Loader2 size={12} className="animate-spin" /> : null}
+                {searching ? 'Searching...' : 'Search'}
               </button>
             </form>
             
             {/* Search results list */}
-            {searchResults.length > 0 && (
+            {searching ? (
+              <div className="mt-3 space-y-2 animate-pulse px-1">
+                <div className="flex justify-between items-center text-[10px] text-indigo-600 font-bold uppercase tracking-wider">
+                  <span>Searching Channels...</span>
+                </div>
+                {[1, 2].map((n) => (
+                  <div key={n} className="p-3 bg-white/50 border border-white/60 shadow-sm rounded-xl flex items-center justify-between">
+                    <div className="space-y-2 flex-grow mr-2">
+                      <div className="w-2/3 h-3 bg-slate-200 rounded" />
+                      <div className="w-1/2 h-2.5 bg-slate-200 rounded" />
+                      <div className="w-1/3 h-2 bg-slate-200 rounded" />
+                    </div>
+                    <div className="w-10 h-6 bg-slate-200 rounded-lg shrink-0" />
+                  </div>
+                ))}
+              </div>
+            ) : searchResults.length > 0 && (
               <div className="mt-3 space-y-2 max-h-48 overflow-y-auto pr-1">
                 <div className="flex justify-between items-center text-[10px] text-indigo-600 font-bold uppercase tracking-wider px-1">
                   <span>Search Results</span>
@@ -355,7 +373,21 @@ export default function ChatPage() {
           
           <div className="flex-1 overflow-y-auto p-3 space-y-2">
             {loadingConv ? (
-              <div className="flex justify-center py-10"><CustomLoader /></div>
+              <div className="space-y-3 p-1">
+                {[1, 2, 3, 4].map((n) => (
+                  <div
+                    key={n}
+                    className="p-4 bg-white/20 border border-transparent rounded-2xl animate-pulse space-y-3"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="w-1/2 h-4 bg-slate-200 rounded" />
+                      <div className="w-10 h-3 bg-slate-200 rounded" />
+                    </div>
+                    <div className="w-20 h-4.5 bg-slate-200 rounded" />
+                    <div className="w-5/6 h-3 bg-slate-200 rounded" />
+                  </div>
+                ))}
+              </div>
             ) : filteredConversations.length === 0 ? (
               <div className="text-center py-20 text-gray-400 text-sm">
                 <MessageSquare className="mx-auto mb-2 opacity-40" size={32} />
@@ -426,7 +458,30 @@ export default function ChatPage() {
               {/* Message Thread list */}
               <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6 space-y-4">
                 {loadingMsgs ? (
-                  <div className="flex justify-center py-10"><CustomLoader /></div>
+                  <div className="space-y-4 animate-pulse">
+                    {[1, 2, 3, 4].map((n) => {
+                      const isLeft = n % 2 === 1;
+                      return (
+                        <div
+                          key={n}
+                          className={`flex ${isLeft ? 'justify-start' : 'justify-end'}`}
+                        >
+                          <div
+                            className={`w-2/3 max-w-[280px] rounded-2xl p-4 space-y-2 shadow-sm ${
+                              isLeft
+                                ? 'bg-white border border-white/50'
+                                : 'bg-indigo-100/50'
+                            }`}
+                          >
+                            {isLeft && <div className="w-16 h-3 bg-slate-200 rounded" />}
+                            <div className="w-full h-4 bg-slate-200 rounded" />
+                            <div className="w-3/4 h-4 bg-slate-200 rounded" />
+                            <div className="w-10 h-2 bg-slate-200 rounded ml-auto mt-1" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 ) : (
                   messages.map((msg) => {
                     const isOwnMessage = Number(msg.senderId) === Number(user.id);
@@ -435,7 +490,7 @@ export default function ChatPage() {
                         key={msg.id}
                         initial={{ opacity: 0, y: 15, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        transition={{ duration: 0.25, ease: 'easeOut' }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
                         className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
                       >
                         <div
@@ -490,6 +545,6 @@ export default function ChatPage() {
         </div>
 
       </div>
-    </div>
+    </PageTransition>
   );
 }

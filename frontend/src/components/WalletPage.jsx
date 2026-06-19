@@ -58,8 +58,45 @@ export default function WalletPage() {
   if (loading) {
     return (
       <CloudsBackground>
-        <div className="flex-1 flex justify-center items-center h-screen">
-          <Loader2 className="animate-spin text-indigo-500" size={48} />
+        <div className="flex-1 pt-32 relative font-sans w-full min-h-screen py-12 px-4 sm:px-6 lg:px-8 z-10 animate-pulse">
+          <div className="max-w-4xl mx-auto space-y-8">
+            {/* Header Skeleton */}
+            <div className="text-center pt-24 mb-12 space-y-4">
+              <div className="w-64 h-12 bg-slate-200 rounded mx-auto" />
+              <div className="w-96 h-6 bg-slate-200 rounded mx-auto" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Balance Card Skeleton */}
+              <div className="bg-white/60 backdrop-blur-xl p-8 rounded-3xl border border-white/80 shadow-sm space-y-6">
+                <div className="flex justify-between items-center">
+                  <div className="w-36 h-6 bg-slate-200 rounded" />
+                  <div className="w-16 h-6 bg-slate-200 rounded-full" />
+                </div>
+                <div className="space-y-3">
+                  <div className="w-48 h-12 bg-slate-200 rounded" />
+                  <div className="w-32 h-4 bg-slate-200 rounded" />
+                </div>
+                <div className="pt-6 border-t border-slate-100 space-y-4">
+                  <div className="w-full h-12 bg-slate-200 rounded-2xl" />
+                  <div className="w-full h-12 bg-slate-200 rounded-xl" />
+                </div>
+              </div>
+
+              {/* Quick Actions Skeleton */}
+              <div className="space-y-6">
+                <div className="bg-white/60 backdrop-blur-xl p-6 rounded-3xl border border-white/80 shadow-sm space-y-4">
+                  <div className="w-36 h-6 bg-slate-200 rounded" />
+                  <div className="w-full h-12 bg-slate-200 rounded" />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="h-16 bg-slate-200 rounded-2xl" />
+                    <div className="h-16 bg-slate-200 rounded-2xl" />
+                  </div>
+                </div>
+                <div className="h-40 bg-slate-200 rounded-3xl" />
+              </div>
+            </div>
+          </div>
         </div>
       </CloudsBackground>
     );
@@ -68,7 +105,12 @@ export default function WalletPage() {
   return (
     <CloudsBackground>
       <div className="flex-1 pt-32 relative font-sans w-full min-h-screen py-12 px-4 sm:px-6 lg:px-8 z-10">
-        <div className="max-w-4xl mx-auto space-y-8">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.75 }}
+          className="max-w-4xl mx-auto space-y-8"
+        >
           {/* Header Section */}
           <div className="text-center pt-24 mb-12">
             {/* <motion.div 
@@ -218,7 +260,7 @@ export default function WalletPage() {
               </div>
             </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </CloudsBackground>
   );
