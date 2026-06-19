@@ -210,29 +210,90 @@ public class ChatService {
                 .build();
     }
 
-    public UserSearchResponseDTO searchByPhoneNumber(String phoneNumber) {
-        Optional<Vendor> vendorOpt = vendorRepository.findByPhoneNumber(phoneNumber);
-        if (vendorOpt.isPresent()) {
-            Vendor v = vendorOpt.get();
-            return UserSearchResponseDTO.builder()
-                    .id(v.getId())
-                    .name(v.getBusinessName())
-                    .type("VENDOR")
-                    .phoneNumber(v.getPhoneNumber())
-                    .build();
+    public List<UserSearchResponseDTO> searchUsers(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+        String lowerQuery = query.toLowerCase().trim();
+        List<UserSearchResponseDTO> results = new ArrayList<>();
+        Set<String> uniqueKeys = new HashSet<>();
+
+        // 1. Search Vendors by business name, phone number, or user name
+        for (Vendor v : vendorRepository.findAll()) {
+            boolean matches = false;
+            if (v.getBusinessName() != null && v.getBusinessName().toLowerCase().contains(lowerQuery)) {
+                matches = true;
+            } else if (v.getPhoneNumber() != null && v.getPhoneNumber().contains(query)) {
+                matches = true;
+            } else if (v.getUser() != null && v.getUser().getName() != null && v.getUser().getName().toLowerCase().contains(lowerQuery)) {
+                matches = true;
+            }
+
+            if (matches) {
+                String key = "VENDOR_" + v.getId() + "_null";
+                if (uniqueKeys.add(key)) {
+                    results.add(UserSearchResponseDTO.builder()
+                            .id(v.getId())
+                            .name(v.getBusinessName())
+                            .type("VENDOR")
+                            .phoneNumber(v.getPhoneNumber())
+                            .build());
+                }
+            }
         }
 
-        Optional<Customer> customerOpt = customerRepository.findByPhoneNumber(phoneNumber);
-        if (customerOpt.isPresent()) {
-            Customer c = customerOpt.get();
-            return UserSearchResponseDTO.builder()
-                    .id(c.getId())
-                    .name(c.getFirstName() + " " + c.getLastName())
-                    .type("CUSTOMER")
-                    .phoneNumber(c.getPhoneNumber())
-                    .build();
+        // 2. Search Services by name or category
+        for (Services s : servicesRepository.findAll()) {
+            boolean matches = false;
+            if (s.getName() != null && s.getName().toLowerCase().contains(lowerQuery)) {
+                matches = true;
+            } else if (s.getCategory() != null && s.getCategory().name().toLowerCase().contains(lowerQuery)) {
+                matches = true;
+            }
+
+            if (matches) {
+                Vendor v = s.getVendor();
+                if (v != null) {
+                    String key = "VENDOR_" + v.getId() + "_" + s.getId();
+                    if (uniqueKeys.add(key)) {
+                        results.add(UserSearchResponseDTO.builder()
+                                .id(v.getId())
+                                .name(v.getBusinessName() + " (" + s.getName() + ")")
+                                .type("VENDOR")
+                                .phoneNumber(v.getPhoneNumber())
+                                .serviceId(s.getId())
+                                .serviceName(s.getName())
+                                .build());
+                    }
+                }
+            }
         }
 
-        throw new ResourceNotFoundException("No vendor or customer found with phone number: " + phoneNumber);
+        // 3. Search Customers by firstName, lastName, phone number, or user name
+        for (Customer c : customerRepository.findAll()) {
+            boolean matches = false;
+            String fullName = (c.getFirstName() + " " + c.getLastName()).toLowerCase();
+            if (fullName.contains(lowerQuery)) {
+                matches = true;
+            } else if (c.getPhoneNumber() != null && c.getPhoneNumber().contains(query)) {
+                matches = true;
+            } else if (c.getUser() != null && c.getUser().getName() != null && c.getUser().getName().toLowerCase().contains(lowerQuery)) {
+                matches = true;
+            }
+
+            if (matches) {
+                String key = "CUSTOMER_" + c.getId() + "_null";
+                if (uniqueKeys.add(key)) {
+                    results.add(UserSearchResponseDTO.builder()
+                            .id(c.getId())
+                            .name(c.getFirstName() + " " + c.getLastName())
+                            .type("CUSTOMER")
+                            .phoneNumber(c.getPhoneNumber())
+                            .build());
+                }
+            }
+        }
+
+        return results;
     }
 }

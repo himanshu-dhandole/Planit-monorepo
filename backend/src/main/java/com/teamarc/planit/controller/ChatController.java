@@ -46,9 +46,9 @@ public class ChatController {
     }
 
     @GetMapping("/api/chat/search")
-    public ResponseEntity<UserSearchResponseDTO> searchByPhoneNumber(
-            @RequestParam String phoneNumber) {
-        return ResponseEntity.ok(chatService.searchByPhoneNumber(phoneNumber));
+    public ResponseEntity<List<UserSearchResponseDTO>> searchUsers(
+            @RequestParam String query) {
+        return ResponseEntity.ok(chatService.searchUsers(query));
     }
 
     @MessageMapping("/chat.sendMessage")

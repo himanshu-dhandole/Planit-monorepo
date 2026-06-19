@@ -11,4 +11,6 @@ public class UserSearchResponseDTO {
     private String name; // businessName for vendor, firstName + lastName for customer
     private String type; // "VENDOR" or "CUSTOMER"
     private String phoneNumber;
+    private Long serviceId;
+    private String serviceName;
 }
