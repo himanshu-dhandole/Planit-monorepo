@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import apiClient from '../lib/apiClient';
 import { toast } from 'sonner';
-import { Plus, Edit2, Trash2, MapPin, CheckCircle, XCircle, Clock, Loader2, IndianRupee, Phone, FileText, Briefcase, User, Map, CreditCard, Activity, Star } from 'lucide-react';
+import { Plus, Edit2, Trash2, MapPin, CheckCircle, XCircle, Clock, Loader2, IndianRupee, Phone, FileText, Briefcase, User, Map, CreditCard, Activity, Star, ShieldAlert } from 'lucide-react';
 import { Widget } from '@uploadcare/react-widget';
 import CloudsBackground from './CloudsBackground';
 import CustomLoader from './CustomLoader';
@@ -24,8 +24,31 @@ export default function VendorDashboard() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [vendorProfile, setVendorProfile] = useState(null);
   const [services, setServices] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
+  const [activeTab, setActiveTab] = useState('services');
   const [showAddForm, setShowAddForm] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
+
+  const getTrustBadge = (score) => {
+    if (score === null || score === undefined) return null;
+    let badgeText = 'STANDARD';
+    let badgeStyle = 'bg-slate-100 text-slate-700 border-slate-200';
+    
+    if (score >= 4.5) {
+      badgeText = 'GOLD';
+      badgeStyle = 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white border-amber-600 shadow-sm';
+    } else if (score >= 4.0) {
+      badgeText = 'SILVER';
+      badgeStyle = 'bg-gradient-to-r from-slate-400 to-slate-350 text-white border-slate-500 shadow-sm';
+    }
+    
+    return (
+      <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${badgeStyle}`}>
+        <Star size={12} fill={score >= 4.0 ? 'white' : 'transparent'} />
+        {badgeText}
+      </span>
+    );
+  };
 
   // Form State
   const [formData, setFormData] = useState({
@@ -46,21 +69,26 @@ export default function VendorDashboard() {
     try {
       if (vendorProfile?.id) {
         // Parallelize for fast refresh
-        const [vendorRes, servicesRes] = await Promise.all([
+        const [vendorRes, servicesRes, testimonialsRes] = await Promise.all([
           apiClient.get(`/api/vendor/customer/${customerProfile.id}`),
-          apiClient.get(`/api/vendor/services/${vendorProfile.id}?page=0&size=100`)
+          apiClient.get(`/api/vendor/services/${vendorProfile.id}?page=0&size=100`),
+          apiClient.get(`/api/testimonials/vendor/${vendorProfile.id}`)
         ]);
         setVendorProfile(vendorRes.data?.data || vendorRes.data);
         setServices(servicesRes.data?.data?.content || servicesRes.data?.content || []);
+        setTestimonials(testimonialsRes.data?.data || testimonialsRes.data || []);
       } else {
         const vendorRes = await apiClient.get(`/api/vendor/customer/${customerProfile.id}`);
         const vendor = vendorRes.data?.data || vendorRes.data;
         setVendorProfile(vendor);
 
         if (vendor?.id) {
-          const servicesRes = await apiClient.get(`/api/vendor/services/${vendor.id}?page=0&size=100`);
-          const servicesData = servicesRes.data?.data?.content || servicesRes.data?.content || [];
-          setServices(servicesData);
+          const [servicesRes, testimonialsRes] = await Promise.all([
+            apiClient.get(`/api/vendor/services/${vendor.id}?page=0&size=100`),
+            apiClient.get(`/api/testimonials/vendor/${vendor.id}`)
+          ]);
+          setServices(servicesRes.data?.data?.content || servicesRes.data?.content || []);
+          setTestimonials(testimonialsRes.data?.data || testimonialsRes.data || []);
         }
       }
     } catch (error) {
@@ -69,6 +97,31 @@ export default function VendorDashboard() {
     } finally {
       setLoading(false);
       setIsRefreshing(false);
+    }
+  };
+
+  const handleToggleFeature = async (id) => {
+    try {
+      await apiClient.put(`/api/testimonials/${id}/feature`);
+      toast.success("Testimonial featured status updated!");
+      setTestimonials(prev => prev.map(t => t.id === id ? { ...t, isFeatured: !t.isFeatured } : t));
+    } catch (err) {
+      console.error("Error toggling testimonial feature status:", err);
+      toast.error("Failed to update testimonial status");
+    }
+  };
+
+  const handleDeleteTestimonial = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this testimonial? This action cannot be undone.")) {
+      return;
+    }
+    try {
+      await apiClient.delete(`/api/testimonials/${id}`);
+      toast.success("Testimonial deleted successfully!");
+      setTestimonials(prev => prev.filter(t => t.id !== id));
+    } catch (err) {
+      console.error("Error deleting testimonial:", err);
+      toast.error("Failed to delete testimonial");
     }
   };
 
@@ -170,6 +223,23 @@ export default function VendorDashboard() {
     <CloudsBackground>
       <PageTransition className="flex-1 pt-32 relative font-sans w-full min-h-screen py-12 px-4 sm:px-6 lg:px-8 z-10">
         <div className="max-w-6xl mx-auto space-y-8">
+
+          {/* Suspension Banner */}
+          {vendorProfile && vendorProfile.karma < 2.0 && (
+            <div className="bg-red-50 border-2 border-red-200 rounded-3xl p-6 flex items-start gap-4 shadow-sm relative overflow-hidden animate-pulse">
+              <div className="p-3 bg-red-100 rounded-2xl text-red-600">
+                <ShieldAlert size={28} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-red-800">Account Suspended</h3>
+                <p className="text-red-700 text-sm mt-1">
+                  Your vendor account has been suspended because your Karma score ({vendorProfile.karma.toFixed(2)}) is below the minimum required threshold of 2.00. 
+                  You will not receive new bookings or show up in search results until this is resolved. 
+                  Please contact support or resolve any outstanding complaints.
+                </p>
+              </div>
+            </div>
+          )}
           
           {/* Vendor Header */}
           <div className="bg-white/70 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
@@ -249,7 +319,12 @@ export default function VendorDashboard() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider flex items-center gap-1"><Star size={12}/> Karma Score</p>
-                  <p className="text-2xl font-extrabold text-indigo-600">{vendorProfile?.karma || '0.0'}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-2xl font-extrabold text-indigo-600">
+                      {typeof vendorProfile?.karma === 'number' ? vendorProfile.karma.toFixed(2) : (vendorProfile?.karma || '5.00')}
+                    </span>
+                    {getTrustBadge(vendorProfile?.karma !== undefined && vendorProfile?.karma !== null ? vendorProfile.karma : 5.0)}
+                  </div>
                 </div>
                 <div>
                   <p className="text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider">Verification Status</p>
@@ -406,50 +481,142 @@ export default function VendorDashboard() {
             </DialogContent>
           </Dialog>
 
-          {/* Services Grid */}
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">Your Services <span className="bg-blue-100 text-blue-700 text-sm py-0.5 px-2.5 rounded-full">{services.length}</span></h2>
-            
-            {services.length === 0 ? (
-              <div className="bg-white/60 backdrop-blur-md rounded-3xl border border-white p-12 text-center">
-                <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Plus size={32} className="text-blue-400" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-800">No services listed yet</h3>
-                <p className="text-gray-500 mt-2 max-w-md mx-auto">Start reaching customers by adding your first service offering. It will be reviewed by our admin team shortly after submission.</p>
-                <button onClick={() => setShowAddForm(true)} className="mt-6 px-6 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-50 transition-all shadow-sm">
-                  List New Service
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {services.map((service) => (
-                  <div key={service.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_4px_20px_rgb(0,0,0,0.06)] transition-all flex flex-col h-full group">
-                    <div className="flex justify-between items-start mb-4">
-                      {getStatusBadge(service.verificationStatus)}
-                      <span className="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-md">{service.category}</span>
-                    </div>
-                    
-                    <h3 className="font-bold text-gray-900 text-lg mb-2 group-hover:text-blue-600 transition-colors">{service.name}</h3>
-                    <p className="text-sm text-gray-500 mb-6 line-clamp-3 flex-1">{service.description}</p>
-                    
-                    <div className="pt-4 border-t border-gray-100 mt-auto grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider">Price</p>
-                        <p className="font-bold text-gray-900 flex items-center"><IndianRupee size={14} className="mr-0.5 text-gray-500"/>{service.price}</p>
-                      </div>
-                      {service.location && (
-                        <div>
-                          <p className="text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider">Location</p>
-                          <p className="font-bold text-gray-900 text-sm truncate flex items-center"><MapPin size={14} className="mr-1 text-gray-500"/>{service.location}</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+          {/* Navigation Tabs */}
+          <div className="flex border-b border-gray-200/60 pb-px gap-6">
+            <button
+              onClick={() => setActiveTab('services')}
+              className={`pb-4 text-lg font-bold transition-all relative ${
+                activeTab === 'services'
+                  ? 'text-blue-600 font-extrabold'
+                  : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              Services ({services.length})
+              {activeTab === 'services' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('testimonials')}
+              className={`pb-4 text-lg font-bold transition-all relative ${
+                activeTab === 'testimonials'
+                  ? 'text-blue-600 font-extrabold'
+                  : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              Testimonials ({testimonials.length})
+              {activeTab === 'testimonials' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />
+              )}
+            </button>
           </div>
+
+          {/* Active Tab Panel */}
+          {activeTab === 'services' ? (
+            <div className="space-y-6">
+              {services.length === 0 ? (
+                <div className="bg-white/60 backdrop-blur-md rounded-3xl border border-white p-12 text-center">
+                  <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Plus size={32} className="text-blue-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-800">No services listed yet</h3>
+                  <p className="text-gray-500 mt-2 max-w-md mx-auto">Start reaching customers by adding your first service offering. It will be reviewed by our admin team shortly after submission.</p>
+                  <button onClick={() => setShowAddForm(true)} className="mt-6 px-6 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-50 transition-all shadow-sm">
+                    List New Service
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {services.map((service) => (
+                    <div key={service.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_4px_20px_rgb(0,0,0,0.06)] transition-all flex flex-col h-full group">
+                      <div className="flex justify-between items-start mb-4">
+                        {getStatusBadge(service.verificationStatus)}
+                        <span className="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-md">{service.category}</span>
+                      </div>
+                      
+                      <h3 className="font-bold text-gray-900 text-lg mb-2 group-hover:text-blue-600 transition-colors">{service.name}</h3>
+                      <p className="text-sm text-gray-500 mb-6 line-clamp-3 flex-1">{service.description}</p>
+                      
+                      <div className="pt-4 border-t border-gray-100 mt-auto grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider">Price</p>
+                          <p className="font-bold text-gray-900 flex items-center"><IndianRupee size={14} className="mr-0.5 text-gray-500"/>{service.price}</p>
+                        </div>
+                        {service.location && (
+                          <div>
+                            <p className="text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider">Location</p>
+                            <p className="font-bold text-gray-900 text-sm truncate flex items-center"><MapPin size={14} className="mr-1 text-gray-500"/>{service.location}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {testimonials.length === 0 ? (
+                <div className="bg-white/60 backdrop-blur-md rounded-3xl border border-white p-12 text-center">
+                  <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Star size={32} className="text-amber-400" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-800">No testimonials yet</h3>
+                  <p className="text-gray-500 mt-2 max-w-md mx-auto">When customers complete bookings and recommend your services, their testimonials will appear here.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {testimonials.map((testimonial) => (
+                    <div key={testimonial.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_4px_20px_rgb(0,0,0,0.06)] transition-all flex flex-col justify-between group relative overflow-hidden">
+                      <div>
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <h4 className="font-bold text-gray-900">{testimonial.customerName}</h4>
+                            <p className="text-xs text-gray-400 font-semibold">{testimonial.createdAt ? new Date(testimonial.createdAt).toLocaleDateString() : ''}</p>
+                          </div>
+                          <span className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1 ${testimonial.isFeatured ? 'bg-amber-50 text-amber-600 border border-amber-200' : 'bg-gray-50 text-gray-400 border border-gray-200'}`}>
+                            <Star size={12} fill={testimonial.isFeatured ? 'currentColor' : 'none'} />
+                            {testimonial.isFeatured ? 'Featured' : 'Standard'}
+                          </span>
+                        </div>
+
+                        {testimonial.serviceName && (
+                          <p className="text-xs text-blue-600 font-bold mb-3 flex items-center gap-1">
+                            <Briefcase size={12} /> Service: {testimonial.serviceName}
+                          </p>
+                        )}
+
+                        <p className="text-sm text-gray-600 italic leading-relaxed mb-6 font-medium">
+                          "{testimonial.testimonialText}"
+                        </p>
+                      </div>
+
+                      <div className="pt-4 border-t border-gray-100 flex justify-end gap-3 mt-auto">
+                        <button
+                          onClick={() => handleToggleFeature(testimonial.id)}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                            testimonial.isFeatured
+                              ? 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100/50'
+                              : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          <Star size={14} fill={testimonial.isFeatured ? 'currentColor' : 'none'} />
+                          {testimonial.isFeatured ? 'Unfeature' : 'Feature on Profile'}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTestimonial(testimonial.id)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100/70 border border-red-100 text-red-700 rounded-xl text-xs font-bold transition-all"
+                        >
+                          <Trash2 size={14} />
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
         </div>
       </PageTransition>
