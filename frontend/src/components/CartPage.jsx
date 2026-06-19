@@ -83,7 +83,8 @@ export default function CartPage() {
         customerId: customerProfile.id,
         startDt: item.startDt,
         endDt: item.endDt,
-        bookingAmount: item.service.price
+        bookingAmount: item.service.price,
+        paymentMethod: 'WALLET'
       }));
 
       await apiClient.post('/api/bookings/batch', payload);
