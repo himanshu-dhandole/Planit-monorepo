@@ -11,6 +11,7 @@ import SignUp from './components/SignUp';
 import SignIn from './components/SignIn';
 import Navbar from './components/Navbar';
 import Profile from './components/Profile';
+import AboutPage from './components/AboutPage';
 import Sandbox from './components/Sandbox';
 import WalletPage from './components/WalletPage';
 import VendorOnboard from './components/VendorOnboard';
@@ -35,6 +36,7 @@ function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<Layout><LandingPage /></Layout>} />
+            <Route path="/about" element={<Layout><AboutPage /></Layout>} />
             
             {/* Auth Routes with seamless Cloud Background */}
             <Route element={<AuthLayout />}>

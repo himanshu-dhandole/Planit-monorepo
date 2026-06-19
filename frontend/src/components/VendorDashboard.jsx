@@ -8,6 +8,12 @@ import { Widget } from '@uploadcare/react-widget';
 import CloudsBackground from './CloudsBackground';
 import CustomLoader from './CustomLoader';
 import PageTransition from './PageTransition';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
 
 export default function VendorDashboard() {
   const { user, customerProfile, refreshUser } = useContext(AuthContext);
@@ -15,6 +21,7 @@ export default function VendorDashboard() {
   const [hasRefreshed, setHasRefreshed] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [vendorProfile, setVendorProfile] = useState(null);
   const [services, setServices] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -31,27 +38,37 @@ export default function VendorDashboard() {
   const [availableLocations, setAvailableLocations] = useState([{ city: '', state: '' }]);
   const [photos, setPhotos] = useState([]);
 
-  const fetchVendorData = async () => {
+  const fetchVendorData = async (refresh = false) => {
     if (!customerProfile?.id) return;
     
-    setLoading(true);
+    if (refresh) setIsRefreshing(true);
+    else setLoading(true);
     try {
-      // 1. Fetch Vendor Profile
-      const vendorRes = await apiClient.get(`/api/vendor/customer/${customerProfile.id}`);
-      const vendor = vendorRes.data?.data || vendorRes.data;
-      setVendorProfile(vendor);
+      if (vendorProfile?.id) {
+        // Parallelize for fast refresh
+        const [vendorRes, servicesRes] = await Promise.all([
+          apiClient.get(`/api/vendor/customer/${customerProfile.id}`),
+          apiClient.get(`/api/vendor/services/${vendorProfile.id}?page=0&size=100`)
+        ]);
+        setVendorProfile(vendorRes.data?.data || vendorRes.data);
+        setServices(servicesRes.data?.data?.content || servicesRes.data?.content || []);
+      } else {
+        const vendorRes = await apiClient.get(`/api/vendor/customer/${customerProfile.id}`);
+        const vendor = vendorRes.data?.data || vendorRes.data;
+        setVendorProfile(vendor);
 
-      if (vendor?.id) {
-        // 2. Fetch Services
-        const servicesRes = await apiClient.get(`/api/vendor/services/${vendor.id}?page=0&size=100`);
-        const servicesData = servicesRes.data?.data?.content || servicesRes.data?.content || [];
-        setServices(servicesData);
+        if (vendor?.id) {
+          const servicesRes = await apiClient.get(`/api/vendor/services/${vendor.id}?page=0&size=100`);
+          const servicesData = servicesRes.data?.data?.content || servicesRes.data?.content || [];
+          setServices(servicesData);
+        }
       }
     } catch (error) {
       console.error("Error fetching vendor data:", error);
       toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -118,7 +135,7 @@ export default function VendorDashboard() {
       setFormData({ name: '', description: '', price: '', category: '', location: '' });
       setAvailableLocations([{ city: '', state: '' }]);
       setPhotos([]);
-      fetchVendorData(); // Refresh list
+      fetchVendorData(true); // Refresh list smoothly
     } catch (err) {
       console.error("Error adding service:", err);
       toast.error(err.response?.data?.message || "Failed to add service");
@@ -177,11 +194,11 @@ export default function VendorDashboard() {
             </div>
 
             <button
-              onClick={() => setShowAddForm(!showAddForm)}
+              onClick={() => setShowAddForm(true)}
               className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-sm hover:shadow-md"
             >
-              {showAddForm ? <XCircle size={20} /> : <Plus size={20} />}
-              {showAddForm ? 'Cancel' : 'List New Service'}
+              <Plus size={20} />
+              List New Service
             </button>
           </div>
 
@@ -249,11 +266,13 @@ export default function VendorDashboard() {
             )}
           </div>
 
-          {/* Add Service Form */}
-          {showAddForm && (
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg border border-white p-6 md:p-8 animate-in fade-in slide-in-from-top-4 duration-300">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Create New Service</h2>
-              <form onSubmit={handleAddService} className="space-y-5">
+          {/* Add Service Form Modal */}
+          <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
+            <DialogContent className="w-[95vw] sm:max-w-3xl max-h-[90vh] overflow-y-auto custom-scrollbar bg-white/95 backdrop-blur-xl border-white/40 shadow-2xl rounded-3xl p-6 md:p-8">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold text-gray-900 mb-2">Create New Service</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleAddService} className="space-y-5 mt-2">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-1">
                     <label className="text-sm font-semibold text-gray-700">Service Name *</label>
@@ -374,15 +393,18 @@ export default function VendorDashboard() {
                   </div>
                 </div>
 
-                <div className="pt-4 flex justify-end">
+                <div className="pt-4 flex justify-end gap-3">
+                  <button type="button" onClick={() => setShowAddForm(false)} className="px-6 py-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl font-bold transition-all shadow-sm">
+                    Cancel
+                  </button>
                   <button type="submit" disabled={formLoading} className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-sm flex items-center gap-2 disabled:opacity-70">
                     {formLoading ? <Loader2 className="animate-spin" size={20} /> : <CheckCircle size={20} />}
-                    Submit for Approval
+                    Submit
                   </button>
                 </div>
               </form>
-            </div>
-          )}
+            </DialogContent>
+          </Dialog>
 
           {/* Services Grid */}
           <div className="space-y-6">

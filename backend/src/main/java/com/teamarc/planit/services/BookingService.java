@@ -66,15 +66,16 @@ public class BookingService {
         Booking savedBooking = bookingRepository.save(booking);
 
         Wallet wallet = walletRepository.findByUser_Id(customer.getUser().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Wallet not found for customer with id: " + customer.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Wallet not found for customer with id: " + customer.getId()));
 
-        if(BigDecimal.valueOf(wallet.getBalance()).compareTo(dto.getBookingAmount()) < 0) {
+        if (BigDecimal.valueOf(wallet.getBalance()).compareTo(dto.getBookingAmount()) < 0) {
             throw new RuntimeException("Insufficient balance in wallet for customer with id: " + customer.getId());
         }
 
         // Creating Payment
-        paymentService.createPayment(booking.getId(), "PAY_" + booking.getId() + "_" + System.currentTimeMillis(), PaymentStatus.PENDING);
-
+        paymentService.createPayment(booking.getId(), "PAY_" + booking.getId() + "_" + System.currentTimeMillis(),
+                PaymentStatus.PENDING);
 
         // TODO Notify Vendor
 
@@ -98,7 +99,6 @@ public class BookingService {
 
         return modelMapper.map(saved, BookingResponseDTO.class);
     }
-
 
     // Reject Booking Request By Vendor
 
@@ -134,8 +134,6 @@ public class BookingService {
         return modelMapper.map(saved, BookingResponseDTO.class);
     }
 
-
-
     // Cancel Booking From Customer After Accepting
 
     public BookingResponseDTO cancelBookingRequestAfterAccepting(Long id) {
@@ -152,8 +150,6 @@ public class BookingService {
 
         return modelMapper.map(saved, BookingResponseDTO.class);
     }
-
-
 
     // Cancel Booking From Vendor After Accepting
 
@@ -172,14 +168,7 @@ public class BookingService {
         return modelMapper.map(saved, BookingResponseDTO.class);
     }
 
-
     // Cancel all Booking Request By Vendor
-
-
-
-
-
-
 
     @Transactional
     public BookingResponseDTO updateBookingStatus(Long id, BookingStatus status) {
@@ -200,14 +189,16 @@ public class BookingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + customerId));
 
         Wallet wallet = walletRepository.findByUser_Id(customer.getUser().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Wallet not found for customer with id: " + customerId));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Wallet not found for customer with id: " + customerId));
 
         BigDecimal totalAmount = dtos.stream()
                 .map(BookingRequestDTO::getBookingAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         if (BigDecimal.valueOf(wallet.getBalance()).compareTo(totalAmount) < 0) {
-            throw new RuntimeException("Insufficient balance in wallet for total booking amount. Required: " + totalAmount + ", Available: " + wallet.getBalance());
+            throw new RuntimeException("Insufficient balance in wallet for total booking amount. Required: "
+                    + totalAmount + ", Available: " + wallet.getBalance());
         }
 
         java.util.List<BookingResponseDTO> responses = new java.util.ArrayList<>();
@@ -219,7 +210,8 @@ public class BookingService {
             Event event = eventRepository.findById(dto.getEventId())
                     .orElseThrow(() -> new ResourceNotFoundException("Event not found with id: " + dto.getEventId()));
             Services services = servicesRepository.findById(dto.getServiceId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Service not found with id: " + dto.getServiceId()));
+                    .orElseThrow(
+                            () -> new ResourceNotFoundException("Service not found with id: " + dto.getServiceId()));
 
             Booking booking = new Booking();
             booking.setEvent(event);
@@ -232,7 +224,8 @@ public class BookingService {
 
             Booking savedBooking = bookingRepository.save(booking);
 
-            paymentService.createPayment(savedBooking.getId(), "PAY_" + savedBooking.getId() + "_" + System.currentTimeMillis(), PaymentStatus.PENDING);
+            paymentService.createPayment(savedBooking.getId(),
+                    "PAY_" + savedBooking.getId() + "_" + System.currentTimeMillis(), PaymentStatus.PENDING);
 
             responses.add(modelMapper.map(savedBooking, BookingResponseDTO.class));
         }
@@ -253,6 +246,5 @@ public class BookingService {
         return bookingRepository.findAllByCustomer_Id(customer.getId(), PageRequest.of(page, size))
                 .map(booking -> modelMapper.map(booking, BookingResponseDTO.class));
     }
-
 
 }
