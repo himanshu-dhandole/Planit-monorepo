@@ -21,13 +21,14 @@ export default function ChatPage() {
   const [loadingConv, setLoadingConv] = useState(true);
   const [loadingMsgs, setLoadingMsgs] = useState(false);
 
-  const [phoneSearch, setPhoneSearch] = useState('');
-  const [searchResult, setSearchResult] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
 
   const stompClientRef = useRef(null);
   const subscriptionRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
   useEffect(() => {
     fetchConversations();
@@ -190,33 +191,41 @@ export default function ChatPage() {
   };
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   };
 
-  const handlePhoneSearch = async (e) => {
+  const handleSearchQuery = async (e) => {
     e.preventDefault();
-    if (!phoneSearch.trim()) return;
+    if (!searchQuery.trim()) return;
     setSearching(true);
-    setSearchResult(null);
+    setSearchResults([]);
     try {
-      const res = await apiClient.get(`/api/chat/search?phoneNumber=${encodeURIComponent(phoneSearch.trim())}`);
-      const data = res.data?.data;
-      setSearchResult(data);
+      const res = await apiClient.get(`/api/chat/search?query=${encodeURIComponent(searchQuery.trim())}`);
+      const data = Array.isArray(res.data?.data) ? res.data.data : [];
+      setSearchResults(data);
+      if (data.length === 0) {
+        toast.info("No matching vendors, services, or customers found");
+      }
     } catch (err) {
-      toast.error(err.response?.data?.error?.message || err.response?.data?.message || "User not found with this phone number");
+      toast.error(err.response?.data?.error?.message || err.response?.data?.message || "Search failed");
     } finally {
       setSearching(false);
     }
   };
 
-  const handleStartSearchChat = async () => {
-    if (!searchResult) return;
+  const handleStartSearchChat = async (result) => {
+    if (!result) return;
     try {
       const payload = {};
-      if (searchResult.type === 'VENDOR') {
-        payload.vendorId = searchResult.id;
+      if (result.type === 'VENDOR') {
+        payload.vendorId = result.id;
+        if (result.serviceId) {
+          payload.serviceId = result.serviceId;
+        }
       } else {
-        payload.customerId = searchResult.id;
+        payload.customerId = result.id;
       }
       const res = await apiClient.post('/api/chat/conversations', payload);
       const newConv = res.data?.data;
@@ -229,23 +238,53 @@ export default function ChatPage() {
         });
         setActiveConv(newConv);
       }
-      setPhoneSearch('');
-      setSearchResult(null);
+      setSearchQuery('');
+      setSearchResults([]);
       toast.success("Conversation started!");
     } catch (err) {
       toast.error("Failed to start conversation");
     }
   };
 
+  const getAvatarGradient = (name) => {
+    const colors = [
+      'from-indigo-500 to-purple-600',
+      'from-blue-500 to-indigo-600',
+      'from-purple-500 to-pink-600',
+      'from-teal-400 to-emerald-600',
+      'from-rose-500 to-orange-600',
+    ];
+    if (!name) return colors[0];
+    const index = name.charCodeAt(0) % colors.length;
+    return colors[index];
+  };
+
+  const filteredConversations = conversations.filter(conv => {
+    const displayName = user.id === conv.customerId ? conv.vendorBusinessName : conv.customerName;
+    const serviceName = conv.serviceName || '';
+    const lastMessage = conv.lastMessage || '';
+    const q = searchQuery.toLowerCase();
+    return (
+      displayName?.toLowerCase().includes(q) ||
+      serviceName?.toLowerCase().includes(q) ||
+      lastMessage?.toLowerCase().includes(q)
+    );
+  });
+
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#CBE4F9] to-[#E3F2FC] flex items-center justify-center p-4">
         <div className="bg-white/50 backdrop-blur-xl border border-white/60 p-8 rounded-[2rem] text-center max-w-sm">
-          <p className="text-gray-800 font-bold mb-4">Please sign in to access your chats</p>
+          <p className="text-gray-800 font-bold mb-4 font-sans">Please sign in to access your chats</p>
         </div>
       </div>
     );
   }
+
+  // Active header display name
+  const activeHeaderName = activeConv
+    ? (user.id === activeConv.customerId ? activeConv.vendorBusinessName : activeConv.customerName)
+    : '';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#CBE4F9] to-[#E3F2FC] pt-28 pb-10 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans flex items-center justify-center">
@@ -257,34 +296,59 @@ export default function ChatPage() {
         <div className="w-1/3 border-r border-white/40 flex flex-col h-full bg-white/20">
           <div className="p-6 border-b border-white/40">
             <h2 className="text-xl font-bold text-gray-900 font-serif mb-3">Conversations</h2>
-            <form onSubmit={handlePhoneSearch} className="flex gap-2 mb-2">
+            <form onSubmit={handleSearchQuery} className="flex gap-2 mb-2">
               <input
                 type="text"
-                value={phoneSearch}
-                onChange={(e) => setPhoneSearch(e.target.value)}
-                placeholder="Search phone number..."
-                className="flex-grow px-3 py-2 bg-white/70 border border-gray-200/60 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-xs font-semibold text-gray-800 placeholder-gray-400"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search name, services, number..."
+                className="flex-grow px-3 py-2 bg-white/70 border border-gray-200/60 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-xs font-semibold text-gray-800 placeholder-gray-400"
               />
               <button
                 type="submit"
                 disabled={searching}
-                className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition disabled:opacity-50"
+                className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition disabled:opacity-50 shadow-sm"
               >
                 {searching ? '...' : 'Search'}
               </button>
             </form>
-            {searchResult && (
-              <div className="mt-2 p-3 bg-white/80 border border-blue-100 rounded-xl flex items-center justify-between text-xs">
-                <div className="overflow-hidden mr-2">
-                  <p className="font-bold text-gray-800 truncate">{searchResult.name}</p>
-                  <p className="text-[10px] text-gray-400 font-semibold truncate">{searchResult.type} • {searchResult.phoneNumber}</p>
+            
+            {/* Search results list */}
+            {searchResults.length > 0 && (
+              <div className="mt-3 space-y-2 max-h-48 overflow-y-auto pr-1">
+                <div className="flex justify-between items-center text-[10px] text-indigo-600 font-bold uppercase tracking-wider px-1">
+                  <span>Search Results</span>
+                  <button 
+                    onClick={() => setSearchResults([])} 
+                    className="hover:text-red-500 transition text-[9px] uppercase font-bold"
+                  >
+                    Clear
+                  </button>
                 </div>
-                <button
-                  onClick={handleStartSearchChat}
-                  className="px-2.5 py-1 bg-green-600 hover:bg-green-700 text-white text-[10px] font-bold rounded-lg transition shrink-0"
-                >
-                  Chat
-                </button>
+                {searchResults.map((result, idx) => (
+                  <div 
+                    key={`${result.type}-${result.id}-${result.serviceId || idx}`}
+                    className="p-3 bg-white/95 hover:bg-white border border-white/60 shadow-sm rounded-xl flex items-center justify-between text-xs transition duration-150"
+                  >
+                    <div className="overflow-hidden mr-2">
+                      <p className="font-bold text-gray-900 truncate">{result.name}</p>
+                      <p className="text-[10px] text-gray-400 font-semibold truncate">
+                        {result.type} • {result.phoneNumber}
+                      </p>
+                      {result.serviceName && (
+                        <span className="inline-block mt-0.5 px-1.5 py-0.5 bg-indigo-50 text-indigo-600 text-[9px] font-bold rounded">
+                          Service: {result.serviceName}
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => handleStartSearchChat(result)}
+                      className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold rounded-xl transition-all shadow-sm hover:shadow shrink-0"
+                    >
+                      Chat
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -292,15 +356,14 @@ export default function ChatPage() {
           <div className="flex-1 overflow-y-auto p-3 space-y-2">
             {loadingConv ? (
               <div className="flex justify-center py-10"><CustomLoader /></div>
-            ) : conversations.length === 0 ? (
+            ) : filteredConversations.length === 0 ? (
               <div className="text-center py-20 text-gray-400 text-sm">
                 <MessageSquare className="mx-auto mb-2 opacity-40" size={32} />
                 No active conversations
               </div>
             ) : (
-              conversations.map((conv) => {
+              filteredConversations.map((conv) => {
                 const isActive = activeConv?.id === conv.id;
-                const isUserVendor = user.roles.includes('VENDOR') && conv.vendorBusinessName;
                 const displayName = user.id === conv.customerId ? conv.vendorBusinessName : conv.customerName;
 
                 return (
@@ -309,7 +372,7 @@ export default function ChatPage() {
                     onClick={() => setActiveConv(conv)}
                     className={`p-4 rounded-2xl cursor-pointer transition-all duration-200 border ${
                       isActive 
-                        ? 'bg-white text-gray-900 shadow-sm border-white/80' 
+                        ? 'bg-white text-gray-900 shadow-md border-white/80 scale-[1.01]' 
                         : 'border-transparent hover:bg-white/30 text-gray-600 hover:text-gray-900'
                     }`}
                   >
@@ -323,7 +386,7 @@ export default function ChatPage() {
                     </div>
                     
                     <div className="flex items-center gap-1.5 mb-1.5">
-                      <span className="inline-flex items-center gap-0.5 px-2 py-0.5 bg-gray-100 rounded-md text-[10px] font-bold text-gray-500">
+                      <span className="inline-flex items-center gap-0.5 px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-md text-[9px] font-bold">
                         <Tag size={10} />
                         {conv.serviceName}
                       </span>
@@ -346,12 +409,12 @@ export default function ChatPage() {
               {/* Active conversation details header */}
               <div className="p-6 border-b border-white/40 flex items-center justify-between bg-white/10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-400 to-indigo-500 flex items-center justify-center text-white text-sm font-bold shadow-sm">
-                    {activeConv.vendorBusinessName?.charAt(0) || 'V'}
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-tr ${getAvatarGradient(activeHeaderName)} flex items-center justify-center text-white text-sm font-bold shadow-sm`}>
+                    {activeHeaderName?.charAt(0) || 'U'}
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-900 text-sm">
-                      {user.id === activeConv.customerId ? activeConv.vendorBusinessName : activeConv.customerName}
+                      {activeHeaderName}
                     </h3>
                     <p className="text-[11px] font-semibold text-gray-500">
                       Service: {activeConv.serviceName}
@@ -361,26 +424,29 @@ export default function ChatPage() {
               </div>
 
               {/* Message Thread list */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6 space-y-4">
                 {loadingMsgs ? (
                   <div className="flex justify-center py-10"><CustomLoader /></div>
                 ) : (
                   messages.map((msg) => {
-                    const isOwnMessage = msg.senderId === user.id;
+                    const isOwnMessage = Number(msg.senderId) === Number(user.id);
                     return (
-                      <div
+                      <motion.div
                         key={msg.id}
+                        initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ duration: 0.25, ease: 'easeOut' }}
                         className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
                       >
                         <div
-                          className={`max-w-[70%] rounded-2xl px-4 py-3 shadow-[0_2px_10px_rgba(0,0,0,0.02)] ${
+                          className={`max-w-[70%] rounded-2xl px-4 py-3 shadow-md ${
                             isOwnMessage
-                              ? 'bg-blue-600 text-white rounded-br-none'
-                              : 'bg-white text-gray-800 rounded-bl-none border border-gray-100'
+                              ? 'bg-gradient-to-tr from-indigo-600 to-blue-500 text-white rounded-br-none'
+                              : 'bg-white text-gray-800 rounded-bl-none border border-white/50 shadow-sm'
                           }`}
                         >
                           {!isOwnMessage && (
-                            <p className="text-[10px] font-bold text-blue-500 mb-0.5">
+                            <p className="text-[10px] font-bold text-indigo-500 mb-0.5">
                               {msg.senderName}
                             </p>
                           )}
@@ -389,7 +455,7 @@ export default function ChatPage() {
                             {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   })
                 )}
@@ -403,12 +469,12 @@ export default function ChatPage() {
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
                   placeholder="Type a message..."
-                  className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm placeholder-gray-400 font-medium"
+                  className="flex-1 px-4 py-3 bg-white border border-gray-200/60 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm placeholder-gray-400 font-medium shadow-sm"
                 />
                 <button
                   type="submit"
                   disabled={!messageInput.trim()}
-                  className="p-3.5 bg-[#111111] hover:bg-black text-white rounded-2xl transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center shrink-0"
+                  className="p-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center shrink-0"
                 >
                   <Send size={16} />
                 </button>
@@ -416,7 +482,7 @@ export default function ChatPage() {
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-gray-400 p-8 text-center">
-              <MessageSquare className="opacity-30 mb-3" size={48} />
+              <MessageSquare className="opacity-30 mb-3 text-indigo-500" size={48} />
               <h3 className="font-bold text-gray-700 text-lg mb-1 font-serif">No chat selected</h3>
               <p className="text-sm">Select a conversation from the sidebar to start messaging.</p>
             </div>
