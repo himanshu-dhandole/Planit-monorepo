@@ -46,6 +46,14 @@ export default function ServiceDetails() {
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
 
+  // Vendor & Testimonials states
+  const [vendor, setVendor] = useState(null);
+  const [testimonials, setTestimonials] = useState([]);
+  const [showTestimonialForm, setShowTestimonialForm] = useState(false);
+  const [testimonialText, setTestimonialText] = useState("");
+  const [testimonialLoading, setTestimonialLoading] = useState(false);
+  const [hasCompletedBooking, setHasCompletedBooking] = useState(false);
+
   // Event modal states
   const [showEventModal, setShowEventModal] = useState(false);
   const [events, setEvents] = useState([]);
@@ -246,6 +254,66 @@ export default function ServiceDetails() {
     fetchService();
   }, [id]);
 
+  useEffect(() => {
+    if (!service?.vendorId) return;
+
+    const fetchVendorAndTestimonials = async () => {
+      try {
+        const [vendorRes, testimonialsRes] = await Promise.all([
+          apiClient.get(`/api/public/vendor/${service.vendorId}`),
+          apiClient.get(`/api/testimonials/vendor/${service.vendorId}/featured`)
+        ]);
+        setVendor(vendorRes.data?.data || vendorRes.data);
+        setTestimonials(testimonialsRes.data?.data || testimonialsRes.data || []);
+      } catch (err) {
+        console.error("Error loading vendor or testimonials:", err);
+      }
+    };
+
+    const checkCompletedBooking = async () => {
+      if (!customerProfile?.id) return;
+      try {
+        const res = await apiClient.get(`/api/customer/bookings/${customerProfile.id}?page=0&size=100`);
+        const bookingsList = res.data?.data?.content || res.data?.content || [];
+        const hasCompleted = bookingsList.some(b => b.services?.vendorId === service.vendorId && b.status === 'COMPLETED');
+        setHasCompletedBooking(hasCompleted);
+      } catch (err) {
+        console.error("Error checking completed bookings:", err);
+      }
+    };
+
+    fetchVendorAndTestimonials();
+    checkCompletedBooking();
+  }, [service, customerProfile]);
+
+  const handleSubmitTestimonial = async (e) => {
+    e.preventDefault();
+    if (!testimonialText.trim()) {
+      toast.error("Please write a recommendation comment.");
+      return;
+    }
+    try {
+      setTestimonialLoading(true);
+      const payload = {
+        vendorId: service.vendorId,
+        serviceId: service.id,
+        testimonialText: testimonialText
+      };
+      await apiClient.post('/api/testimonials', payload);
+      toast.success("Thank you! Your testimonial has been submitted to the vendor.");
+      setTestimonialText("");
+      setShowTestimonialForm(false);
+      
+      const res = await apiClient.get(`/api/testimonials/vendor/${service.vendorId}/featured`);
+      setTestimonials(res.data?.data || res.data || []);
+    } catch (err) {
+      console.error("Error submitting testimonial:", err);
+      toast.error(err.response?.data?.message || "Failed to submit testimonial.");
+    } finally {
+      setTestimonialLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <CloudsBackground>
@@ -340,6 +408,25 @@ export default function ServiceDetails() {
                 <MapPin size={16} className="text-indigo-400" />
                 <span>{locationText}</span>
               </div>
+              {vendor && (
+                <>
+                  <span className="text-slate-300">•</span>
+                  <div className="flex items-center gap-1.5 text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full font-bold text-xs">
+                    <Star size={14} fill="currentColor" className="text-indigo-500" />
+                    Reputation: {vendor.karma ? vendor.karma.toFixed(2) : "5.00"}
+                  </div>
+                  {vendor.karma >= 4.5 && (
+                    <span className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                      GOLD TRUSTED
+                    </span>
+                  )}
+                  {vendor.karma >= 4.0 && vendor.karma < 4.5 && (
+                    <span className="bg-gradient-to-r from-slate-400 to-slate-300 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                      SILVER TRUSTED
+                    </span>
+                  )}
+                </>
+              )}
             </motion.div>
           </div>
 
@@ -535,6 +622,180 @@ export default function ServiceDetails() {
                     </button>
                   </div>
                 </motion.div>
+              </motion.div>
+
+              {/* Testimonials & Recommendations Card */}
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                    <Sparkles className="text-indigo-500 animate-pulse" size={22} />
+                    Customer Recommendations
+                  </h3>
+                  {hasCompletedBooking && !showTestimonialForm && (
+                    <button
+                      onClick={() => setShowTestimonialForm(true)}
+                      className="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold rounded-xl transition-all border border-indigo-100"
+                    >
+                      + Recommend Vendor
+                    </button>
+                  )}
+                </div>
+
+                {/* Recommendation input form */}
+                {showTestimonialForm && (
+                  <form onSubmit={handleSubmitTestimonial} className="bg-slate-50 p-6 rounded-2xl border border-slate-200 mb-6 space-y-4">
+                    <h4 className="text-sm font-bold text-slate-800">Write a Recommendation</h4>
+                    <p className="text-xs text-slate-500">
+                      Share your experience working with this vendor. Testimonials are featured on their public profile.
+                    </p>
+                    <textarea
+                      value={testimonialText}
+                      onChange={(e) => setTestimonialText(e.target.value)}
+                      required
+                      maxLength={1000}
+                      rows={4}
+                      placeholder="Would you recommend this vendor's services to other customers? Why?"
+                      className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm font-medium resize-none shadow-sm"
+                    />
+                    <div className="flex justify-end gap-2 text-xs">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowTestimonialForm(false);
+                          setTestimonialText("");
+                        }}
+                        className="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold transition-all"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={testimonialLoading}
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-all disabled:opacity-75 flex items-center gap-1.5"
+                      >
+                        {testimonialLoading ? <Loader2 size={14} className="animate-spin" /> : null}
+                        Submit Recommendation
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {/* Testimonial slider/carousel */}
+                {testimonials.length === 0 ? (
+                  <div className="text-center p-8 bg-slate-50 rounded-2xl border border-slate-100">
+                    <p className="text-sm text-slate-500">No recommendations left for this vendor yet.</p>
+                    {hasCompletedBooking ? (
+                      <p className="text-xs text-indigo-600 mt-2 font-semibold">
+                        You have completed bookings with this vendor! Be the first to recommend them.
+                      </p>
+                    ) : (
+                      <p className="text-[11px] text-slate-400 mt-2">
+                        Only verified customers with completed bookings can leave recommendations.
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <Carousel
+                    className="w-full"
+                    opts={{
+                      loop: true,
+                    }}
+                    plugins={[
+                      Autoplay({
+                        delay: 5000,
+                      }),
+                    ]}
+                  >
+                    <CarouselContent>
+                      {testimonials.map((t) => (
+                        <CarouselItem key={t.id}>
+                          <div className="bg-slate-50/70 hover:bg-slate-50 border border-slate-100 rounded-2xl p-6 shadow-sm transition-all relative overflow-hidden group min-h-[140px] flex flex-col justify-between">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-50/40 rounded-full blur-2xl pointer-events-none" />
+                            <p className="text-slate-600 text-sm font-serif italic leading-relaxed relative z-10 mb-4">
+                              "{t.testimonialText}"
+                            </p>
+                            <div className="flex justify-between items-end relative z-10">
+                              <div>
+                                <span className="font-extrabold text-slate-800 text-sm block">{t.customerName}</span>
+                                <span className="text-[10px] text-slate-400 font-bold block mt-0.5">
+                                  Verified Customer • {new Date(t.createdAt).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
+                                <ShieldCheck size={10} /> Recommended
+                              </span>
+                            </div>
+                          </div>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    {testimonials.length > 1 && (
+                      <div className="flex justify-end gap-2 mt-4">
+                        <CarouselPrevious className="static translate-y-0" />
+                        <CarouselNext className="static translate-y-0" />
+                      </div>
+                    )}
+                  </Carousel>
+                )}
+              </motion.div>
+
+              {/* Customer Reviews Card */}
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white"
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                    <Star className="text-amber-500 fill-amber-500" size={22} />
+                    Customer Reviews
+                  </h3>
+                  <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded-full">
+                    {service.reviews ? service.reviews.length : 0}
+                  </span>
+                </div>
+
+                {!service.reviews || service.reviews.length === 0 ? (
+                  <div className="text-center p-8 bg-slate-50 rounded-2xl border border-slate-100">
+                    <p className="text-sm text-slate-500">No reviews left for this service yet.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {service.reviews.map((r) => (
+                      <div key={r.id} className="bg-slate-50/70 hover:bg-slate-50 border border-slate-100 rounded-2xl p-5 shadow-sm transition-all relative overflow-hidden group">
+                        <div className="flex justify-between items-start gap-4 mb-3">
+                          <div>
+                            <span className="font-bold text-slate-800 text-sm">Verified Customer</span>
+                            <span className="block text-[10px] text-slate-400 font-semibold mt-0.5">
+                              {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : 'N/A'}
+                            </span>
+                          </div>
+                          
+                          {/* Render Stars */}
+                          <div className="flex items-center gap-0.5">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star
+                                key={star}
+                                size={12}
+                                fill={star <= r.rating ? "#f59e0b" : "transparent"}
+                                className={star <= r.rating ? "text-amber-500" : "text-slate-200"}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-slate-600 text-xs font-medium leading-relaxed italic">
+                          "{r.reviewText}"
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </motion.div>
             </div>
 

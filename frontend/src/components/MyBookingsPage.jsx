@@ -14,7 +14,9 @@ import {
   CheckCircle,
   MessageSquare,
   IndianRupee,
-  ArrowRight
+  ArrowRight,
+  Star,
+  ShieldAlert
 } from 'lucide-react';
 import CloudsBackground from './CloudsBackground';
 import PageTransition from './PageTransition';
@@ -22,7 +24,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function MyBookingsPage() {
   const navigate = useNavigate();
-  const { customerProfile } = useContext(AuthContext);
+  const { user, customerProfile } = useContext(AuthContext);
   
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +43,20 @@ export default function MyBookingsPage() {
   const [disputeType, setDisputeType] = useState('PAYMENT_ISSUE');
   const [disputeReason, setDisputeReason] = useState('');
   const [disputeLoading, setDisputeLoading] = useState(false);
+
+  // Review States
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewBooking, setReviewBooking] = useState(null);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewHoverRating, setReviewHoverRating] = useState(0);
+  const [reviewText, setReviewText] = useState('');
+  const [reviewLoading, setReviewLoading] = useState(false);
+
+  // Complaint States
+  const [showComplaintModal, setShowComplaintModal] = useState(false);
+  const [complaintBooking, setComplaintBooking] = useState(null);
+  const [complaintText, setComplaintText] = useState('');
+  const [complaintLoading, setComplaintLoading] = useState(false);
 
   useEffect(() => {
     if (customerProfile?.id) {
@@ -137,6 +153,60 @@ export default function MyBookingsPage() {
       toast.error(err.response?.data?.message || "Failed to raise dispute");
     } finally {
       setDisputeLoading(false);
+    }
+  };
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    if (!reviewText.trim()) {
+      toast.error("Please enter your review comment.");
+      return;
+    }
+    try {
+      setReviewLoading(true);
+      const payload = {
+        bookingId: reviewBooking.id,
+        rating: reviewRating,
+        reviewText: reviewText
+      };
+      await apiClient.post('/api/reviews', payload);
+      toast.success("Review submitted successfully! Thank you for your feedback.");
+      setShowReviewModal(false);
+      setReviewText('');
+      setReviewRating(5);
+      fetchBookings();
+    } catch (err) {
+      console.error("Error submitting review:", err);
+      toast.error(err.response?.data?.message || "Failed to submit review");
+    } finally {
+      setReviewLoading(false);
+    }
+  };
+
+  const handleSubmitComplaint = async (e) => {
+    e.preventDefault();
+    if (!complaintText.trim()) {
+      toast.error("Please enter the complaint description.");
+      return;
+    }
+    try {
+      setComplaintLoading(true);
+      const payload = {
+        bookingId: complaintBooking.id,
+        raisedByUserId: user.id,
+        againstUserId: 0,
+        blame: "PENDING_RESOLUTION",
+        description: complaintText
+      };
+      await apiClient.post('/api/complaints', payload);
+      toast.success("Complaint filed successfully! Our admins will review and resolve it.");
+      setShowComplaintModal(false);
+      setComplaintText('');
+    } catch (err) {
+      console.error("Error raising complaint:", err);
+      toast.error(err.response?.data?.message || "Failed to file complaint");
+    } finally {
+      setComplaintLoading(false);
     }
   };
 
@@ -293,6 +363,28 @@ export default function MyBookingsPage() {
                       >
                         <MessageSquare size={16} />
                       </button>
+                      {booking.status === "COMPLETED" && (
+                        <button
+                          onClick={() => {
+                            setReviewBooking(booking);
+                            setShowReviewModal(true);
+                          }}
+                          className="px-3 py-2 bg-amber-50 hover:bg-amber-100 border border-amber-100 text-amber-600 text-xs font-bold rounded-xl transition-colors animate-fade-in"
+                        >
+                          Review
+                        </button>
+                      )}
+                      {(booking.status === "CONFIRMED" || booking.status === "COMPLETED") && (
+                        <button
+                          onClick={() => {
+                            setComplaintBooking(booking);
+                            setShowComplaintModal(true);
+                          }}
+                          className="px-3 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-100 text-rose-500 text-xs font-bold rounded-xl transition-colors"
+                        >
+                          Complaint
+                        </button>
+                      )}
                       {(booking.status === "PENDING" || booking.status === "CONFIRMED") && (
                         <button
                           onClick={() => handleCancelBooking(booking.id, booking.status)}
@@ -559,6 +651,187 @@ export default function MyBookingsPage() {
                   >
                     {disputeLoading ? <Loader2 className="animate-spin" size={16} /> : null}
                     Submit Dispute
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Review Modal */}
+      <AnimatePresence>
+        {showReviewModal && reviewBooking && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+              onClick={() => setShowReviewModal(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-lg bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2.5rem] p-8 md:p-10"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+                  <Star className="text-amber-500 fill-amber-500" size={24} /> Submit a Review
+                </h3>
+                <button 
+                  onClick={() => setShowReviewModal(false)}
+                  className="p-1.5 hover:bg-slate-100 rounded-xl transition-colors text-slate-500"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmitReview} className="space-y-6">
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs font-semibold text-slate-600">
+                  <div>Booking ID: <strong className="text-slate-800">#{reviewBooking.id}</strong></div>
+                  <div className="mt-1">Service: <strong className="text-slate-800">{reviewBooking.services?.name}</strong></div>
+                </div>
+
+                {/* Rating selection (Stars) */}
+                <div className="space-y-2 text-center">
+                  <label className="text-sm font-bold text-gray-700 block mb-2">Your Rating *</label>
+                  <div className="flex justify-center items-center gap-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setReviewRating(star)}
+                        onMouseEnter={() => setReviewHoverRating(star)}
+                        onMouseLeave={() => setReviewHoverRating(0)}
+                        className="text-slate-300 hover:scale-110 active:scale-95 transition-all"
+                      >
+                        <Star
+                          size={36}
+                          fill={star <= (reviewHoverRating || reviewRating) ? "#f59e0b" : "transparent"}
+                          className={star <= (reviewHoverRating || reviewRating) ? "text-amber-500" : "text-slate-300"}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                  <span className="text-xs font-semibold text-slate-500 block mt-1">
+                    {reviewRating === 5 ? "Excellent (5 Stars)" :
+                     reviewRating === 4 ? "Very Good (4 Stars)" :
+                     reviewRating === 3 ? "Average (3 Stars)" :
+                     reviewRating === 2 ? "Below Average (2 Stars)" :
+                     "Poor (1 Star)"}
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-700">Write your feedback *</label>
+                  <textarea 
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                    required
+                    maxLength={1000}
+                    rows="4"
+                    placeholder="Tell us what you liked or disliked about this vendor's service..."
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition-all text-sm font-medium resize-none shadow-sm"
+                  />
+                  <div className="text-[10px] text-slate-400 text-right">{reviewText.length}/1000 characters</div>
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowReviewModal(false)}
+                    className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl transition-all shadow-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={reviewLoading}
+                    className="flex-1 py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 disabled:opacity-75"
+                  >
+                    {reviewLoading ? <Loader2 className="animate-spin" size={16} /> : null}
+                    Submit Review
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Complaint Modal */}
+      <AnimatePresence>
+        {showComplaintModal && complaintBooking && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+              onClick={() => setShowComplaintModal(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-lg bg-white/90 backdrop-blur-2xl border border-white/60 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] rounded-[2.5rem] p-8 md:p-10"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+                  <ShieldAlert className="text-rose-600" size={24} /> File a Complaint
+                </h3>
+                <button 
+                  onClick={() => setShowComplaintModal(false)}
+                  className="p-1.5 hover:bg-slate-100 rounded-xl transition-colors text-slate-500"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmitComplaint} className="space-y-6">
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs font-semibold text-slate-600">
+                  <div>Booking ID: <strong className="text-slate-800">#{complaintBooking.id}</strong></div>
+                  <div className="mt-1">Service: <strong className="text-slate-800">{complaintBooking.services?.name}</strong></div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-gray-700">Describe the issue *</label>
+                  <textarea 
+                    value={complaintText}
+                    onChange={(e) => setComplaintText(e.target.value)}
+                    required
+                    maxLength={1000}
+                    rows="5"
+                    placeholder="Explain what went wrong in detail. Our admin team will investigate and assign blame according to system rules."
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none transition-all text-sm font-medium resize-none shadow-sm"
+                  />
+                  <div className="text-[10px] text-slate-400 text-right">{complaintText.length}/1000 characters</div>
+                </div>
+
+                <div className="bg-amber-50 border border-amber-100 p-4 rounded-2xl text-[11px] font-semibold text-amber-700 flex gap-2">
+                  <AlertCircle size={16} className="flex-shrink-0 mt-0.5 text-amber-500" />
+                  <span>
+                    Warning: Filing false or malicious complaints will result in a <strong>-0.50</strong> Karma reputation penalty.
+                  </span>
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowComplaintModal(false)}
+                    className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl transition-all shadow-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={complaintLoading}
+                    className="flex-1 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 disabled:opacity-75"
+                  >
+                    {complaintLoading ? <Loader2 className="animate-spin" size={16} /> : null}
+                    File Complaint
                   </button>
                 </div>
               </form>
