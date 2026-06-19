@@ -3,6 +3,7 @@ package com.teamarc.planit.advices;
 
 import com.teamarc.planit.exceptions.ResourceNotFoundException;
 import com.teamarc.planit.exceptions.RuntimeConflictException;
+import com.teamarc.planit.exceptions.InsufficientFundsException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleRuntimeConflictException(RuntimeConflictException exception) {
         ApiError apiError = ApiError.builder()
                 .status(HttpStatus.CONFLICT)
+                .message(exception.getMessage())
+                .build();
+        return buildErrorResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(InsufficientFundsException.class)
+    public ResponseEntity<ApiResponse<?>> handleInsufficientFundsException(InsufficientFundsException exception) {
+        ApiError apiError = ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST)
                 .message(exception.getMessage())
                 .build();
         return buildErrorResponseEntity(apiError);

@@ -56,6 +56,9 @@ public interface BookingMapper {
     Booking toEntity(BookingRequestDTO dto);
     BookingResponseDTO toBookingResponse(Booking entity);
     void updateBookingFromDTO(BookingRequestDTO dto, @MappingTarget Booking entity);
+
+    @Mapping(source = "booking.id", target = "bookingId")
+    EscrowResponseDTO toEscrowResponse(Escrow entity);
     
     // Payment mappings
     Payment toEntity(PaymentRequestDTO dto);

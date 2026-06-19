@@ -1,8 +1,11 @@
 package com.teamarc.planit.controller;
 
 import com.teamarc.planit.dto.request.BookingRequestDTO;
+import com.teamarc.planit.dto.request.RazorpayVerificationRequestDTO;
 import com.teamarc.planit.dto.response.BookingResponseDTO;
+import com.teamarc.planit.dto.response.PaymentResponseDTO;
 import com.teamarc.planit.services.BookingService;
+import com.teamarc.planit.services.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +17,10 @@ import org.springframework.web.bind.annotation.*;
 public class BookingController {
 
     private final BookingService bookingService;
+    private final PaymentService paymentService;
 
     @PostMapping
-    public ResponseEntity<BookingResponseDTO> createBooking(@RequestBody @jakarta.validation.Valid BookingRequestDTO bookingRequestDTO) {
+    public ResponseEntity<?> createBooking(@RequestBody @jakarta.validation.Valid BookingRequestDTO bookingRequestDTO) {
         return ResponseEntity.ok(bookingService.createBookingRequest(bookingRequestDTO));
     }
 
@@ -53,6 +57,13 @@ public class BookingController {
     @PostMapping("/{id}/cancel/vendor")
     public ResponseEntity<BookingResponseDTO> cancelByVendor(@PathVariable Long id) {
         return ResponseEntity.ok(bookingService.cancelBookingRequestByVendor(id));
+    }
+
+    @PostMapping("/{id}/pay/razorpay/verify")
+    public ResponseEntity<PaymentResponseDTO> verifyRazorpayBookingPayment(
+            @PathVariable Long id,
+            @RequestBody @Valid RazorpayVerificationRequestDTO dto) {
+        return ResponseEntity.ok(paymentService.verifyRazorpayBookingPayment(id, dto));
     }
 }
 

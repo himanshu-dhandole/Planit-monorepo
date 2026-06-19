@@ -1,34 +1,43 @@
 package com.teamarc.planit.services;
 
 import com.razorpay.RazorpayClient;
+import com.teamarc.planit.configs.PlatformFeeConfig;
 import com.teamarc.planit.dto.request.RazorpayVerificationRequestDTO;
+import com.teamarc.planit.dto.response.PaymentResponseDTO;
 import com.teamarc.planit.dto.response.RazorpayOrderResponseDTO;
 import com.teamarc.planit.entity.Booking;
+import com.teamarc.planit.entity.Escrow;
 import com.teamarc.planit.entity.Payment;
 import com.teamarc.planit.entity.User;
 import com.teamarc.planit.entity.enums.BookingStatus;
+import com.teamarc.planit.entity.enums.PaymentMethod;
 import com.teamarc.planit.entity.enums.PaymentStatus;
 import com.teamarc.planit.exceptions.ResourceNotFoundException;
+import com.teamarc.planit.mapper.BookingMapper;
 import com.teamarc.planit.repository.BookingRepository;
+import com.teamarc.planit.repository.EscrowRepository;
 import com.teamarc.planit.repository.PaymentRepository;
-import com.teamarc.planit.strategies.WalletPaymentStrategies;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentService {
 
     private final BookingRepository bookingRepository;
     private final WalletService walletService;
     private final PaymentRepository paymentRepository;
+    private final EscrowRepository escrowRepository;
+    private final BookingMapper bookingMapper;
     private final RazorpayClient razorpayClient;
-    private final WalletPaymentStrategies walletPaymentStrategies;
 
     @Value("${razorpay.key.id}")
     private String keyId;
@@ -37,7 +46,7 @@ public class PaymentService {
     private String keySecret;
 
     @Transactional
-    public Payment payWithWallet(Long bookingId) {
+    public Object initiateBookingPayment(Long bookingId, PaymentMethod method) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
 
@@ -45,112 +54,80 @@ public class PaymentService {
             throw new IllegalStateException("Booking is already confirmed");
         }
 
-        User user = booking.getCustomer().getUser();
+        BigDecimal bookingAmount = booking.getBookingAmount();
+        BigDecimal platformFee = bookingAmount.multiply(PlatformFeeConfig.PLATFORM_FEE_RATE)
+                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal totalAmount = bookingAmount.add(platformFee);
 
-        // Deduct money from user's wallet
-        walletService.deductMoneyFromWallet(
-                user,
-                booking.getBookingAmount().doubleValue(),
-                "WTX_" + bookingId + "_" + System.currentTimeMillis(),
-                booking,
-                com.teamarc.planit.entity.enums.TransactionMethod.BOOKING
-        );
+        if (method == PaymentMethod.WALLET) {
+            User user = booking.getCustomer().getUser();
+            
+            // 1. Deduct bookingAmount + platformFee (2% of bookingAmount) from customer wallet
+            walletService.deductMoney(
+                    user,
+                    totalAmount,
+                    "WTX_" + bookingId + "_" + System.currentTimeMillis(),
+                    booking
+            );
 
-        // Save payment record
-        Payment payment = new Payment();
-        payment.setBooking(booking);
-        payment.setAmount(booking.getBookingAmount());
-        payment.setStatus(PaymentStatus.PAID);
-        payment.setTxnId("PAY_WL_" + bookingId + "_" + System.currentTimeMillis());
-
-        Payment savedPayment = paymentRepository.save(payment);
-
-        // Confirm the booking
-        booking.setStatus(BookingStatus.CONFIRMED);
-        bookingRepository.save(booking);
-
-        return savedPayment;
-    }
-
-    public void createPayment(Long bookingId, String txnId, PaymentStatus status) {
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
-
-        Payment payment = new Payment();
-        payment.setBooking(booking);
-        payment.setAmount(booking.getBookingAmount());
-        payment.setStatus(status);
-        payment.setTxnId(txnId);
-
-        paymentRepository.save(payment);
-    }
-
-    public void processPayment(Booking booking) {
-        Payment payment = paymentRepository.findByBooking(booking)
-                .orElseThrow(() -> new ResourceNotFoundException("Payment record not found for booking ID: " + booking.getId()));
-        walletPaymentStrategies.processPayment(payment);
-    }
-
-    public void cancelPayment(Booking booking) {
-        Payment payment = paymentRepository.findByBooking(booking).orElseThrow(() -> new ResourceNotFoundException("Payment record not found for booking ID: " + booking.getId()));
-
-        payment.setStatus(PaymentStatus.CANCELLED);
-        paymentRepository.save(payment);
-    }
-
-    public void refundPayment(Booking booking) {
-        Payment payment = paymentRepository.findByBooking(booking).orElseThrow(() -> new ResourceNotFoundException("Payment record not found for booking ID: " + booking.getId()));
-        walletPaymentStrategies.refundPayment(payment);
-    }
-
-    public void refundBookedServicePayment(Booking booking) {
-        Payment payment = paymentRepository.findByBooking(booking).orElseThrow(() -> new ResourceNotFoundException("Payment record not found for booking ID: " + booking.getId()));
-        walletPaymentStrategies.refundBookedServicePayment(payment);
-    }
-
-    @Transactional
-    public RazorpayOrderResponseDTO createRazorpayOrder(Long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
-
-        if (booking.getStatus() == BookingStatus.CONFIRMED) {
-            throw new IllegalStateException("Booking is already confirmed");
-        }
-
-        long amountInPaise = booking.getBookingAmount().multiply(new BigDecimal(100)).longValue();
-
-        try {
-            JSONObject orderRequest = new JSONObject();
-            orderRequest.put("amount", amountInPaise);
-            orderRequest.put("currency", "INR");
-            orderRequest.put("receipt", "rcpt_" + bookingId + "_" + System.currentTimeMillis());
-
-            com.razorpay.Order razorpayOrder = razorpayClient.orders.create(orderRequest);
-            String orderId = razorpayOrder.get("id");
-
-            // Save pending payment record using Razorpay Order ID as temporary txn_id
-            Payment payment = new Payment();
-            payment.setBooking(booking);
-            payment.setAmount(booking.getBookingAmount());
-            payment.setStatus(PaymentStatus.PENDING);
-            payment.setTxnId(orderId);
-            paymentRepository.save(payment);
-
-            return RazorpayOrderResponseDTO.builder()
-                    .id(orderId)
-                    .amount(amountInPaise)
-                    .currency("INR")
-                    .keyId(keyId.trim())
-                    .bookingId(bookingId)
+            // 2. Create Escrow record with heldAmount = bookingAmount
+            Escrow escrow = Escrow.builder()
+                    .booking(booking)
+                    .heldAmount(bookingAmount)
+                    .status(Escrow.EscrowStatus.HELD)
                     .build();
+            escrowRepository.save(escrow);
 
-        } catch (com.razorpay.RazorpayException e) {
-            throw new RuntimeException("Error creating Razorpay order: " + e.getMessage(), e);
+            // 3. Set Payment.status = PAID, Booking.status remains PENDING (waiting for vendor accept)
+            Payment payment = paymentRepository.findByBooking(booking).orElse(new Payment());
+            payment.setBooking(booking);
+            payment.setAmount(totalAmount);
+            payment.setStatus(PaymentStatus.PAID);
+            payment.setTxnId("PAY_WL_" + bookingId + "_" + System.currentTimeMillis());
+            Payment savedPayment = paymentRepository.save(payment);
+
+            // 4. Return PaymentResponseDTO
+            return bookingMapper.toPaymentResponse(savedPayment);
+
+        } else if (method == PaymentMethod.RAZORPAY) {
+            // 1. Create Razorpay order for bookingAmount * 1.02
+            long amountInPaise = totalAmount.multiply(BigDecimal.valueOf(100)).longValue();
+            try {
+                JSONObject orderRequest = new JSONObject();
+                orderRequest.put("amount", amountInPaise);
+                orderRequest.put("currency", "INR");
+                orderRequest.put("receipt", "rcpt_" + bookingId + "_" + System.currentTimeMillis());
+
+                com.razorpay.Order razorpayOrder = razorpayClient.orders.create(orderRequest);
+                String orderId = razorpayOrder.get("id");
+
+                // 2. Save Payment with status = PENDING, txnId = razorpayOrderId
+                Payment payment = paymentRepository.findByBooking(booking).orElse(new Payment());
+                payment.setBooking(booking);
+                payment.setAmount(totalAmount);
+                payment.setStatus(PaymentStatus.PENDING);
+                payment.setTxnId(orderId);
+                paymentRepository.save(payment);
+
+                // 3. Return RazorpayOrderResponseDTO
+                return RazorpayOrderResponseDTO.builder()
+                        .id(orderId)
+                        .amount(amountInPaise)
+                        .currency("INR")
+                        .keyId(keyId.trim())
+                        .bookingId(bookingId)
+                        .build();
+
+            } catch (com.razorpay.RazorpayException e) {
+                throw new RuntimeException("Error creating Razorpay order: " + e.getMessage(), e);
+            }
+        } else {
+            throw new IllegalArgumentException("Unsupported payment method: " + method);
         }
     }
 
     @Transactional
-    public Payment verifyRazorpayPayment(Long bookingId, RazorpayVerificationRequestDTO verificationDTO) {
+    public PaymentResponseDTO verifyRazorpayBookingPayment(Long bookingId, RazorpayVerificationRequestDTO verificationDTO) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
 
@@ -168,20 +145,25 @@ public class PaymentService {
             Payment payment = paymentRepository.findByTxnId(verificationDTO.getRazorpayOrderId())
                     .orElseThrow(() -> new ResourceNotFoundException("Payment record not found for Razorpay Order ID: " + verificationDTO.getRazorpayOrderId()));
 
+            // 1. Update Payment.status = PAID
             payment.setStatus(PaymentStatus.PAID);
-            payment.setTxnId(verificationDTO.getRazorpayPaymentId()); // update order ID with final payment ID
+            payment.setTxnId(verificationDTO.getRazorpayPaymentId());
             Payment savedPayment = paymentRepository.save(payment);
 
-            // Confirm booking
-            booking.setStatus(BookingStatus.CONFIRMED);
-            bookingRepository.save(booking);
+            // 2. Create Escrow with heldAmount = bookingAmount
+            Escrow escrow = Escrow.builder()
+                    .booking(booking)
+                    .heldAmount(booking.getBookingAmount())
+                    .status(Escrow.EscrowStatus.HELD)
+                    .build();
+            escrowRepository.save(escrow);
 
-            return savedPayment;
+            // 3. Booking remains PENDING (waiting for vendor accept)
+
+            return bookingMapper.toPaymentResponse(savedPayment);
 
         } catch (com.razorpay.RazorpayException e) {
             throw new RuntimeException("Error verifying Razorpay payment: " + e.getMessage(), e);
         }
     }
-
-
 }

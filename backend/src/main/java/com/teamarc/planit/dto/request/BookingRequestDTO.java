@@ -1,5 +1,6 @@
 package com.teamarc.planit.dto.request;
 
+import com.teamarc.planit.entity.enums.PaymentMethod;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,4 +31,7 @@ public class BookingRequestDTO {
     @NotNull(message = "Booking amount is required")
     @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal bookingAmount;
+
+    @NotNull(message = "Payment method is required")
+    private PaymentMethod paymentMethod;
 }

@@ -5,14 +5,16 @@ import com.razorpay.OrderClient;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import com.teamarc.planit.dto.request.RazorpayVerificationRequestDTO;
+import com.teamarc.planit.dto.response.PaymentResponseDTO;
 import com.teamarc.planit.dto.response.RazorpayOrderResponseDTO;
 import com.teamarc.planit.entity.*;
 import com.teamarc.planit.entity.enums.BookingStatus;
+import com.teamarc.planit.entity.enums.PaymentMethod;
 import com.teamarc.planit.entity.enums.PaymentStatus;
-import com.teamarc.planit.exceptions.ResourceNotFoundException;
+import com.teamarc.planit.mapper.BookingMapper;
 import com.teamarc.planit.repository.BookingRepository;
+import com.teamarc.planit.repository.EscrowRepository;
 import com.teamarc.planit.repository.PaymentRepository;
-import com.teamarc.planit.strategies.WalletPaymentStrategies;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,13 +46,16 @@ class PaymentServiceTest {
     private PaymentRepository paymentRepository;
 
     @Mock
+    private EscrowRepository escrowRepository;
+
+    @Mock
+    private BookingMapper bookingMapper;
+
+    @Mock
     private RazorpayClient razorpayClient;
 
     @Mock
     private OrderClient orderClient;
-
-    @Mock
-    private WalletPaymentStrategies walletPaymentStrategies;
 
     @InjectMocks
     private PaymentService paymentService;
@@ -84,78 +89,70 @@ class PaymentServiceTest {
         payment = new Payment();
         payment.setId(200L);
         payment.setBooking(booking);
-        payment.setAmount(BigDecimal.valueOf(150.0));
+        payment.setAmount(BigDecimal.valueOf(153.0)); // 150 * 1.02
         payment.setStatus(PaymentStatus.PENDING);
         payment.setTxnId("rzp_order_123");
     }
 
     @Test
-    void payWithWallet_success() {
+    void initiateBookingPayment_wallet_success() {
         when(bookingRepository.findById(100L)).thenReturn(Optional.of(booking));
+        when(paymentRepository.findByBooking(booking)).thenReturn(Optional.empty());
         when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(bookingRepository.save(any(Booking.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(escrowRepository.save(any(Escrow.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Payment result = paymentService.payWithWallet(100L);
+        PaymentResponseDTO expectedResponse = new PaymentResponseDTO();
+        expectedResponse.setId(200L);
+        expectedResponse.setBookingId(100L);
+        expectedResponse.setAmount(BigDecimal.valueOf(153.0));
+        expectedResponse.setStatus(PaymentStatus.PAID);
+        when(bookingMapper.toPaymentResponse(any(Payment.class))).thenReturn(expectedResponse);
 
-        assertNotNull(result);
+        Object response = paymentService.initiateBookingPayment(100L, PaymentMethod.WALLET);
+
+        assertTrue(response instanceof PaymentResponseDTO);
+        PaymentResponseDTO result = (PaymentResponseDTO) response;
         assertEquals(PaymentStatus.PAID, result.getStatus());
-        assertEquals(BigDecimal.valueOf(150.0), result.getAmount());
-        assertTrue(result.getTxnId().startsWith("PAY_WL_"));
-        assertEquals(BookingStatus.CONFIRMED, booking.getStatus());
+        assertEquals(BigDecimal.valueOf(153.0), result.getAmount());
 
-        verify(walletService, times(1)).deductMoneyFromWallet(
-                eq(user), eq(150.0), anyString(), eq(booking), eq(com.teamarc.planit.entity.enums.TransactionMethod.BOOKING)
+        verify(walletService, times(1)).deductMoney(
+                eq(user), eq(BigDecimal.valueOf(153.00).setScale(2)), anyString(), eq(booking)
         );
+        verify(escrowRepository, times(1)).save(argThat(escrow ->
+                escrow.getBooking() == booking &&
+                escrow.getHeldAmount().compareTo(BigDecimal.valueOf(150.0)) == 0 &&
+                escrow.getStatus() == Escrow.EscrowStatus.HELD
+        ));
         verify(paymentRepository, times(1)).save(any(Payment.class));
-        verify(bookingRepository, times(1)).save(booking);
     }
 
     @Test
-    void payWithWallet_alreadyConfirmed() {
-        booking.setStatus(BookingStatus.CONFIRMED);
+    void initiateBookingPayment_razorpay_success() throws RazorpayException {
         when(bookingRepository.findById(100L)).thenReturn(Optional.of(booking));
+        when(paymentRepository.findByBooking(booking)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalStateException.class, () -> paymentService.payWithWallet(100L));
-        verifyNoInteractions(walletService);
-        verify(paymentRepository, never()).save(any(Payment.class));
-    }
-
-    @Test
-    void createRazorpayOrder_success() throws RazorpayException {
-        when(bookingRepository.findById(100L)).thenReturn(Optional.of(booking));
-        
         Order razorpayOrder = mock(Order.class);
         when(razorpayOrder.get("id")).thenReturn("rzp_order_123");
         when(orderClient.create(any(JSONObject.class))).thenReturn(razorpayOrder);
 
-        RazorpayOrderResponseDTO response = paymentService.createRazorpayOrder(100L);
+        Object response = paymentService.initiateBookingPayment(100L, PaymentMethod.RAZORPAY);
 
-        assertNotNull(response);
-        assertEquals("rzp_order_123", response.getId());
-        assertEquals(15000L, response.getAmount()); // 150 * 100 paise
-        assertEquals("INR", response.getCurrency());
-        assertEquals("mock_key_id", response.getKeyId());
-        assertEquals(100L, response.getBookingId());
+        assertTrue(response instanceof RazorpayOrderResponseDTO);
+        RazorpayOrderResponseDTO result = (RazorpayOrderResponseDTO) response;
+        assertEquals("rzp_order_123", result.getId());
+        assertEquals(15300L, result.getAmount()); // 153 * 100 paise
+        assertEquals("INR", result.getCurrency());
 
-        verify(paymentRepository, times(1)).save(argThat(p -> 
-            p.getBooking() == booking &&
-            p.getAmount().equals(BigDecimal.valueOf(150.0)) &&
-            p.getStatus() == PaymentStatus.PENDING &&
-            p.getTxnId().equals("rzp_order_123")
+        verify(paymentRepository, times(1)).save(argThat(p ->
+                p.getBooking() == booking &&
+                p.getAmount().compareTo(BigDecimal.valueOf(153.0)) == 0 &&
+                p.getStatus() == PaymentStatus.PENDING &&
+                p.getTxnId().equals("rzp_order_123")
         ));
     }
 
     @Test
-    void createRazorpayOrder_alreadyConfirmed() {
-        booking.setStatus(BookingStatus.CONFIRMED);
-        when(bookingRepository.findById(100L)).thenReturn(Optional.of(booking));
-
-        assertThrows(IllegalStateException.class, () -> paymentService.createRazorpayOrder(100L));
-        verifyNoInteractions(orderClient);
-    }
-
-    @Test
-    void verifyRazorpayPayment_success() throws RazorpayException {
+    void verifyRazorpayBookingPayment_success() throws RazorpayException {
         RazorpayVerificationRequestDTO verificationDTO = new RazorpayVerificationRequestDTO();
         verificationDTO.setRazorpayOrderId("rzp_order_123");
         verificationDTO.setRazorpayPaymentId("rzp_pay_456");
@@ -164,26 +161,36 @@ class PaymentServiceTest {
         when(bookingRepository.findById(100L)).thenReturn(Optional.of(booking));
         when(paymentRepository.findByTxnId("rzp_order_123")).thenReturn(Optional.of(payment));
         when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(bookingRepository.save(any(Booking.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        PaymentResponseDTO expectedResponse = new PaymentResponseDTO();
+        expectedResponse.setId(200L);
+        expectedResponse.setBookingId(100L);
+        expectedResponse.setAmount(BigDecimal.valueOf(153.0));
+        expectedResponse.setStatus(PaymentStatus.PAID);
+        expectedResponse.setTxnId("rzp_pay_456");
+        when(bookingMapper.toPaymentResponse(any(Payment.class))).thenReturn(expectedResponse);
 
         try (MockedStatic<com.razorpay.Utils> utilities = mockStatic(com.razorpay.Utils.class)) {
             utilities.when(() -> com.razorpay.Utils.verifyPaymentSignature(any(JSONObject.class), anyString()))
                      .thenReturn(true);
 
-            Payment result = paymentService.verifyRazorpayPayment(100L, verificationDTO);
+            PaymentResponseDTO result = paymentService.verifyRazorpayBookingPayment(100L, verificationDTO);
 
             assertNotNull(result);
             assertEquals(PaymentStatus.PAID, result.getStatus());
             assertEquals("rzp_pay_456", result.getTxnId());
-            assertEquals(BookingStatus.CONFIRMED, booking.getStatus());
 
             verify(paymentRepository, times(1)).save(payment);
-            verify(bookingRepository, times(1)).save(booking);
+            verify(escrowRepository, times(1)).save(argThat(escrow ->
+                    escrow.getBooking() == booking &&
+                    escrow.getHeldAmount().compareTo(BigDecimal.valueOf(150.0)) == 0 &&
+                    escrow.getStatus() == Escrow.EscrowStatus.HELD
+            ));
         }
     }
 
     @Test
-    void verifyRazorpayPayment_invalidSignature() {
+    void verifyRazorpayBookingPayment_invalidSignature() {
         RazorpayVerificationRequestDTO verificationDTO = new RazorpayVerificationRequestDTO();
         verificationDTO.setRazorpayOrderId("rzp_order_123");
         verificationDTO.setRazorpayPaymentId("rzp_pay_456");
@@ -195,33 +202,12 @@ class PaymentServiceTest {
             utilities.when(() -> com.razorpay.Utils.verifyPaymentSignature(any(JSONObject.class), anyString()))
                      .thenReturn(false);
 
-            assertThrows(IllegalArgumentException.class, () -> 
-                    paymentService.verifyRazorpayPayment(100L, verificationDTO)
+            assertThrows(IllegalArgumentException.class, () ->
+                    paymentService.verifyRazorpayBookingPayment(100L, verificationDTO)
             );
 
             verify(paymentRepository, never()).save(any(Payment.class));
-            verify(bookingRepository, never()).save(any(Booking.class));
+            verify(escrowRepository, never()).save(any(Escrow.class));
         }
-    }
-
-    @Test
-    void processPayment_delegatesToStrategy() {
-        when(paymentRepository.findByBooking(booking)).thenReturn(Optional.of(payment));
-        paymentService.processPayment(booking);
-        verify(walletPaymentStrategies, times(1)).processPayment(payment);
-    }
-
-    @Test
-    void refundPayment_delegatesToStrategy() {
-        when(paymentRepository.findByBooking(booking)).thenReturn(Optional.of(payment));
-        paymentService.refundPayment(booking);
-        verify(walletPaymentStrategies, times(1)).refundPayment(payment);
-    }
-
-    @Test
-    void refundBookedServicePayment_delegatesToStrategy() {
-        when(paymentRepository.findByBooking(booking)).thenReturn(Optional.of(payment));
-        paymentService.refundBookedServicePayment(booking);
-        verify(walletPaymentStrategies, times(1)).refundBookedServicePayment(payment);
     }
 }

@@ -2,7 +2,9 @@ package com.teamarc.planit.strategies;
 
 import com.teamarc.planit.entity.*;
 import com.teamarc.planit.entity.enums.PaymentStatus;
+import com.teamarc.planit.exceptions.InsufficientFundsException;
 import com.teamarc.planit.exceptions.ResourceNotFoundException;
+import com.teamarc.planit.repository.EscrowRepository;
 import com.teamarc.planit.repository.PaymentRepository;
 import com.teamarc.planit.repository.WalletRepository;
 import com.teamarc.planit.repository.WalletTransactionRepository;
@@ -32,6 +34,9 @@ class WalletPaymentStrategiesTest {
     private PaymentRepository paymentRepository;
 
     @Mock
+    private EscrowRepository escrowRepository;
+
+    @Mock
     private WalletService walletService;
 
     @Mock
@@ -49,6 +54,7 @@ class WalletPaymentStrategiesTest {
     private Payment payment;
     private Wallet customerWallet;
     private Wallet vendorWallet;
+    private Escrow escrow;
 
     @BeforeEach
     void setUp() {
@@ -83,7 +89,7 @@ class WalletPaymentStrategiesTest {
         payment = new Payment();
         payment.setId(50L);
         payment.setBooking(booking);
-        payment.setAmount(BigDecimal.valueOf(100.0));
+        payment.setAmount(BigDecimal.valueOf(102.0)); // booking + customer platform fee
         payment.setStatus(PaymentStatus.PENDING);
 
         customerWallet = new Wallet();
@@ -95,139 +101,125 @@ class WalletPaymentStrategiesTest {
         vendorWallet.setId(200L);
         vendorWallet.setUser(vendorUser);
         vendorWallet.setBalance(50.0);
+
+        escrow = new Escrow();
+        escrow.setId(300L);
+        escrow.setBooking(booking);
+        escrow.setHeldAmount(BigDecimal.valueOf(100.0));
+        escrow.setStatus(Escrow.EscrowStatus.HELD);
     }
 
     @Test
-    void processPayment_success() {
-        when(walletRepository.findByUser_Id(customerUser.getId())).thenReturn(Optional.of(customerWallet));
+    void releaseEscrowToVendor_success() {
+        when(walletRepository.findByUser_Id(vendorUser.getId())).thenReturn(Optional.of(vendorWallet));
+        when(paymentRepository.findByBooking(booking)).thenReturn(Optional.of(payment));
         when(walletTransactionRepository.findByTransactionId(anyString())).thenReturn(Optional.empty());
-        when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        walletPaymentStrategies.processPayment(payment);
+        vendorWallet.setBalance(10.0); // Vendor has enough for 2% fee (2.0)
 
+        walletPaymentStrategies.releaseEscrowToVendor(escrow);
+
+        assertEquals(Escrow.EscrowStatus.RELEASED_TO_VENDOR, escrow.getStatus());
+        assertNotNull(escrow.getReleasedAt());
         assertEquals(PaymentStatus.PAID, payment.getStatus());
+
+        // Deduct 2.0 vendor fee
         verify(walletService, times(1)).deductMoney(
-                eq(customerUser), argThat(a -> a.compareTo(new BigDecimal("100.0")) == 0), anyString(), eq(booking)
+                eq(vendorUser), eq(BigDecimal.valueOf(2.0).setScale(2)), anyString(), eq(booking)
         );
-        // Business share: 100 * (1 - 0.05) = 95.0
+        // Credit 100.0 - 2.0 = 98.0
         verify(walletService, times(1)).addMoney(
-                eq(vendorUser), argThat(a -> a.compareTo(new BigDecimal("95.0")) == 0), anyString(), eq(booking)
+                eq(vendorUser), eq(BigDecimal.valueOf(98.0).setScale(2)), anyString(), eq(booking)
         );
+        verify(escrowRepository, times(1)).save(escrow);
         verify(paymentRepository, times(1)).save(payment);
     }
 
     @Test
-    void processPayment_insufficientBalance() {
-        customerWallet.setBalance(30.0); // Less than payment amount 100.0
-        when(walletRepository.findByUser_Id(customerUser.getId())).thenReturn(Optional.of(customerWallet));
-        when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> 
-                walletPaymentStrategies.processPayment(payment)
-        );
-
-        assertTrue(exception.getMessage().contains("Insufficient balance in wallet"));
-        assertEquals(PaymentStatus.FAILED, payment.getStatus());
-        verify(paymentRepository, times(1)).save(payment);
-        verifyNoInteractions(walletService);
-    }
-
-    @Test
-    void processPayment_alreadyPaid() {
-        payment.setStatus(PaymentStatus.PAID);
-        when(walletRepository.findByUser_Id(customerUser.getId())).thenReturn(Optional.of(customerWallet));
-
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> 
-                walletPaymentStrategies.processPayment(payment)
-        );
-
-        assertEquals("Payment is already processed", exception.getMessage());
-        verify(paymentRepository, never()).save(any(Payment.class));
-    }
-
-    @Test
-    void processPayment_alreadyCancelled() {
-        payment.setStatus(PaymentStatus.CANCELLED);
-        when(walletRepository.findByUser_Id(customerUser.getId())).thenReturn(Optional.of(customerWallet));
-
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> 
-                walletPaymentStrategies.processPayment(payment)
-        );
-
-        assertEquals("Payment is already cancelled", exception.getMessage());
-        verify(paymentRepository, never()).save(any(Payment.class));
-    }
-
-    @Test
-    void refundPayment_success() {
-        payment.setStatus(PaymentStatus.PAID);
+    void releaseEscrowToVendor_insufficientFunds() {
         when(walletRepository.findByUser_Id(vendorUser.getId())).thenReturn(Optional.of(vendorWallet));
-        when(walletTransactionRepository.findByTransactionId(anyString())).thenReturn(Optional.empty());
-        when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        vendorWallet.setBalance(1.0); // Less than 2% fee (2.0)
 
-        vendorWallet.setBalance(150.0); // Ensure vendor has enough balance
-
-        walletPaymentStrategies.refundPayment(payment);
-
-        assertEquals(PaymentStatus.REFUNDED, payment.getStatus());
-        verify(walletService, times(1)).deductMoney(
-                eq(vendorUser), argThat(a -> a.compareTo(new BigDecimal("100.0")) == 0), anyString(), eq(booking)
-        );
-        verify(walletService, times(1)).addMoney(
-                eq(customerUser), argThat(a -> a.compareTo(new BigDecimal("100.0")) == 0), anyString(), eq(booking)
-        );
-        verify(paymentRepository, times(1)).save(payment);
-    }
-
-    @Test
-    void refundPayment_insufficientVendorBalance() {
-        payment.setStatus(PaymentStatus.PAID);
-        when(walletRepository.findByUser_Id(vendorUser.getId())).thenReturn(Optional.of(vendorWallet));
-        vendorWallet.setBalance(30.0); // Less than refund amount 100.0
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> 
-                walletPaymentStrategies.refundPayment(payment)
+        assertThrows(InsufficientFundsException.class, () ->
+                walletPaymentStrategies.releaseEscrowToVendor(escrow)
         );
 
-        assertTrue(exception.getMessage().contains("Insufficient balance in Vendor wallet"));
+        verify(escrowRepository, never()).save(any(Escrow.class));
         verify(paymentRepository, never()).save(any(Payment.class));
         verifyNoInteractions(walletService);
     }
 
     @Test
-    void refundBookedServicePayment_success() {
-        payment.setStatus(PaymentStatus.PAID);
-        when(walletRepository.findByUser_Id(vendorUser.getId())).thenReturn(Optional.of(vendorWallet));
+    void refundEscrowToCustomer_success() {
+        when(paymentRepository.findByBooking(booking)).thenReturn(Optional.of(payment));
         when(walletTransactionRepository.findByTransactionId(anyString())).thenReturn(Optional.empty());
-        when(paymentRepository.save(any(Payment.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        vendorWallet.setBalance(150.0);
+        walletPaymentStrategies.refundEscrowToCustomer(escrow);
 
-        walletPaymentStrategies.refundBookedServicePayment(payment);
-
+        assertEquals(Escrow.EscrowStatus.REFUNDED_TO_CUSTOMER, escrow.getStatus());
         assertEquals(PaymentStatus.REFUNDED, payment.getStatus());
-        // refund amount = 100.0 * (1 - 0.05 * 2) = 100.0 * 0.90 = 90.0
-        verify(walletService, times(1)).deductMoney(
-                eq(vendorUser), argThat(a -> a.compareTo(new BigDecimal("90.0")) == 0), anyString(), eq(booking)
-        );
-        // customer gets full 100.0 refund
+
+        // Refund full held amount (100.0)
         verify(walletService, times(1)).addMoney(
-                eq(customerUser), argThat(a -> a.compareTo(new BigDecimal("100.0")) == 0), anyString(), eq(booking)
+                eq(customerUser), eq(BigDecimal.valueOf(100.0)), anyString(), eq(booking)
         );
+        verify(escrowRepository, times(1)).save(escrow);
         verify(paymentRepository, times(1)).save(payment);
     }
 
     @Test
-    void refundBookedServicePayment_insufficientVendorBalance() {
-        payment.setStatus(PaymentStatus.PAID);
-        when(walletRepository.findByUser_Id(vendorUser.getId())).thenReturn(Optional.of(vendorWallet));
-        vendorWallet.setBalance(30.0);
+    void cancelWithFeeByCustomer_success() {
+        when(paymentRepository.findByBooking(booking)).thenReturn(Optional.of(payment));
+        when(walletTransactionRepository.findByTransactionId(anyString())).thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> 
-                walletPaymentStrategies.refundBookedServicePayment(payment)
+        walletPaymentStrategies.cancelWithFeeByCustomer(escrow);
+
+        assertEquals(Escrow.EscrowStatus.PARTIALLY_REFUNDED, escrow.getStatus());
+        assertEquals(PaymentStatus.REFUNDED, payment.getStatus());
+
+        // Refund 100.0 - 2.0 = 98.0
+        verify(walletService, times(1)).addMoney(
+                eq(customerUser), eq(BigDecimal.valueOf(98.0).setScale(2)), anyString(), eq(booking)
+        );
+        verify(escrowRepository, times(1)).save(escrow);
+        verify(paymentRepository, times(1)).save(payment);
+    }
+
+    @Test
+    void cancelWithFeeByVendor_success() {
+        when(walletRepository.findByUser_Id(vendorUser.getId())).thenReturn(Optional.of(vendorWallet));
+        when(paymentRepository.findByBooking(booking)).thenReturn(Optional.of(payment));
+        when(walletTransactionRepository.findByTransactionId(anyString())).thenReturn(Optional.empty());
+
+        vendorWallet.setBalance(10.0);
+
+        walletPaymentStrategies.cancelWithFeeByVendor(escrow);
+
+        assertEquals(Escrow.EscrowStatus.REFUNDED_TO_CUSTOMER, escrow.getStatus());
+        assertEquals(PaymentStatus.REFUNDED, payment.getStatus());
+
+        // Credit full 100.0 to customer
+        verify(walletService, times(1)).addMoney(
+                eq(customerUser), eq(BigDecimal.valueOf(100.0)), anyString(), eq(booking)
+        );
+        // Deduct 2% penalty (2.0) from vendor
+        verify(walletService, times(1)).deductMoney(
+                eq(vendorUser), eq(BigDecimal.valueOf(2.0).setScale(2)), anyString(), eq(booking)
+        );
+        verify(escrowRepository, times(1)).save(escrow);
+        verify(paymentRepository, times(1)).save(payment);
+    }
+
+    @Test
+    void cancelWithFeeByVendor_insufficientFunds() {
+        when(walletRepository.findByUser_Id(vendorUser.getId())).thenReturn(Optional.of(vendorWallet));
+        vendorWallet.setBalance(1.0); // Less than penalty (2.0)
+
+        assertThrows(InsufficientFundsException.class, () ->
+                walletPaymentStrategies.cancelWithFeeByVendor(escrow)
         );
 
-        assertTrue(exception.getMessage().contains("Insufficient balance in Vendor wallet"));
+        verify(escrowRepository, never()).save(any(Escrow.class));
         verify(paymentRepository, never()).save(any(Payment.class));
         verifyNoInteractions(walletService);
     }
