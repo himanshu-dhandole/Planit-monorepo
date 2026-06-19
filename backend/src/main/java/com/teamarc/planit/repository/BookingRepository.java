@@ -19,5 +19,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.services s LEFT JOIN FETCH s.vendor v WHERE b.event.id = :eventId")
     Page<Booking> findAllByEvent_Id(@Param("eventId") Long eventId, Pageable pageable);
+
+    @Query("SELECT COUNT(b) > 0 FROM Booking b WHERE b.customer.id = :customerId AND b.services.vendor.id = :vendorId AND b.status = com.teamarc.planit.entity.enums.BookingStatus.COMPLETED")
+    boolean hasCompletedBooking(@Param("customerId") Long customerId, @Param("vendorId") Long vendorId);
 }
 

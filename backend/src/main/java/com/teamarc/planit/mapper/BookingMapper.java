@@ -84,4 +84,21 @@ public interface BookingMapper {
 
     @Mapping(source = "bookingId", target = "booking.id")
     void updateDisputeFromDTO(DisputeManagementRequestDTO dto, @MappingTarget DisputeManagement entity);
+
+    // Testimonial mappings
+    @Mapping(source = "vendorId", target = "vendor.id")
+    @Mapping(source = "serviceId", target = "services.id")
+    com.teamarc.planit.entity.Testimonial toEntity(com.teamarc.planit.dto.request.TestimonialRequestDTO dto);
+
+    @Mapping(source = "vendor.id", target = "vendorId")
+    @Mapping(source = "vendor.businessName", target = "businessName")
+    @Mapping(source = "customer.id", target = "customerId")
+    @Mapping(source = "customer.user.name", target = "customerName")
+    @Mapping(source = "services.id", target = "serviceId")
+    @Mapping(source = "services.name", target = "serviceName")
+    com.teamarc.planit.dto.response.TestimonialResponseDTO toTestimonialResponse(com.teamarc.planit.entity.Testimonial entity);
+
+    @Mapping(source = "vendorId", target = "vendor.id")
+    @Mapping(source = "serviceId", target = "services.id")
+    void updateTestimonialFromDTO(com.teamarc.planit.dto.request.TestimonialRequestDTO dto, @MappingTarget com.teamarc.planit.entity.Testimonial entity);
 }
