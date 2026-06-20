@@ -395,16 +395,21 @@ export default function VendorList() {
                         <div className="flex items-center gap-2">
                           <div className="flex items-center gap-1 text-amber-500 bg-amber-50 px-2 py-0.5 rounded-md text-[10px] font-bold">
                             <Star size={10} fill="currentColor" />
-                            <span>{vendor.karma > 0 ? vendor.karma.toFixed(2) : "5.00"}</span>
+                            <span>{vendor.aura !== undefined && vendor.aura !== null ? vendor.aura.toFixed(1) : "500.0"}</span>
                           </div>
-                          {vendor.karma >= 4.5 && (
-                            <span className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
-                              GOLD
+                          {vendor.aura >= 800.0 && (
+                            <span className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm shadow-[0_0_8px_rgba(245,158,11,0.3)]">
+                              RADIANT
                             </span>
                           )}
-                          {vendor.karma >= 4.0 && vendor.karma < 4.5 && (
-                            <span className="bg-gradient-to-r from-slate-400 to-slate-300 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
-                              SILVER
+                          {vendor.aura >= 500.0 && vendor.aura < 800.0 && (
+                            <span className="bg-gradient-to-r from-cyan-400 to-blue-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm shadow-[0_0_6px_rgba(6,182,212,0.2)]">
+                              LUMINOUS
+                            </span>
+                          )}
+                          {vendor.aura < 500.0 && (
+                            <span className="bg-slate-100 text-slate-500 text-[9px] font-bold px-1.5 py-0.5 rounded border border-slate-200">
+                              FAINT
                             </span>
                           )}
                           <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1">

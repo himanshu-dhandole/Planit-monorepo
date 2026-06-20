@@ -849,7 +849,7 @@ export default function MyBookingsPage() {
                 <div className="bg-amber-50 border border-amber-100 p-4 rounded-2xl text-[11px] font-semibold text-amber-700 flex gap-2">
                   <AlertCircle size={16} className="flex-shrink-0 mt-0.5 text-amber-500" />
                   <span>
-                    Warning: Filing false or malicious complaints will result in a <strong>-0.50</strong> Karma reputation penalty.
+                    Warning: Filing false or malicious complaints will result in a <strong>-50.0</strong> Aura reputation penalty.
                   </span>
                 </div>
 

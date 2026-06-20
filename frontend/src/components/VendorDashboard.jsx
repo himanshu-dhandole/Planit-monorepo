@@ -33,20 +33,20 @@ export default function VendorDashboard() {
 
   const getTrustBadge = (score) => {
     if (score === null || score === undefined) return null;
-    let badgeText = 'STANDARD';
-    let badgeStyle = 'bg-slate-100 text-slate-700 border-slate-200';
+    let badgeText = 'FAINT';
+    let badgeStyle = 'bg-slate-100 text-slate-500 border-slate-200';
     
-    if (score >= 4.5) {
-      badgeText = 'GOLD';
-      badgeStyle = 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white border-amber-600 shadow-sm';
-    } else if (score >= 4.0) {
-      badgeText = 'SILVER';
-      badgeStyle = 'bg-gradient-to-r from-slate-400 to-slate-350 text-white border-slate-500 shadow-sm';
+    if (score >= 800.0) {
+      badgeText = 'RADIANT';
+      badgeStyle = 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white border-amber-600 shadow-sm shadow-[0_0_12px_rgba(245,158,11,0.4)]';
+    } else if (score >= 500.0) {
+      badgeText = 'LUMINOUS';
+      badgeStyle = 'bg-gradient-to-r from-cyan-400 to-blue-500 text-white border-cyan-500 shadow-sm shadow-[0_0_8px_rgba(6,182,212,0.3)]';
     }
     
     return (
       <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${badgeStyle}`}>
-        <Star size={12} fill={score >= 4.0 ? 'white' : 'transparent'} />
+        <Star size={12} fill={score >= 500.0 ? 'white' : 'transparent'} />
         {badgeText}
       </span>
     );
@@ -476,7 +476,7 @@ export default function VendorDashboard() {
         >
 
           {/* Suspension Banner */}
-          {vendorProfile && vendorProfile.karma < 2.0 && (
+          {vendorProfile && vendorProfile.aura < 100.0 && (
             <div className="bg-red-50 border-2 border-red-200 rounded-3xl p-6 flex items-start gap-4 shadow-sm relative overflow-hidden animate-pulse">
               <div className="p-3 bg-red-100 rounded-2xl text-red-600">
                 <ShieldAlert size={28} />
@@ -484,7 +484,7 @@ export default function VendorDashboard() {
               <div className="flex-1">
                 <h3 className="text-lg font-bold text-red-800">Account Suspended</h3>
                 <p className="text-red-700 text-sm mt-1">
-                  Your vendor account has been suspended because your Karma score ({vendorProfile.karma.toFixed(2)}) is below the minimum required threshold of 2.00. 
+                  Your vendor account has been suspended because your Aura score ({vendorProfile.aura.toFixed(1)}) is below the minimum required threshold of 100.0. 
                   You will not receive new bookings or show up in search results until this is resolved. 
                   Please contact support or resolve any outstanding complaints.
                 </p>
@@ -569,12 +569,12 @@ export default function VendorDashboard() {
                   <p className="text-2xl font-extrabold text-blue-600">{vendorProfile?.totalBookings || 0}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider flex items-center gap-1"><Star size={12}/> Karma Score</p>
+                  <p className="text-xs text-gray-400 font-semibold mb-1 uppercase tracking-wider flex items-center gap-1"><Star size={12}/> Aura Score</p>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-2xl font-extrabold text-indigo-600">
-                      {typeof vendorProfile?.karma === 'number' ? vendorProfile.karma.toFixed(2) : (vendorProfile?.karma || '5.00')}
+                      {typeof vendorProfile?.aura === 'number' ? vendorProfile.aura.toFixed(1) : (vendorProfile?.aura || '500.0')}
                     </span>
-                    {getTrustBadge(vendorProfile?.karma !== undefined && vendorProfile?.karma !== null ? vendorProfile.karma : 5.0)}
+                    {getTrustBadge(vendorProfile?.aura !== undefined && vendorProfile?.aura !== null ? vendorProfile.aura : 500.0)}
                   </div>
                 </div>
                 <div>

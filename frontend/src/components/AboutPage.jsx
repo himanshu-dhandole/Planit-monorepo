@@ -7,7 +7,7 @@ export default function AboutPage() {
     {
       name: "Aarav Mehta",
       role: "Lead Backend Architect",
-      bio: "Full stack wizard who thrives on optimizing high-throughput APIs, orchestrating database transactions, and keeping the Karma Engine running flawlessly.",
+      bio: "Full stack wizard who thrives on optimizing high-throughput APIs, orchestrating database transactions, and keeping the Aura Engine running flawlessly.",
       avatar: "AM",
       color: "from-blue-400 to-indigo-500",
     },

@@ -142,7 +142,7 @@ export default function Navbar() {
     { name: "Services", hasDropdown: false, path: "/services" },
     { name: "Vendors", hasDropdown: false, path: "/vendors" },
     { name: "Messages", hasDropdown: false, path: "/chats" },
-    { name: "Karma", hasDropdown: false, path: "#" },
+    { name: "Aura", hasDropdown: false, path: "#" },
   ];
 
   return (

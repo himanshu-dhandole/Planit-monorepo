@@ -76,8 +76,8 @@ export default function AdminDashboard() {
         setComplaints(dataList);
       } else if (activeTab === 'AUDIT_TRAIL') {
         const url = searchUserId.trim() 
-          ? `/api/admin/karma/user/${searchUserId.trim()}`
-          : '/api/admin/karma/audit-trail';
+          ? `/api/admin/aura/user/${searchUserId.trim()}`
+          : '/api/admin/aura/audit-trail';
         const res = await apiClient.get(url);
         const dataList = Array.isArray(res.data?.data) ? res.data.data : (Array.isArray(res.data) ? res.data : []);
         setAuditTrail(dataList);
@@ -119,7 +119,7 @@ export default function AdminDashboard() {
     try {
       const endpoint = `/api/admin/complaints/${selectedComplaint.id}/resolve?blame=${complaintBlame}`;
       await apiClient.post(endpoint);
-      toast.success("Complaint resolved successfully and Karma updated.");
+      toast.success("Complaint resolved successfully and Aura updated.");
       setIsComplaintModalOpen(false);
       setSelectedComplaint(null);
       fetchData();
@@ -211,7 +211,7 @@ export default function AdminDashboard() {
                 onClick={() => setActiveTab('AUDIT_TRAIL')}
                 className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'AUDIT_TRAIL' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
               >
-                <FileText size={18} /> Karma Logs
+                <FileText size={18} /> Aura Logs
               </button>
             </div>
           </div>
@@ -607,8 +607,8 @@ export default function AdminDashboard() {
                     {auditTrail.length === 0 ? (
                       <div className="text-center py-20 bg-white/60 rounded-3xl border border-white">
                         <FileText size={48} className="text-gray-300 mx-auto mb-4" />
-                        <h3 className="text-xl font-bold text-gray-700">No karma logs found</h3>
-                        <p className="text-gray-500 mt-2">No karma transactions match the filter criteria.</p>
+                        <h3 className="text-xl font-bold text-gray-700">No aura logs found</h3>
+                        <p className="text-gray-500 mt-2">No aura transactions match the filter criteria.</p>
                       </div>
                     ) : (
                       <div className="overflow-x-auto rounded-2xl border border-slate-100 bg-white shadow-sm">
@@ -619,7 +619,7 @@ export default function AdminDashboard() {
                               <th className="px-6 py-4">User</th>
                               <th className="px-6 py-4">Role</th>
                               <th className="px-6 py-4">Change</th>
-                              <th className="px-6 py-4">Karma Range</th>
+                              <th className="px-6 py-4">Aura Range</th>
                               <th className="px-6 py-4">Rule / Context</th>
                               <th className="px-6 py-4">Date</th>
                             </tr>
@@ -646,7 +646,7 @@ export default function AdminDashboard() {
                                   </span>
                                 </td>
                                 <td className="px-6 py-4 text-xs font-semibold text-slate-500">
-                                  {tx.previousKarma ? tx.previousKarma.toFixed(2) : '5.00'} → {tx.newKarma ? tx.newKarma.toFixed(2) : '5.00'}
+                                  {tx.previousAura !== undefined && tx.previousAura !== null ? tx.previousAura.toFixed(1) : '500.0'} → {tx.newAura !== undefined && tx.newAura !== null ? tx.newAura.toFixed(1) : '500.0'}
                                 </td>
                                 <td className="px-6 py-4">
                                   <div className="font-semibold text-gray-800 text-xs">{tx.ruleApplied}</div>
@@ -882,8 +882,8 @@ export default function AdminDashboard() {
                           onChange={(e) => setComplaintBlame(e.target.value)}
                           className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-bold text-gray-800"
                         >
-                          <option value="VENDOR_FAULT">Vendor at Fault (Deduct Vendor Karma)</option>
-                          <option value="CUSTOMER_FAULT">Customer at Fault (Deduct Customer Karma)</option>
+                          <option value="VENDOR_FAULT">Vendor at Fault (Deduct Vendor Aura)</option>
+                          <option value="CUSTOMER_FAULT">Customer at Fault (Deduct Customer Aura)</option>
                           <option value="SYSTEM_FAULT">System Error / Force Majeure (No Penalties)</option>
                           <option value="UNDETERMINED">Undetermined / Shared Blame</option>
                         </select>
@@ -912,7 +912,7 @@ export default function AdminDashboard() {
                           className="w-4 h-4 text-amber-600 border-slate-300 rounded focus:ring-amber-500"
                         />
                         <label htmlFor="dismiss-malicious" className="text-sm font-bold text-slate-700 select-none cursor-pointer">
-                          Mark as Malicious (Penalizes customer karma)
+                          Mark as Malicious (Penalizes customer aura)
                         </label>
                       </div>
 

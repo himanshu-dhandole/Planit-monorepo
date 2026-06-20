@@ -465,16 +465,21 @@ export default function ServiceDetails() {
                   <span className="text-slate-300">•</span>
                   <div className="flex items-center gap-1.5 text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full font-bold text-xs">
                     <Star size={14} fill="currentColor" className="text-indigo-500" />
-                    Reputation: {vendor.karma ? vendor.karma.toFixed(2) : "5.00"}
+                    Reputation: {vendor.aura !== undefined && vendor.aura !== null ? vendor.aura.toFixed(1) : "500.0"}
                   </div>
-                  {vendor.karma >= 4.5 && (
-                    <span className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                      GOLD TRUSTED
+                  {vendor.aura >= 800.0 && (
+                    <span className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm shadow-[0_0_8px_rgba(245,158,11,0.3)]">
+                      RADIANT TRUSTED
                     </span>
                   )}
-                  {vendor.karma >= 4.0 && vendor.karma < 4.5 && (
-                    <span className="bg-gradient-to-r from-slate-400 to-slate-300 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-                      SILVER TRUSTED
+                  {vendor.aura >= 500.0 && vendor.aura < 800.0 && (
+                    <span className="bg-gradient-to-r from-cyan-400 to-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm shadow-[0_0_6px_rgba(6,182,212,0.2)]">
+                      LUMINOUS TRUSTED
+                    </span>
+                  )}
+                  {vendor.aura < 500.0 && (
+                    <span className="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-1 rounded-full border border-slate-200">
+                      FAINT TRUSTED
                     </span>
                   )}
                 </>
@@ -621,7 +626,7 @@ export default function ServiceDetails() {
                   <div className="bg-white/10 rounded-2xl p-5 border border-white/10 hover:bg-white/20 transition-colors">
                     <Sparkles size={28} className="text-indigo-200 mb-3" />
                     <h4 className="font-bold text-lg mb-1">
-                      Karma Protections
+                      Aura Protections
                     </h4>
                     <p className="text-indigo-100 text-sm">
                       Ensuring fair dealing and a stress-free experience for

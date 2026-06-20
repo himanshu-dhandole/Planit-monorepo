@@ -112,7 +112,7 @@ export default function Footer() {
                   </li>
                   <li>
                     <a href="#" className="hover:text-white transition-colors">
-                      Karma
+                      Aura
                     </a>
                   </li>
                 </ul>
