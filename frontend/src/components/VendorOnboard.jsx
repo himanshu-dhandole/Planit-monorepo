@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import { Briefcase, MapPin, Phone, Building2, Tag, CheckCircle, FileText, Loader2, ArrowLeft } from 'lucide-react';
 import CloudsBackground from './CloudsBackground';
 import 'leaflet/dist/leaflet.css';
+import { FileUploaderRegular } from '@uploadcare/react-uploader';
+import '@uploadcare/react-uploader/core.css';
 
 export default function VendorOnboard() {
   const navigate = useNavigate();
@@ -295,8 +297,38 @@ export default function VendorOnboard() {
                   <textarea name="description" value={formData.description} onChange={handleChange} rows="4" className="w-full bg-white px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-gray-800 shadow-sm resize-none" placeholder="Describe what your business offers..."></textarea>
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Profile Image URL (Optional)</label>
-                  <input type="url" name="profileImageUrl" value={formData.profileImageUrl} onChange={handleChange} className="w-full bg-white px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-gray-800 shadow-sm" placeholder="https://example.com/logo.jpg" />
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Profile Image (Optional)</label>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    {formData.profileImageUrl && (
+                      <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-gray-200 shadow-sm shrink-0">
+                        <img src={formData.profileImageUrl} alt="Profile Preview" className="w-full h-full object-cover" />
+                        <button 
+                          type="button" 
+                          onClick={() => setFormData(prev => ({ ...prev, profileImageUrl: '' }))} 
+                          className="absolute top-1 right-1 bg-white/85 p-1 rounded-full text-red-500 hover:text-red-750 transition-colors shadow-sm"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
+                    <FileUploaderRegular
+                      pubkey="demopublickey"
+                      maxLocalFileSizeBytes={10000000}
+                      multiple={false}
+                      imgOnly={true}
+                      sourceList="local, url, camera"
+                      className="uc-light"
+                      onChange={(e) => {
+                        const successfulFiles = e.allEntries.filter((file) => file.status === "success");
+                        if (successfulFiles.length > 0) {
+                          const url = successfulFiles[0].cdnUrl;
+                          setFormData(prev => ({ ...prev, profileImageUrl: url }));
+                        }
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

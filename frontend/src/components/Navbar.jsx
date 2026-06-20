@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { CartContext } from "../context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
+import logo from "../assets/planit-logo-removebg-preview.png";
 import {
   CalendarDays,
   User,
@@ -152,9 +153,10 @@ export default function Navbar() {
         <div className="bg-white/50 backdrop-blur-xl border border-white/40 shadow-sm rounded-full px-4 md:px-6 py-2.5 md:py-3 flex items-center gap-3 md:gap-8 text-sm font-medium text-gray-800 transition-all">
           <Link
             to="/"
-            className="font-serif text-xl md:text-2xl font-black tracking-tighter hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 font-serif text-xl md:text-2xl font-black tracking-tighter hover:opacity-80 transition-opacity"
           >
-            PLANIT
+            <img src={logo} alt="Planit Logo" className="h-12 mb-1 w-auto" />
+            <span>PLANIT</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
@@ -218,7 +220,11 @@ export default function Navbar() {
                 <span
                   className={`font-semibold transition-colors duration-300 hidden sm:block ${hoveredItem === "Profile" ? "text-black" : "text-gray-800"}`}
                 >
-                  Hi {customerProfile?.firstName || user.email.split("@")[0]}!
+                  Hi{" "}
+                  {user.name ||
+                    customerProfile?.firstName ||
+                    user.email.split("@")[0]}
+                  !
                 </span>
                 <div
                   className={`w-9 h-9 rounded-full bg-gray-100 overflow-hidden border-2 shadow-sm flex items-center justify-center transition-all duration-300 ${hoveredItem === "Profile" ? "border-gray-300" : "border-white"}`}
@@ -252,67 +258,145 @@ export default function Navbar() {
             )}
 
             {/* Hamburger Button for Mobile (Shadcn Drawer) */}
-            <Drawer direction="right" open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <Drawer
+              direction="right"
+              open={mobileMenuOpen}
+              onOpenChange={setMobileMenuOpen}
+            >
               <DrawerTrigger asChild>
-                <button
-                  className="md:hidden p-2 text-gray-700 hover:text-black transition-colors rounded-full hover:bg-white/50 flex-shrink-0"
-                >
+                <button className="md:hidden p-2 text-gray-700 hover:text-black transition-colors rounded-full hover:bg-white/50 flex-shrink-0">
                   <Menu size={22} />
                 </button>
               </DrawerTrigger>
               <DrawerContent className="w-[300px] sm:w-[350px] bg-white/90 backdrop-blur-xl border-white/40 overflow-y-auto z-[100] custom-scrollbar">
                 <DrawerHeader className="mb-6 mt-4">
-                  <DrawerTitle className="text-left font-serif text-2xl font-black tracking-tighter">PLANIT</DrawerTitle>
+                  <DrawerTitle className="flex items-center gap-2 text-left font-serif text-2xl font-black tracking-tighter">
+                    <img
+                      src={logo}
+                      alt="Planit Logo"
+                      className="h-10 w-auto opacity-90"
+                    />
+                    <span>PLANIT</span>
+                  </DrawerTitle>
                 </DrawerHeader>
                 <div className="flex flex-col gap-2">
-                {navItems.map((item) => (
-                  !item.hasDropdown ? (
-                    <Link
-                      key={item.name}
-                      to={item.path}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block p-3 text-gray-800 hover:bg-white/60 hover:text-black rounded-xl font-semibold transition-all"
-                    >
-                      {item.name}
-                    </Link>
-                  ) : (
-                    <div key={item.name} className="flex flex-col gap-1 mb-2">
-                      <div className="p-3 text-gray-400 font-bold text-xs uppercase tracking-wider">
+                  {navItems.map((item) =>
+                    !item.hasDropdown ? (
+                      <Link
+                        key={item.name}
+                        to={item.path}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block p-3 text-gray-800 hover:bg-white/60 hover:text-black rounded-xl font-semibold transition-all"
+                      >
                         {item.name}
-                      </div>
-                      {item.name === "Dashboards" && (
-                        <div className="grid grid-cols-1 gap-1">
-                          <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><User size={18}/> User Profile</Link>
-                          {isVendor && <Link to="/vendor-dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><Box size={18}/> Vendor Dashboard</Link>}
-                          <Link to="/my-events" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><CalendarDays size={18}/> My Events</Link>
-                          {isAdmin && <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><Users size={18}/> Admin Dashboard</Link>}
-                          <Link to="/my-bookings" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><FileText size={18}/> My Bookings</Link>
-                          {isVendor && <Link to="/vendor-bookings" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><CreditCard size={18}/> Vendor Bookings</Link>}
-                          <Link to="/disputes" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><AlertCircle size={18}/> Disputes Center</Link>
-                          <Link to="/support" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><HelpCircle size={18}/> Support Help</Link>
+                      </Link>
+                    ) : (
+                      <div key={item.name} className="flex flex-col gap-1 mb-2">
+                        <div className="p-3 text-gray-400 font-bold text-xs uppercase tracking-wider">
+                          {item.name}
                         </div>
-                      )}
+                        {item.name === "Dashboards" && (
+                          <div className="grid grid-cols-1 gap-1">
+                            <Link
+                              to="/profile"
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"
+                            >
+                              <User size={18} /> User Profile
+                            </Link>
+                            {isVendor && (
+                              <Link
+                                to="/vendor-dashboard"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"
+                              >
+                                <Box size={18} /> Vendor Dashboard
+                              </Link>
+                            )}
+                            <Link
+                              to="/my-events"
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"
+                            >
+                              <CalendarDays size={18} /> My Events
+                            </Link>
+                            {isAdmin && (
+                              <Link
+                                to="/admin"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"
+                              >
+                                <Users size={18} /> Admin Dashboard
+                              </Link>
+                            )}
+                            <Link
+                              to="/my-bookings"
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"
+                            >
+                              <FileText size={18} /> My Bookings
+                            </Link>
+                            {isVendor && (
+                              <Link
+                                to="/vendor-bookings"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"
+                              >
+                                <CreditCard size={18} /> Vendor Bookings
+                              </Link>
+                            )}
+                            <Link
+                              to="/disputes"
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"
+                            >
+                              <AlertCircle size={18} /> Disputes Center
+                            </Link>
+                            <Link
+                              to="/support"
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"
+                            >
+                              <HelpCircle size={18} /> Support Help
+                            </Link>
+                          </div>
+                        )}
+                      </div>
+                    ),
+                  )}
+                  {user ? (
+                    <>
+                      <div className="p-3 mt-2 text-gray-400 font-bold text-xs uppercase tracking-wider border-t border-gray-200">
+                        Account
+                      </div>
+                      <Link
+                        to="/wallet"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"
+                      >
+                        <Wallet size={18} /> Wallet
+                      </Link>
+                      <button
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          setShowSignOutModal(true);
+                        }}
+                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-50/50 transition-all text-red-500 font-medium"
+                      >
+                        <LogOut size={18} /> Sign Out
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-200 sm:hidden">
+                      <Link
+                        to="/signin"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="w-full py-3 px-4 text-center text-gray-700 font-semibold border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
+                      >
+                        Log in
+                      </Link>
                     </div>
-                  )
-                ))}
-                {user ? (
-                  <>
-                    <div className="p-3 mt-2 text-gray-400 font-bold text-xs uppercase tracking-wider border-t border-gray-200">
-                      Account
-                    </div>
-                    <Link to="/wallet" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><Wallet size={18}/> Wallet</Link>
-                    <button 
-                      onClick={() => { setMobileMenuOpen(false); setShowSignOutModal(true); }}
-                      className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-50/50 transition-all text-red-500 font-medium"
-                    >
-                      <LogOut size={18}/> Sign Out
-                    </button>
-                  </>
-                ) : (
-                  <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-200 sm:hidden">
-                    <Link to="/signin" onClick={() => setMobileMenuOpen(false)} className="w-full py-3 px-4 text-center text-gray-700 font-semibold border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors">Log in</Link>
-                  </div>
-                )}
+                  )}
                 </div>
               </DrawerContent>
             </Drawer>

@@ -28,6 +28,7 @@ public class JWTService {
         return Jwts.builder()
                 .subject(Long.toString(user.getId()))
                 .claim("email", user.getEmail())
+                .claim("name", user.getName())
                 .claim("role", user.getRole().toString())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))

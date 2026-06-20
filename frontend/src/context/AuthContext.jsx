@@ -24,7 +24,7 @@ export function AuthProvider({ children }) {
       if (token) {
         try {
           const decoded = jwtDecode(token);
-          const userData = { id: decoded.sub, email: decoded.email || 'User', roles: parseRoles(decoded.role) };
+          const userData = { id: decoded.sub, email: decoded.email || 'User', name: decoded.name || 'User', roles: parseRoles(decoded.role) };
           setUser(userData);
           
           // Fetch customer profile on load
@@ -35,6 +35,25 @@ export function AuthProvider({ children }) {
             }
           } catch (err) {
             setCustomerProfile(null);
+          }
+
+          // Fetch fresh token/role from backend database
+          try {
+            const response = await apiClient.post('/auth/refresh');
+            const freshToken = response.data?.data?.accessToken || response.data?.accessToken;
+            if (freshToken) {
+              localStorage.setItem('accessToken', freshToken);
+              const freshDecoded = jwtDecode(freshToken);
+              const freshUserData = { 
+                id: freshDecoded.sub, 
+                email: freshDecoded.email || freshDecoded.sub, 
+                name: freshDecoded.name || freshDecoded.email?.split("@")[0] || 'User',
+                roles: parseRoles(freshDecoded.role) 
+              };
+              setUser(freshUserData);
+            }
+          } catch (refreshErr) {
+            console.error("Background token refresh failed on init", refreshErr);
           }
         } catch (error) {
           console.error("Token decoding failed", error);
@@ -54,7 +73,7 @@ export function AuthProvider({ children }) {
     if (accessToken) {
       localStorage.setItem('accessToken', accessToken);
       const decoded = jwtDecode(accessToken);
-      const userData = { id: decoded.sub, email: decoded.email || email, roles: parseRoles(decoded.role) };
+      const userData = { id: decoded.sub, email: decoded.email || email, name: decoded.name || decoded.email?.split("@")[0] || email || 'User', roles: parseRoles(decoded.role) };
       setUser(userData);
 
       // Fetch profile
@@ -94,8 +113,18 @@ export function AuthProvider({ children }) {
       if (token) {
         localStorage.setItem('accessToken', token);
         const decoded = jwtDecode(token);
-        const userData = { id: decoded.sub, email: decoded.email || decoded.sub, roles: parseRoles(decoded.role) };
+        const userData = { id: decoded.sub, email: decoded.email || decoded.sub, name: decoded.name || decoded.email?.split("@")[0] || 'User', roles: parseRoles(decoded.role) };
         setUser(userData);
+
+        // Fetch fresh customer profile
+        try {
+          const res = await apiClient.get(`/api/customer/user/${userData.id}`);
+          if (res.data) {
+            setCustomerProfile(res.data.data || res.data);
+          }
+        } catch (profileErr) {
+          setCustomerProfile(null);
+        }
       }
     } catch (error) {
       console.error("Token refresh failed", error);

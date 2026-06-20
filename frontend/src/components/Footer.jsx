@@ -26,7 +26,7 @@ function FooterDeveloperItem({ imageUrl, title, githubUrl }) {
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#050505] text-[#A1A1AA] pt-16 md:pt-20 pb-10 border-t border-white/5 font-sans rounded-t-[2rem] md:rounded-t-[2.5rem] mt-[-2rem] md:mt-[-2.5rem] relative z-10">
+    <footer className="w-full bg-[#050505] text-[#A1A1AA] pt-16 md:pt-20 pb-10 border-t border-white/5 font-sans rounded-t-[2rem] md:rounded-t-[2.5rem] relative z-10">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-16 lg:mb-24">
           {/* Left Section - Logo, Text, Badges */}
