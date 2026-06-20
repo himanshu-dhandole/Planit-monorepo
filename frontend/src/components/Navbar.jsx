@@ -20,6 +20,7 @@ import {
   CalendarCheck,
   Menu,
   X,
+  LayoutGrid,
 } from "lucide-react";
 import {
   Drawer,
@@ -283,11 +284,7 @@ export default function Navbar() {
                       {item.name === "Dashboards" && (
                         <div className="grid grid-cols-1 gap-1">
                           <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><User size={18}/> User Profile</Link>
-                          {isVendor && <Link to="/vendor-dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><Box size={18}/> Vendor Dashboard</Link>}
-                          <Link to="/my-events" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><CalendarDays size={18}/> My Events</Link>
-                          {isAdmin && <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><Users size={18}/> Admin Dashboard</Link>}
-                          <Link to="/my-bookings" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><FileText size={18}/> My Bookings</Link>
-                          {isVendor && <Link to="/vendor-bookings" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><CreditCard size={18}/> Vendor Bookings</Link>}
+                          <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><LayoutGrid size={18}/> Console Workspace</Link>
                           <Link to="/disputes" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><AlertCircle size={18}/> Disputes Center</Link>
                           <Link to="/support" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 transition-all text-gray-700 font-medium"><HelpCircle size={18}/> Support Help</Link>
                         </div>
@@ -342,42 +339,11 @@ export default function Navbar() {
                     onClick={() => setHoveredItem(null)}
                   />
                   <DropdownItem
-                    icon={<Box size={20} />}
-                    title="Vendor Dashboard"
-                    desc="Manage your vendor services"
-                    to="/vendor-dashboard"
+                    icon={<LayoutGrid size={20} />}
+                    title="Console Workspace"
+                    desc="Access events, tasks, bookings, and wallet"
+                    to="/dashboard"
                     onClick={() => setHoveredItem(null)}
-                    disabled={!isVendor}
-                  />
-                  <DropdownItem
-                    icon={<CalendarDays size={20} />}
-                    title="My Events"
-                    desc="View and manage your events"
-                    to="/my-events"
-                    onClick={() => setHoveredItem(null)}
-                  />
-                  <DropdownItem
-                    icon={<Users size={20} />}
-                    title="Admin Dashboard"
-                    desc="Platform administration"
-                    to="/admin"
-                    onClick={() => setHoveredItem(null)}
-                    disabled={!isAdmin}
-                  />
-                  <DropdownItem
-                    icon={<FileText size={20} />}
-                    title="My Bookings"
-                    desc="Track and cancel service bookings"
-                    to="/my-bookings"
-                    onClick={() => setHoveredItem(null)}
-                  />
-                  <DropdownItem
-                    icon={<CreditCard size={20} />}
-                    title="Vendor Bookings"
-                    desc="Manage incoming customer bookings"
-                    to="/vendor-bookings"
-                    onClick={() => setHoveredItem(null)}
-                    disabled={!isVendor}
                   />
                   <DropdownItem
                     icon={<AlertCircle size={20} />}
