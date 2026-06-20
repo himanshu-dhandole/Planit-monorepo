@@ -99,8 +99,8 @@ public interface BookingMapper {
     @Mapping(source = "bookingId", target = "booking.id")
     void updateDisputeFromDTO(DisputeManagementRequestDTO dto, @MappingTarget DisputeManagement entity);
 
-    // Karma mappings
-    com.teamarc.planit.dto.response.KarmaTransactionResponseDTO toKarmaTransactionResponse(com.teamarc.planit.entity.KarmaTransaction entity);
+    // Aura mappings
+    com.teamarc.planit.dto.response.AuraTransactionResponseDTO toAuraTransactionResponse(com.teamarc.planit.entity.AuraTransaction entity);
 
     // Testimonial mappings
     @Mapping(source = "vendorId", target = "vendor.id")

@@ -33,7 +33,7 @@ public class BookingService {
     private final WalletRepository walletRepository;
     private final PaymentService paymentService;
     private final PaymentRepository paymentRepository;
-    private final KarmaService karmaService;
+    private final AuraService auraService;
     private final EscrowRepository escrowRepository;
     private final WalletPaymentStrategies walletPaymentStrategies;
 
@@ -163,20 +163,20 @@ public class BookingService {
         booking.setStatus(BookingStatus.CANCELLED);
         Booking saved = bookingRepository.save(booking);
 
-        // Apply time-dependent customer karma penalty
+        // Apply time-dependent customer aura penalty
         LocalDateTime now = LocalDateTime.now();
         java.time.Duration duration = java.time.Duration.between(now, booking.getStartDt());
-        double penalty = -0.10;
+        double penalty = -10.0;
         String urgency = "STANDARD";
         if (duration.isNegative() || duration.toHours() <= 24) {
-            penalty = -1.00;
+            penalty = -100.0;
             urgency = "CRITICAL";
         } else if (duration.toDays() <= 7) {
-            penalty = -0.50;
+            penalty = -50.0;
             urgency = "URGENT";
         }
 
-        karmaService.applyKarmaChange(
+        auraService.applyAuraChange(
                 booking.getCustomer().getUser().getId(),
                 Role.CUSTOMER,
                 penalty,
@@ -209,20 +209,20 @@ public class BookingService {
         booking.setStatus(BookingStatus.CANCELLED);
         Booking saved = bookingRepository.save(booking);
 
-        // Apply time-dependent vendor karma penalty
+        // Apply time-dependent vendor aura penalty
         LocalDateTime now = LocalDateTime.now();
         java.time.Duration duration = java.time.Duration.between(now, booking.getStartDt());
-        double penalty = -0.10;
+        double penalty = -10.0;
         String urgency = "STANDARD";
         if (duration.isNegative() || duration.toHours() <= 24) {
-            penalty = -1.00;
+            penalty = -100.0;
             urgency = "CRITICAL";
         } else if (duration.toDays() <= 7) {
-            penalty = -0.50;
+            penalty = -50.0;
             urgency = "URGENT";
         }
 
-        karmaService.applyKarmaChange(
+        auraService.applyAuraChange(
                 booking.getServices().getVendor().getUser().getId(),
                 Role.VENDOR,
                 penalty,
@@ -247,10 +247,10 @@ public class BookingService {
 
         if (status == BookingStatus.COMPLETED && oldStatus != BookingStatus.COMPLETED) {
             // Reward Vendor
-            karmaService.applyKarmaChange(
+            auraService.applyAuraChange(
                     booking.getServices().getVendor().getUser().getId(),
                     Role.VENDOR,
-                    0.10,
+                    20.0,
                     "BOOKING_COMPLETED",
                     booking.getId(),
                     null,
@@ -258,10 +258,10 @@ public class BookingService {
                     "Booking completed successfully."
             );
             // Reward Customer
-            karmaService.applyKarmaChange(
+            auraService.applyAuraChange(
                     booking.getCustomer().getUser().getId(),
                     Role.CUSTOMER,
-                    0.05,
+                    10.0,
                     "BOOKING_COMPLETED",
                     booking.getId(),
                     null,

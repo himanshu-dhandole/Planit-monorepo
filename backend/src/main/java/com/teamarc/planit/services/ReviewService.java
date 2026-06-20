@@ -32,7 +32,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final BookingRepository bookingRepository;
     private final ServicesRepository servicesRepository;
-    private final KarmaService karmaService;
+    private final AuraService auraService;
     private final ModelMapper modelMapper;
 
     @Transactional
@@ -72,15 +72,15 @@ public class ReviewService {
         Services service = booking.getServices();
         recalculateServiceRating(service);
 
-        // 6. Apply Review-to-Karma modifier to the vendor
-        Double karmaChange = getKarmaChangeForRating(dto.getRating());
-        if (karmaChange != 0.0) {
+        // 6. Apply Review-to-Aura modifier to the vendor
+        Double auraChange = getAuraChangeForRating(dto.getRating());
+        if (auraChange != 0.0) {
             User vendorUser = service.getVendor().getUser();
             String description = "Review rating of " + dto.getRating() + " stars left by Customer user ID: " + currentUser.getId();
-            karmaService.applyKarmaChange(
+            auraService.applyAuraChange(
                     vendorUser.getId(),
                     Role.VENDOR,
-                    karmaChange,
+                    auraChange,
                     "REVIEW_RECEIVED_" + dto.getRating() + "_STAR",
                     booking.getId(),
                     null,
@@ -114,13 +114,13 @@ public class ReviewService {
         servicesRepository.save(service);
     }
 
-    private Double getKarmaChangeForRating(Integer rating) {
+    private Double getAuraChangeForRating(Integer rating) {
         switch (rating) {
-            case 5: return 0.10;
-            case 4: return 0.05;
+            case 5: return 5.0;
+            case 4: return 2.0;
             case 3: return 0.0;
-            case 2: return -0.20;
-            case 1: return -0.50;
+            case 2: return -10.0;
+            case 1: return -30.0;
             default: return 0.0;
         }
     }

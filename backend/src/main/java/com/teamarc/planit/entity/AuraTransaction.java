@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "karma_transactions")
+@Table(name = "aura_transactions")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class KarmaTransaction {
+public class AuraTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,14 +26,14 @@ public class KarmaTransaction {
     @Column(name = "action_role", nullable = false)
     private Role actionRole;
 
-    @Column(nullable = false, columnDefinition = "DECIMAL(5,2)")
+    @Column(nullable = false, columnDefinition = "DECIMAL(5,1)")
     private Double amount;
 
-    @Column(name = "previous_karma", nullable = false, columnDefinition = "DECIMAL(3,2)")
-    private Double previousKarma;
+    @Column(name = "previous_aura", nullable = false, columnDefinition = "DECIMAL(5,1)")
+    private Double previousAura;
 
-    @Column(name = "new_karma", nullable = false, columnDefinition = "DECIMAL(3,2)")
-    private Double newKarma;
+    @Column(name = "new_aura", nullable = false, columnDefinition = "DECIMAL(5,1)")
+    private Double newAura;
 
     @Column(name = "rule_applied", nullable = false)
     private String ruleApplied;

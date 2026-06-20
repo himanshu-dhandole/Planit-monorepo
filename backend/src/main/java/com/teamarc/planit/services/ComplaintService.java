@@ -32,7 +32,7 @@ public class ComplaintService {
     private final ComplaintRepository complaintRepository;
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
-    private final KarmaService karmaService;
+    private final AuraService auraService;
     private final BookingMapper bookingMapper;
 
     @Transactional
@@ -84,14 +84,14 @@ public class ComplaintService {
 
         Complaint saved = complaintRepository.save(complaint);
 
-        // Apply karma rules based on blame
+        // Apply aura rules based on blame
         if (blame == ComplaintBlame.VENDOR_FAULT) {
             // Find vendor user (which is againstUser if raised by customer, or raisedByUser if raised by vendor)
             User vendorUser = getVendorUserForComplaint(complaint);
-            karmaService.applyKarmaChange(
+            auraService.applyAuraChange(
                     vendorUser.getId(),
                     Role.VENDOR,
-                    -1.00,
+                    -100.0,
                     "COMPLAINT_RESOLVED_VENDOR_FAULT",
                     complaint.getBooking().getId(),
                     saved.getId(),
@@ -100,10 +100,10 @@ public class ComplaintService {
             );
         } else if (blame == ComplaintBlame.CUSTOMER_FAULT) {
             User customerUser = getCustomerUserForComplaint(complaint);
-            karmaService.applyKarmaChange(
+            auraService.applyAuraChange(
                     customerUser.getId(),
                     Role.CUSTOMER,
-                    -1.00,
+                    -100.0,
                     "COMPLAINT_RESOLVED_CUSTOMER_FAULT",
                     complaint.getBooking().getId(),
                     saved.getId(),
@@ -133,10 +133,10 @@ public class ComplaintService {
         // If dismiss is malicious, penalize customer who raised it
         if (malicious) {
             User raisedByUser = complaint.getRaisedByUser();
-            karmaService.applyKarmaChange(
+            auraService.applyAuraChange(
                     raisedByUser.getId(),
                     Role.CUSTOMER,
-                    -0.50,
+                    -50.0,
                     "COMPLAINT_DISMISSED_MALICIOUS",
                     complaint.getBooking().getId(),
                     saved.getId(),

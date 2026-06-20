@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class KarmaTransactionResponseDTO {
+public class AuraTransactionResponseDTO {
     private Long id;
     private Long userId;
     private Role actionRole;
     private Double amount;
-    private Double previousKarma;
-    private Double newKarma;
+    private Double previousAura;
+    private Double newAura;
     private String ruleApplied;
     private Long bookingId;
     private Long complaintId;

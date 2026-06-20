@@ -28,7 +28,7 @@ public class VendorResponseDTO {
     private String category;
     private com.teamarc.planit.entity.enums.VerificationStatus verificationStatus;
     private java.lang.Integer totalBookings;
-    private java.lang.Double karma;
+    private java.lang.Double aura;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private PointDTO coordinates;

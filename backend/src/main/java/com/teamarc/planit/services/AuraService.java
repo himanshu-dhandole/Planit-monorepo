@@ -1,12 +1,12 @@
 package com.teamarc.planit.services;
 
 import com.teamarc.planit.entity.Customer;
-import com.teamarc.planit.entity.KarmaTransaction;
+import com.teamarc.planit.entity.AuraTransaction;
 import com.teamarc.planit.entity.User;
 import com.teamarc.planit.entity.Vendor;
 import com.teamarc.planit.entity.enums.Role;
 import com.teamarc.planit.repository.CustomerRepository;
-import com.teamarc.planit.repository.KarmaTransactionRepository;
+import com.teamarc.planit.repository.AuraTransactionRepository;
 import com.teamarc.planit.repository.UserRepository;
 import com.teamarc.planit.repository.VendorRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,46 +21,46 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class KarmaService {
+public class AuraService {
 
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
     private final VendorRepository vendorRepository;
-    private final KarmaTransactionRepository karmaTransactionRepository;
+    private final AuraTransactionRepository auraTransactionRepository;
 
-    public static final double MIN_KARMA = 1.0;
-    public static final double MAX_KARMA = 5.0;
+    public static final double MIN_AURA = 0.0;
+    public static final double MAX_AURA = 1000.0;
 
     /**
-     * Applies a karma change to a user.
-     * Keeps user, customer, and vendor karma columns in sync.
+     * Applies an aura change to a user.
+     * Keeps user, customer, and vendor aura columns in sync.
      * Enforces policy outcomes (suspension/refund flags).
      * Logs the transaction in the database (silent, no notifications).
      */
     @Transactional
-    public void applyKarmaChange(Long userId, Role actionRole, Double amount, String ruleApplied, Long bookingId, Long complaintId, Long reviewId, String description) {
+    public void applyAuraChange(Long userId, Role actionRole, Double amount, String ruleApplied, Long bookingId, Long complaintId, Long reviewId, String description) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
 
-        double previousKarma = user.getKarma() != null ? user.getKarma() : 5.0;
+        double previousAura = user.getAura() != null ? user.getAura() : 500.0;
         
-        // Clamping between 1.0 and 5.0
-        double rawNewKarma = previousKarma + amount;
-        double newKarma = Math.max(MIN_KARMA, Math.min(MAX_KARMA, rawNewKarma));
+        // Clamping between 0.0 and 1000.0
+        double rawNewAura = previousAura + amount;
+        double newAura = Math.max(MIN_AURA, Math.min(MAX_AURA, rawNewAura));
 
         // Format to 2 decimal places
-        BigDecimal bd = BigDecimal.valueOf(newKarma);
+        BigDecimal bd = BigDecimal.valueOf(newAura);
         bd = bd.setScale(2, RoundingMode.HALF_UP);
-        newKarma = bd.doubleValue();
+        newAura = bd.doubleValue();
 
         // 1. Update User Entity
-        user.setKarma(newKarma);
+        user.setAura(newAura);
         userRepository.save(user);
 
         // 2. Synchronize Customer Entity
         Customer customer = customerRepository.findByUserId(userId);
         if (customer != null) {
-            customer.setKarma(newKarma);
+            customer.setAura(newAura);
             customerRepository.save(customer);
         }
 
@@ -68,24 +68,24 @@ public class KarmaService {
         Optional<Vendor> vendorOpt = vendorRepository.findByUser_Id(userId);
         if (vendorOpt.isPresent()) {
             Vendor vendor = vendorOpt.get();
-            vendor.setKarma(newKarma);
+            vendor.setAura(newAura);
 
-            // Enforcement: If karma drops below 2.0, suspend vendor profile
-            if (newKarma < 2.0) {
+            // Enforcement: If aura drops below 100.0, suspend vendor profile
+            if (newAura < 100.0) {
                 vendor.setIsActive(false);
-                log.warn("Vendor {} suspended due to low karma score ({})", vendor.getBusinessName(), newKarma);
+                log.warn("Vendor {} suspended due to low aura score ({})", vendor.getBusinessName(), newAura);
             }
 
             vendorRepository.save(vendor);
         }
 
         // 4. Log the audit transaction (silent)
-        KarmaTransaction transaction = KarmaTransaction.builder()
+        AuraTransaction transaction = AuraTransaction.builder()
                 .userId(userId)
                 .actionRole(actionRole)
                 .amount(amount)
-                .previousKarma(previousKarma)
-                .newKarma(newKarma)
+                .previousAura(previousAura)
+                .newAura(newAura)
                 .ruleApplied(ruleApplied)
                 .bookingId(bookingId)
                 .complaintId(complaintId)
@@ -93,26 +93,26 @@ public class KarmaService {
                 .description(description)
                 .build();
 
-        karmaTransactionRepository.save(transaction);
+        auraTransactionRepository.save(transaction);
 
-        log.info("Applied karma change to user ID {}: previous={}, new={}, rule={}", userId, previousKarma, newKarma, ruleApplied);
+        log.info("Applied aura change to user ID {}: previous={}, new={}, rule={}", userId, previousAura, newAura, ruleApplied);
     }
 
     /**
-     * Get the trust badge name based on karma score.
+     * Get the trust badge name based on aura score.
      */
-    public String getTrustBadge(Double karma) {
-        if (karma == null) return "STANDARD";
-        if (karma >= 4.5) return "GOLD";
-        if (karma >= 4.0) return "SILVER";
-        return "STANDARD";
+    public String getTrustBadge(Double aura) {
+        if (aura == null) return "LUMINOUS";
+        if (aura >= 800.0) return "RADIANT";
+        if (aura >= 500.0) return "LUMINOUS";
+        return "FAINT";
     }
 
     /**
      * Check if customer needs stricter refund checks.
      */
-    public boolean needsStricterRefundCheck(Double karma) {
-        if (karma == null) return false;
-        return karma < 3.0;
+    public boolean needsStricterRefundCheck(Double aura) {
+        if (aura == null) return false;
+        return aura < 300.0;
     }
 }

@@ -68,7 +68,7 @@ public class AdminService {
                             .gstNumber(onBoardNewVendorRequestDTO.getGstNumber())
                             .verificationStatus(VerificationStatus.VERIFIED)
                             .isActive(true)
-                            .karma(user.getKarma())
+                            .aura(user.getAura())
                             .coordinates(onBoardNewVendorRequestDTO.getCoordinates() != null ? GeometryUtil.creatPoint(onBoardNewVendorRequestDTO.getCoordinates()) : null)
                             .build();
 

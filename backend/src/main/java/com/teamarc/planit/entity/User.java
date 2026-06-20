@@ -49,16 +49,16 @@ public class User implements UserDetails {
     @org.hibernate.annotations.ColumnDefault("false")
     private Boolean isEmailVerified;
 
-    @Column(nullable = false, columnDefinition = "DECIMAL(3,2)")
-    @org.hibernate.annotations.ColumnDefault("5.0")
-    private Double karma;
+    @Column(nullable = false, columnDefinition = "DECIMAL(5,1)")
+    @org.hibernate.annotations.ColumnDefault("500.0")
+    private Double aura;
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
         if (isEmailVerified == null) isEmailVerified = false;
-        if (karma == null) karma = 5.0;
+        if (aura == null) aura = 500.0;
     }
 
     @PreUpdate

@@ -25,7 +25,7 @@ public class CustomerResponseDTO {
     private String pincode;
     private String aadharUrl;
     private com.teamarc.planit.entity.enums.VerificationStatus verificationStatus;
-    private Double karma;
+    private Double aura;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private PointDTO coordinates;

@@ -62,9 +62,9 @@ public class Customer {
     @Column(nullable = false)
     private com.teamarc.planit.entity.enums.VerificationStatus verificationStatus;
     
-    @Column(nullable = false, columnDefinition = "DECIMAL(3,2)")
-    @ColumnDefault("5.0")
-    private Double karma;
+    @Column(nullable = false, columnDefinition = "DECIMAL(5,1)")
+    @ColumnDefault("500.0")
+    private Double aura;
     
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -85,7 +85,7 @@ public class Customer {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        if (karma == null) karma = 5.0;
+        if (aura == null) aura = 500.0;
         if (verificationStatus == null) verificationStatus = com.teamarc.planit.entity.enums.VerificationStatus.PENDING;
     }
     

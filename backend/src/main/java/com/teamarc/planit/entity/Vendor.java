@@ -76,9 +76,9 @@ public class Vendor {
     @ColumnDefault("0")
     private Integer totalBookings;
     
-    @Column(nullable = false, columnDefinition = "DECIMAL(3,2)")
-    @ColumnDefault("5.0")
-    private Double karma;
+    @Column(nullable = false, columnDefinition = "DECIMAL(5,1)")
+    @ColumnDefault("500.0")
+    private Double aura;
     
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -96,7 +96,7 @@ public class Vendor {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        if (karma == null) karma = 5.0;
+        if (aura == null) aura = 500.0;
         if (totalBookings == null) totalBookings = 0;
     }
     
