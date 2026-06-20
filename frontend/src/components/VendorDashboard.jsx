@@ -4,7 +4,8 @@ import { AuthContext } from '../context/AuthContext';
 import apiClient from '../lib/apiClient';
 import { toast } from 'sonner';
 import { Plus, Edit2, Trash2, MapPin, CheckCircle, XCircle, Clock, Loader2, IndianRupee, Phone, FileText, Briefcase, User, Map, CreditCard, Activity, Star, ShieldAlert, Navigation } from 'lucide-react';
-import { Widget } from '@uploadcare/react-widget';
+import { FileUploaderRegular } from '@uploadcare/react-uploader';
+import '@uploadcare/react-uploader/core.css';
 import 'leaflet/dist/leaflet.css';
 import CloudsBackground from './CloudsBackground';
 import CustomLoader from './CustomLoader';
@@ -724,20 +725,22 @@ export default function VendorDashboard() {
                     
                     {photos.length < 5 && (
                       <div className="mt-2">
-                        <Widget 
+                        <FileUploaderRegular 
                           key={`upload-widget-${photos.length}`}
-                          publicKey="demopublickey" 
-                          id="file" 
+                          pubkey="demopublickey" 
                           multiple
-                          onChange={(info) => {
-                              if (info.count && info.cdnUrl) {
-                                  const newUrls = Array.from({length: info.count}, (_, i) => `${info.cdnUrl}nth/${i}/`);
-                                  setPhotos(prev => [...prev, ...newUrls].slice(0, 5));
-                              } else if (info.cdnUrl && !info.count) {
-                                  if (!photos.includes(info.cdnUrl)) {
-                                      setPhotos(prev => [...prev, info.cdnUrl].slice(0, 5));
-                                  }
-                              }
+                          onChange={(e) => {
+                            const successfulFiles = e.allEntries.filter((file) => file.status === "success");
+                            const newUrls = successfulFiles.map((file) => file.cdnUrl).filter(Boolean);
+                            setPhotos(prev => {
+                              const combined = [...prev];
+                              newUrls.forEach(url => {
+                                if (!combined.includes(url)) {
+                                  combined.push(url);
+                                }
+                              });
+                              return combined.slice(0, 5);
+                            });
                           }} 
                         />
                       </div>
