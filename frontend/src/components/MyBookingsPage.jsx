@@ -253,21 +253,28 @@ export default function MyBookingsPage() {
       <PageTransition className="flex-1 pt-32 pb-12 px-4 sm:px-6 lg:px-8 relative font-sans w-full min-h-screen z-10">
         <div className="max-w-5xl mx-auto space-y-8">
           
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/50 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/80 shadow-sm">
-                <CalendarDays className="text-indigo-600" size={24} />
-              </div>
-              <div>
-                <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">My Bookings</h1>
-                <p className="text-slate-500 font-medium text-sm mt-0.5">Manage and track your service bookings.</p>
-              </div>
-            </div>
+          {/* Header Section */}
+          <div className="text-center pt-8 mb-10 relative">
+            <motion.h1
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight"
+            >
+              My Bookings
+            </motion.h1>
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="mt-4 text-lg text-slate-600 font-medium max-w-2xl mx-auto"
+            >
+              Manage and track your service bookings.
+            </motion.p>
           </div>
 
           {/* Filters */}
-          <div className="flex flex-wrap gap-2 pb-2">
+          <div className="flex flex-wrap justify-center gap-3 pb-8">
             {['ALL', 'PENDING', 'CONFIRMED', 'REJECTED', 'CANCELLED'].map((status) => (
               <button
                 key={status}

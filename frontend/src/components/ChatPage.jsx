@@ -8,6 +8,7 @@ import { AuthContext } from '../context/AuthContext';
 import apiClient from '../lib/apiClient';
 import CustomLoader from './CustomLoader';
 import { toast } from 'sonner';
+import CloudsBackground from './CloudsBackground';
 
 export default function ChatPage() {
   const { user } = useContext(AuthContext);
@@ -249,11 +250,11 @@ export default function ChatPage() {
 
   const getAvatarGradient = (name) => {
     const colors = [
-      'from-indigo-500 to-purple-600',
       'from-blue-500 to-indigo-600',
-      'from-purple-500 to-pink-600',
+      'from-cyan-500 to-blue-600',
+      'from-purple-500 to-indigo-500',
       'from-teal-400 to-emerald-600',
-      'from-rose-500 to-orange-600',
+      'from-rose-500 to-orange-500',
     ];
     if (!name) return colors[0];
     const index = name.charCodeAt(0) % colors.length;
@@ -274,11 +275,13 @@ export default function ChatPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#CBE4F9] to-[#E3F2FC] flex items-center justify-center p-4">
-        <div className="bg-white/50 backdrop-blur-xl border border-white/60 p-8 rounded-[2rem] text-center max-w-sm">
-          <p className="text-gray-800 font-bold mb-4 font-sans">Please sign in to access your chats</p>
+      <CloudsBackground>
+        <div className="min-h-screen flex items-center justify-center p-4 z-10 relative">
+          <div className="bg-white/80 backdrop-blur-md border border-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] text-center max-w-sm">
+            <p className="text-gray-800 font-semibold mb-4 font-sans">Please sign in to access your chats</p>
+          </div>
         </div>
-      </div>
+      </CloudsBackground>
     );
   }
 
@@ -288,27 +291,27 @@ export default function ChatPage() {
     : '';
 
   return (
-    <PageTransition className="min-h-screen bg-gradient-to-b from-[#CBE4F9] to-[#E3F2FC] pt-28 pb-10 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans flex items-center justify-center">
-      <div className="absolute inset-0 bg-noise pointer-events-none z-0"></div>
-      
-      <div className="w-full max-w-5xl h-[80vh] bg-white/40 backdrop-blur-xl border border-white/50 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.06)] flex overflow-hidden relative z-10">
+    <CloudsBackground>
+      <PageTransition className="min-h-screen pt-28 pb-10 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans flex items-center justify-center z-10">
+        
+        <div className="w-full max-w-7xl h-[calc(100vh-140px)] bg-white/70 backdrop-blur-xl border border-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex overflow-hidden relative z-10">
         
         {/* Left pane: Conversations List */}
-        <div className="w-1/3 border-r border-white/40 flex flex-col h-full bg-white/20">
-          <div className="p-6 border-b border-white/40">
-            <h2 className="text-xl font-bold text-gray-900 font-serif mb-3">Conversations</h2>
+        <div className="w-1/3 border-r border-white flex flex-col h-full bg-white/40">
+          <div className="p-6 border-b border-white">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Conversations</h2>
             <form onSubmit={handleSearchQuery} className="flex gap-2 mb-2">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search name, services, number..."
-                className="flex-grow px-3 py-2 bg-white/70 border border-gray-200/60 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-xs font-semibold text-gray-800 placeholder-gray-400"
+                className="flex-grow px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none transition-all text-sm font-medium text-gray-800 placeholder-gray-400 shadow-sm"
               />
               <button
                 type="submit"
                 disabled={searching}
-                className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition disabled:opacity-50 shadow-sm flex items-center justify-center gap-1"
+                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition disabled:opacity-50 shadow-sm flex items-center justify-center gap-1"
               >
                 {searching ? <Loader2 size={12} className="animate-spin" /> : null}
                 {searching ? 'Searching...' : 'Search'}
@@ -318,7 +321,7 @@ export default function ChatPage() {
             {/* Search results list */}
             {searching ? (
               <div className="mt-3 space-y-2 animate-pulse px-1">
-                <div className="flex justify-between items-center text-[10px] text-indigo-600 font-bold uppercase tracking-wider">
+                <div className="flex justify-between items-center text-[10px] text-blue-600 font-bold uppercase tracking-wider">
                   <span>Searching Channels...</span>
                 </div>
                 {[1, 2].map((n) => (
@@ -334,7 +337,7 @@ export default function ChatPage() {
               </div>
             ) : searchResults.length > 0 && (
               <div className="mt-3 space-y-2 max-h-48 overflow-y-auto pr-1">
-                <div className="flex justify-between items-center text-[10px] text-indigo-600 font-bold uppercase tracking-wider px-1">
+                <div className="flex justify-between items-center text-[10px] text-blue-600 font-bold uppercase tracking-wider px-1">
                   <span>Search Results</span>
                   <button 
                     onClick={() => setSearchResults([])} 
@@ -354,14 +357,14 @@ export default function ChatPage() {
                         {result.type} • {result.phoneNumber}
                       </p>
                       {result.serviceName && (
-                        <span className="inline-block mt-0.5 px-1.5 py-0.5 bg-indigo-50 text-indigo-600 text-[9px] font-bold rounded">
+                        <span className="inline-block mt-0.5 px-1.5 py-0.5 bg-blue-50 text-blue-600 text-[9px] font-bold rounded">
                           Service: {result.serviceName}
                         </span>
                       )}
                     </div>
                     <button
                       onClick={() => handleStartSearchChat(result)}
-                      className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold rounded-xl transition-all shadow-sm hover:shadow shrink-0"
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-all shadow-sm hover:shadow shrink-0"
                     >
                       Chat
                     </button>
@@ -418,7 +421,7 @@ export default function ChatPage() {
                     </div>
                     
                     <div className="flex items-center gap-1.5 mb-1.5">
-                      <span className="inline-flex items-center gap-0.5 px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-md text-[9px] font-bold">
+                      <span className="inline-flex items-center gap-0.5 px-2 py-0.5 bg-blue-50 text-blue-700 rounded-md text-[9px] font-bold">
                         <Tag size={10} />
                         {conv.serviceName}
                       </span>
@@ -494,14 +497,14 @@ export default function ChatPage() {
                         className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
                       >
                         <div
-                          className={`max-w-[70%] rounded-2xl px-4 py-3 shadow-md ${
+                          className={`max-w-[70%] rounded-2xl px-4 py-3 shadow-sm ${
                             isOwnMessage
-                              ? 'bg-gradient-to-tr from-indigo-600 to-blue-500 text-white rounded-br-none'
-                              : 'bg-white text-gray-800 rounded-bl-none border border-white/50 shadow-sm'
+                              ? 'bg-blue-600 text-white rounded-br-none'
+                              : 'bg-white text-gray-800 rounded-bl-none border border-gray-100 shadow-sm'
                           }`}
                         >
                           {!isOwnMessage && (
-                            <p className="text-[10px] font-bold text-indigo-500 mb-0.5">
+                            <p className="text-[10px] font-bold text-blue-500 mb-0.5">
                               {msg.senderName}
                             </p>
                           )}
@@ -518,27 +521,27 @@ export default function ChatPage() {
               </div>
 
               {/* Message sending form input */}
-              <form onSubmit={handleSendMessage} className="p-4 border-t border-white/40 bg-white/20 flex gap-3">
+              <form onSubmit={handleSendMessage} className="p-4 border-t border-white bg-white/40 flex gap-3">
                 <input
                   type="text"
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
                   placeholder="Type a message..."
-                  className="flex-1 px-4 py-3 bg-white border border-gray-200/60 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm placeholder-gray-400 font-medium shadow-sm"
+                  className="flex-1 px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-blue-500 outline-none transition-all text-sm placeholder-gray-400 font-medium shadow-sm"
                 />
                 <button
                   type="submit"
                   disabled={!messageInput.trim()}
-                  className="p-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center shrink-0"
+                  className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all shadow-sm disabled:opacity-50 flex items-center justify-center shrink-0"
                 >
-                  <Send size={16} />
+                  <Send size={20} />
                 </button>
               </form>
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-gray-400 p-8 text-center">
-              <MessageSquare className="opacity-30 mb-3 text-indigo-500" size={48} />
-              <h3 className="font-bold text-gray-700 text-lg mb-1 font-serif">No chat selected</h3>
+              <MessageSquare className="opacity-30 mb-3 text-blue-500" size={48} />
+              <h3 className="font-semibold text-gray-800 text-lg mb-1">No chat selected</h3>
               <p className="text-sm">Select a conversation from the sidebar to start messaging.</p>
             </div>
           )}
@@ -546,5 +549,6 @@ export default function ChatPage() {
 
       </div>
     </PageTransition>
+    </CloudsBackground>
   );
 }

@@ -51,7 +51,7 @@ function App() {
             <Route path="/wallet" element={<Protected><Layout><WalletPage /></Layout></Protected>} />
             <Route path="/services" element={<Layout><ServiceList /></Layout>} />
             <Route path="/services/:id" element={<Layout><ServiceDetails /></Layout>} />
-            <Route path="/cart" element={<Protected><Layout><CartPage /></Layout></Protected>} />
+            <Route path="/event-checkout" element={<Protected><Layout><CartPage /></Layout></Protected>} />
             <Route path="/my-events" element={<Protected><Layout><MyEventsPage /></Layout></Protected>} />
             <Route path="/my-bookings" element={<Protected><Layout><MyBookingsPage /></Layout></Protected>} />
             <Route path="/vendor-bookings" element={<Protected><Layout><VendorBookingsPage /></Layout></Protected>} />

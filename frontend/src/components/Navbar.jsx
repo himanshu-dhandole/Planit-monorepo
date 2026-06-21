@@ -198,7 +198,7 @@ export default function Navbar() {
           <div className="flex items-center gap-2 md:gap-4 ml-2 md:ml-4">
             {user && (
               <Link
-                to="/cart"
+                to="/event-checkout"
                 className="relative p-2 text-gray-700 hover:text-indigo-600 transition-all transform hover:scale-105 active:scale-95"
                 title="Event Checkout"
               >

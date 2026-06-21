@@ -140,7 +140,7 @@ export default function ServiceDetails() {
           created.title,
         );
         setShowEventModal(false);
-        navigate("/cart");
+        navigate("/event-checkout");
         toast.success("Added to bookings!");
       } catch (err) {
         console.error("Error creating direct booking:", err);
