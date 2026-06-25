@@ -13,19 +13,13 @@ import Navbar from './components/Navbar';
 import Profile from './components/Profile';
 import AboutPage from './components/AboutPage';
 import Sandbox from './components/Sandbox';
-import WalletPage from './components/WalletPage';
 import VendorOnboard from './components/VendorOnboard';
-import AdminDashboard from './components/AdminDashboard';
-import VendorDashboard from './components/VendorDashboard';
 import ServiceList from './components/ServiceList';
 import ServiceDetails from './components/ServiceDetails';
 import VendorList from './components/VendorList';
 import ChatPage from './components/ChatPage';
 import CartPage from './components/CartPage';
-import MyEventsPage from './components/MyEventsPage';
-import MyBookingsPage from './components/MyBookingsPage';
-import VendorBookingsPage from './components/VendorBookingsPage';
-import MyDisputesPage from './components/MyDisputesPage';
+import UnifiedDashboard from './components/UnifiedDashboard';
 
 
 function App() {
@@ -47,16 +41,17 @@ function App() {
             <Route path="/profile" element={<Protected><Layout><Profile /></Layout></Protected>} />
             <Route path="/vendor-onboard" element={<Protected><Layout><VendorOnboard /></Layout></Protected>} />
             <Route path="/vendors" element={<Layout><VendorList /></Layout>} />
-            <Route path="/vendor-dashboard" element={<Protected><Layout><VendorDashboard /></Layout></Protected>} />
-            <Route path="/wallet" element={<Protected><Layout><WalletPage /></Layout></Protected>} />
+            <Route path="/dashboard" element={<Protected><Layout><UnifiedDashboard /></Layout></Protected>} />
+            <Route path="/vendor-dashboard" element={<Protected><Layout><UnifiedDashboard /></Layout></Protected>} />
+            <Route path="/wallet" element={<Protected><Layout><UnifiedDashboard /></Layout></Protected>} />
             <Route path="/services" element={<Layout><ServiceList /></Layout>} />
             <Route path="/services/:id" element={<Layout><ServiceDetails /></Layout>} />
             <Route path="/event-checkout" element={<Protected><Layout><CartPage /></Layout></Protected>} />
-            <Route path="/my-events" element={<Protected><Layout><MyEventsPage /></Layout></Protected>} />
-            <Route path="/my-bookings" element={<Protected><Layout><MyBookingsPage /></Layout></Protected>} />
-            <Route path="/vendor-bookings" element={<Protected><Layout><VendorBookingsPage /></Layout></Protected>} />
-            <Route path="/disputes" element={<Protected><Layout><MyDisputesPage /></Layout></Protected>} />
-            <Route path="/admin" element={<Protected><Layout><AdminDashboard /></Layout></Protected>} />
+            <Route path="/my-events" element={<Protected><Layout><UnifiedDashboard /></Layout></Protected>} />
+            <Route path="/my-bookings" element={<Protected><Layout><UnifiedDashboard /></Layout></Protected>} />
+            <Route path="/vendor-bookings" element={<Protected><Layout><UnifiedDashboard /></Layout></Protected>} />
+            <Route path="/disputes" element={<Protected><Layout><UnifiedDashboard /></Layout></Protected>} />
+            <Route path="/admin" element={<Protected><Layout><UnifiedDashboard /></Layout></Protected>} />
             <Route path="/sandbox" element={<Protected><Sandbox /></Protected>} />
             
             <Route path="/chats" element={<Protected><Layout><ChatPage /></Layout></Protected>} />
