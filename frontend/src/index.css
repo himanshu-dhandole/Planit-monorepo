@@ -43,4 +43,28 @@
       rgba(239, 68, 68, 0.22) 8px
     );
   }
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+  }
+  .glass-panel-dark {
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .glow-shadow-rose {
+    box-shadow: 0 0 15px rgba(244, 63, 94, 0.15), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  }
+  .glow-shadow-blue {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.15), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  }
+  .premium-shadow {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.015), 0 1px 3px rgba(0, 0, 0, 0.01);
+  }
+  .smooth-transition {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 }

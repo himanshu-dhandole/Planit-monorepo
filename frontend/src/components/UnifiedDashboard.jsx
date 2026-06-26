@@ -12,7 +12,7 @@ import {
   Activity, Star, ShieldAlert, Navigation, Calendar, CalendarDays, 
   MessageSquare, ChevronDown, ChevronUp, Crown, ArrowRight, Scale, 
   Users, Server, Ban, Check, LayoutGrid, Menu, Wallet as WalletIcon, Settings, X,
-  ChevronLeft, ChevronRight
+  ChevronLeft, ChevronRight, Bell, Sparkles
 } from 'lucide-react';
 import CloudsBackground from './CloudsBackground';
 import PageTransition from './PageTransition';
@@ -253,24 +253,51 @@ export default function UnifiedDashboard({ isDemoMode = false, demoRole = null }
           {/* Client Workspace Sidebar */}
           {workspaceMode === 'client' && (
             <>
-              {sidebarExpanded && <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-3">Tasks</span>}
-              <SidebarNavItem active={activeTab === 'overview'} expanded={sidebarExpanded} icon={<Activity size={18} />} label="Overview" onClick={() => handleSetTab('overview')} />
+              {sidebarExpanded && <span className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 px-3">Planning Core</span>}
+              <SidebarNavItem active={activeTab === 'overview'} expanded={sidebarExpanded} icon={<LayoutGrid size={18} />} label="Home" onClick={() => handleSetTab('overview')} />
               <SidebarNavItem active={activeTab === 'events'} expanded={sidebarExpanded} icon={<CalendarDays size={18} />} label="My Events" onClick={() => handleSetTab('events')} />
-              <SidebarNavItem active={activeTab === 'bookings'} expanded={sidebarExpanded} icon={<FileText size={18} />} label="My Bookings" onClick={() => handleSetTab('bookings')} />
-              <SidebarNavItem active={activeTab === 'disputes'} expanded={sidebarExpanded} icon={<Scale size={18} />} label="Disputes Center" onClick={() => handleSetTab('disputes')} />
-              <SidebarNavItem active={activeTab === 'wallet'} expanded={sidebarExpanded} icon={<WalletIcon size={18} />} label="Wallet" onClick={() => handleSetTab('wallet')} />
+              <SidebarNavItem active={activeTab === 'timeline'} expanded={sidebarExpanded} icon={<Map size={18} />} label="Timeline" onClick={() => handleSetTab('timeline')} />
+              <SidebarNavItem active={activeTab === 'tasks'} expanded={sidebarExpanded} icon={<CheckCircle size={18} />} label="Tasks" onClick={() => handleSetTab('tasks')} />
+
+              {sidebarExpanded && <span className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mt-4 mb-1.5 px-3">Vendors & Budget</span>}
+              <SidebarNavItem active={activeTab === 'vendors'} expanded={sidebarExpanded} icon={<Users size={18} />} label="Vendors" onClick={() => handleSetTab('vendors')} />
+              <SidebarNavItem active={activeTab === 'bookings'} expanded={sidebarExpanded} icon={<FileText size={18} />} label="Bookings" onClick={() => handleSetTab('bookings')} />
+              <SidebarNavItem active={activeTab === 'budget'} expanded={sidebarExpanded} icon={<IndianRupee size={18} />} label="Budget" onClick={() => handleSetTab('budget')} />
+
+              {sidebarExpanded && <span className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mt-4 mb-1.5 px-3">Collaboration</span>}
+              <SidebarNavItem active={activeTab === 'messages'} expanded={sidebarExpanded} icon={<MessageSquare size={18} />} label="Messages" onClick={() => handleSetTab('messages')} />
+              <SidebarNavItem active={activeTab === 'documents'} expanded={sidebarExpanded} icon={<Briefcase size={18} />} label="Documents" onClick={() => handleSetTab('documents')} />
+              <SidebarNavItem active={activeTab === 'analytics'} expanded={sidebarExpanded} icon={<Activity size={18} />} label="Analytics" onClick={() => handleSetTab('analytics')} />
+
+              {sidebarExpanded && <span className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mt-4 mb-1.5 px-3">Platform</span>}
+              <SidebarNavItem active={activeTab === 'cancellation'} expanded={sidebarExpanded} icon={<ShieldAlert size={18} />} label="Cancellation Center" onClick={() => handleSetTab('cancellation')} highlighted={true} />
+              <SidebarNavItem active={activeTab === 'notifications'} expanded={sidebarExpanded} icon={<Bell size={18} />} label="Notifications" onClick={() => handleSetTab('notifications')} />
+              <SidebarNavItem active={activeTab === 'settings'} expanded={sidebarExpanded} icon={<Settings size={18} />} label="Settings" onClick={() => handleSetTab('settings')} />
             </>
           )}
 
           {/* Vendor Workspace Sidebar */}
           {workspaceMode === 'vendor' && (
             <>
-              {sidebarExpanded && <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-3">Manage Business</span>}
-              <SidebarNavItem active={activeTab === 'overview'} expanded={sidebarExpanded} icon={<Activity size={18} />} label="Overview" onClick={() => handleSetTab('overview')} />
-              <SidebarNavItem active={activeTab === 'services'} expanded={sidebarExpanded} icon={<Server size={18} />} label="My Services" onClick={() => handleSetTab('services')} />
-              <SidebarNavItem active={activeTab === 'vendor-bookings'} expanded={sidebarExpanded} icon={<CreditCard size={18} />} label="Client Bookings" onClick={() => handleSetTab('vendor-bookings')} />
-              <SidebarNavItem active={activeTab === 'testimonials'} expanded={sidebarExpanded} icon={<Star size={18} />} label="Testimonials" onClick={() => handleSetTab('testimonials')} />
-              <SidebarNavItem active={activeTab === 'business-profile'} expanded={sidebarExpanded} icon={<Briefcase size={18} />} label="Business Details" onClick={() => handleSetTab('business-profile')} />
+              {sidebarExpanded && <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-3">Business Core</span>}
+              <SidebarNavItem active={activeTab === 'overview'} expanded={sidebarExpanded} icon={<Activity size={18} />} label="Dashboard" onClick={() => handleSetTab('overview')} />
+              <SidebarNavItem active={activeTab === 'vendor-bookings'} expanded={sidebarExpanded} icon={<CreditCard size={18} />} label="Bookings" onClick={() => handleSetTab('vendor-bookings')} />
+              <SidebarNavItem active={activeTab === 'services'} expanded={sidebarExpanded} icon={<Server size={18} />} label="Services" onClick={() => handleSetTab('services')} />
+              <SidebarNavItem active={activeTab === 'calendar'} expanded={sidebarExpanded} icon={<CalendarDays size={18} />} label="Calendar" onClick={() => handleSetTab('calendar')} />
+
+              {sidebarExpanded && <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-4 mb-2 px-3">Finance & Growth</span>}
+              <SidebarNavItem active={activeTab === 'earnings'} expanded={sidebarExpanded} icon={<IndianRupee size={18} />} label="Earnings" onClick={() => handleSetTab('earnings')} />
+              <SidebarNavItem active={activeTab === 'customers'} expanded={sidebarExpanded} icon={<Users size={18} />} label="Customers" onClick={() => handleSetTab('customers')} />
+              <SidebarNavItem active={activeTab === 'analytics'} expanded={sidebarExpanded} icon={<Activity size={18} />} label="Analytics" onClick={() => handleSetTab('analytics')} />
+
+              {sidebarExpanded && <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-4 mb-2 px-3">Collaboration</span>}
+              <SidebarNavItem active={activeTab === 'messages'} expanded={sidebarExpanded} icon={<MessageSquare size={18} />} label="Messages" onClick={() => handleSetTab('messages')} />
+              <SidebarNavItem active={activeTab === 'reviews'} expanded={sidebarExpanded} icon={<Star size={18} />} label="Reviews" onClick={() => handleSetTab('reviews')} />
+              <SidebarNavItem active={activeTab === 'documents'} expanded={sidebarExpanded} icon={<FileText size={18} />} label="Documents" onClick={() => handleSetTab('documents')} />
+
+              {sidebarExpanded && <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-4 mb-2 px-3">Preferences</span>}
+              <SidebarNavItem active={activeTab === 'availability'} expanded={sidebarExpanded} icon={<Clock size={18} />} label="Availability" onClick={() => handleSetTab('availability')} />
+              <SidebarNavItem active={activeTab === 'settings'} expanded={sidebarExpanded} icon={<Settings size={18} />} label="Settings" onClick={() => handleSetTab('settings')} />
             </>
           )}
 
@@ -336,19 +363,46 @@ export default function UnifiedDashboard({ isDemoMode = false, demoRole = null }
                   <>
                     {activeTab === 'overview' && <ClientOverviewTab customerProfile={displayProfile} setTab={handleSetTab} isDemoMode={isDemoMode} />}
                     {activeTab === 'events' && <EventsTab customerProfile={displayProfile} isDemoMode={isDemoMode} />}
+                    {activeTab === 'timeline' && <TimelineTab isDemoMode={isDemoMode} />}
+                    {activeTab === 'tasks' && <KanbanTasksTab isDemoMode={isDemoMode} />}
+                    {activeTab === 'vendors' && <VendorsMarketplaceTab isDemoMode={isDemoMode} setTab={handleSetTab} />}
                     {activeTab === 'bookings' && <BookingsTab customerProfile={displayProfile} user={displayUser} isDemoMode={isDemoMode} />}
-                    {activeTab === 'disputes' && <DisputesTab user={displayUser} isDemoMode={isDemoMode} />}
-                    {activeTab === 'wallet' && <WalletTab user={displayUser} isDemoMode={isDemoMode} />}
+                    {activeTab === 'budget' && <BudgetCenterTab isDemoMode={isDemoMode} />}
+                    {activeTab === 'messages' && <MessagesHubTab isDemoMode={isDemoMode} />}
+                    {activeTab === 'documents' && <DocumentVaultTab isDemoMode={isDemoMode} />}
+                    {activeTab === 'analytics' && <AnalyticsMinimalTab isDemoMode={isDemoMode} />}
+                    {activeTab === 'cancellation' && <CancellationCenterTab isDemoMode={isDemoMode} />}
+                    {activeTab === 'notifications' && <NotificationsInboxTab isDemoMode={isDemoMode} />}
+                    {activeTab === 'settings' && (
+                      <div className="space-y-8">
+                        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
+                          <h2 className="text-xl font-bold text-gray-900 mb-2">Workspace Settings</h2>
+                          <p className="text-xs text-gray-500 font-semibold mb-6">Manage your payment cards, wallet disbursements, and profile preferences.</p>
+                          <WalletTab user={displayUser} isDemoMode={isDemoMode} />
+                        </div>
+                        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
+                          <h3 className="text-sm font-bold text-gray-800 mb-4">Disputes & Incident Logs</h3>
+                          <DisputesTab user={displayUser} isDemoMode={isDemoMode} />
+                        </div>
+                      </div>
+                    )}
                   </>
                 )}
 
                 {workspaceMode === 'vendor' && (
                   <>
                     {activeTab === 'overview' && <VendorOverviewTab customerProfile={displayProfile} setTab={handleSetTab} isDemoMode={isDemoMode} />}
-                    {activeTab === 'services' && <ServicesTab customerProfile={displayProfile} isDemoMode={isDemoMode} />}
-                    {activeTab === 'vendor-bookings' && <VendorBookingsTab customerProfile={displayProfile} isDemoMode={isDemoMode} />}
-                    {activeTab === 'testimonials' && <TestimonialsTab customerProfile={displayProfile} isDemoMode={isDemoMode} />}
-                    {activeTab === 'business-profile' && <BusinessProfileTab customerProfile={displayProfile} refreshUser={refreshUser} isDemoMode={isDemoMode} />}
+                    {activeTab === 'services' && <VendorServicesTab customerProfile={displayProfile} setTab={handleSetTab} isDemoMode={isDemoMode} />}
+                    {activeTab === 'vendor-bookings' && <VendorBookingsTab customerProfile={displayProfile} setTab={handleSetTab} isDemoMode={isDemoMode} />}
+                    {activeTab === 'calendar' && <VendorCalendarTab setTab={handleSetTab} isDemoMode={isDemoMode} />}
+                    {activeTab === 'earnings' && <VendorEarningsTab setTab={handleSetTab} isDemoMode={isDemoMode} />}
+                    {activeTab === 'customers' && <VendorCustomersTab setTab={handleSetTab} isDemoMode={isDemoMode} />}
+                    {activeTab === 'messages' && <VendorMessagesTab setTab={handleSetTab} isDemoMode={isDemoMode} />}
+                    {activeTab === 'reviews' && <VendorReviewsTab setTab={handleSetTab} isDemoMode={isDemoMode} />}
+                    {activeTab === 'documents' && <VendorDocumentsTab setTab={handleSetTab} isDemoMode={isDemoMode} />}
+                    {activeTab === 'analytics' && <VendorAnalyticsTab setTab={handleSetTab} isDemoMode={isDemoMode} />}
+                    {activeTab === 'availability' && <VendorAvailabilityTab setTab={handleSetTab} isDemoMode={isDemoMode} />}
+                    {activeTab === 'settings' && <VendorSettingsTab customerProfile={displayProfile} refreshUser={refreshUser} setTab={handleSetTab} isDemoMode={isDemoMode} />}
                   </>
                 )}
 
@@ -370,6 +424,7 @@ export default function UnifiedDashboard({ isDemoMode = false, demoRole = null }
         </div>
       </div>
 
+      <FloatingAICopilot isDemoMode={isDemoMode} workspaceMode={workspaceMode} />
     </div>
   );
 
@@ -391,26 +446,33 @@ export default function UnifiedDashboard({ isDemoMode = false, demoRole = null }
 }
 
 /* Sidebar Navigation Item */
-function SidebarNavItem({ active, expanded, icon, label, onClick }) {
+function SidebarNavItem({ active, expanded, icon, label, onClick, highlighted = false }) {
   return (
     <button
       onClick={onClick}
       className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 relative hover:scale-[1.01] active:scale-[0.99] ${
         active 
-          ? 'text-blue-750 font-bold' 
-          : 'text-slate-650 hover:bg-white/25 hover:text-slate-900'
+          ? highlighted
+            ? 'text-rose-800 font-bold bg-rose-100/40 border border-rose-200 shadow-sm'
+            : 'text-blue-750 font-bold' 
+          : highlighted
+            ? 'text-rose-700 bg-rose-50/20 border border-rose-100/30 hover:bg-rose-100/30 hover:border-rose-200 hover:text-rose-800 glow-shadow-rose'
+            : 'text-slate-650 hover:bg-white/25 hover:text-slate-900'
       }`}
     >
-      {active && (
+      {active && !highlighted && (
         <motion.div 
           layoutId="activeSidebarTab"
           className="absolute inset-0 bg-white/60 backdrop-blur-md border border-white/80 rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.02)]"
           transition={{ type: "spring", stiffness: 380, damping: 30 }}
         />
       )}
-      <span className={`relative z-10 transition-colors ${active ? 'text-blue-600' : 'text-slate-400'}`}>{icon}</span>
+      <span className={`relative z-10 transition-colors ${active ? highlighted ? 'text-rose-600' : 'text-blue-600' : highlighted ? 'text-rose-500' : 'text-slate-400'}`}>{icon}</span>
       {expanded && <span className="relative z-10 truncate">{label}</span>}
-      {active && expanded && (
+      {expanded && highlighted && (
+        <span className="relative z-10 ml-auto px-1.5 py-0.5 bg-rose-500 text-white rounded-md text-[8px] font-black uppercase tracking-wider animate-pulse shadow-sm">USP</span>
+      )}
+      {active && expanded && !highlighted && (
         <motion.div 
           layoutId="activeDot"
           className="absolute right-3.5 w-1.5 h-1.5 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.6)]"
@@ -422,28 +484,23 @@ function SidebarNavItem({ active, expanded, icon, label, onClick }) {
 }
 /* ============================================================================
    CLIENT WORKSPACE TABS
-   ============================================================================ */
-
-/* 1. Client Overview Tab */
+   ===========================================================/* 1. Client Overview Tab */
 function ClientOverviewTab({ customerProfile, setTab, isDemoMode }) {
   const [stats, setStats] = useState({ events: 0, bookings: 0, disputes: 0, wallet: 0 });
   const [events, setEvents] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [eventTasks, setEventTasks] = useState({});
-  const [hoveredPoint, setHoveredPoint] = useState(null);
+  const [activeEventId, setActiveEventId] = useState(null);
+  const [eventBudgets, setEventBudgets] = useState({});
+  const [showBudgetModal, setShowBudgetModal] = useState(false);
+  const [newBudgetLimit, setNewBudgetLimit] = useState("");
 
   const today = useMemo(() => new Date(), []);
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [selectedDay, setSelectedDay] = useState(today.getDate());
   const [hoveredDay, setHoveredDay] = useState(null);
-
-  // Management Workspace states
-  const [activeEventId, setActiveEventId] = useState(null);
-  const [eventBudgets, setEventBudgets] = useState({});
-  const [showBudgetModal, setShowBudgetModal] = useState(false);
-  const [newBudgetLimit, setNewBudgetLimit] = useState("");
 
   // Clamp selectedDay if it exceeds the number of days in the new month
   useEffect(() => {
@@ -462,9 +519,9 @@ function ClientOverviewTab({ customerProfile, setTab, isDemoMode }) {
         wallet: 15450
       });
       setEvents([
-        { id: 101, title: "Anjali's Sangeet Ceremony", startDate: "2026-11-12T18:00:00", status: "CONFIRMED", budget: 300000 },
-        { id: 102, title: "Corporate Product Launch 2026", startDate: "2026-08-20T09:00:00", status: "PENDING_BOOKING", budget: 500000 },
-        { id: 103, title: "Outdoor Birthday Bash", startDate: "2026-07-05T16:00:00", status: "DRAFT", budget: 100000 }
+        { id: 101, title: "Anjali's Sangeet Ceremony", startDate: "2026-11-12T18:00:00", status: "CONFIRMED", budget: 300000, category: "SANGEET" },
+        { id: 102, title: "Corporate Product Launch 2026", startDate: "2026-08-20T09:00:00", status: "PENDING_BOOKING", budget: 500000, category: "CORPORATE" },
+        { id: 103, title: "Outdoor Birthday Bash", startDate: "2026-07-05T16:00:00", status: "DRAFT", budget: 100000, category: "BIRTHDAY" }
       ]);
       setBookings([
         { id: 501, eventId: 101, services: { name: "Shine & Sound DJs", category: "MUSIC" }, bookingAmount: 25000, status: "CONFIRMED", bookedAt: "2026-06-05T12:00:00" },
@@ -520,7 +577,7 @@ function ClientOverviewTab({ customerProfile, setTab, isDemoMode }) {
       let tasks = [];
       if (stored) {
         try {
-          tasks = JSON.parse(stored).filter(t => t.id !== 't1' && t.id !== 't2' && t.id !== 't3');
+          tasks = JSON.parse(stored);
         } catch (e) {
           console.error("Error parsing stored tasks:", e);
         }
@@ -541,6 +598,34 @@ function ClientOverviewTab({ customerProfile, setTab, isDemoMode }) {
       budgets[e.id] = stored ? parseFloat(stored) : (e.budget || 200000);
     });
     setEventBudgets(budgets);
+  }, [events]);
+
+  // Sync state on Copilot storage update
+  useEffect(() => {
+    const handleStorageUpdate = () => {
+      const budgets = {};
+      events.forEach(e => {
+        const stored = localStorage.getItem(`planit_budget_${e.id}`);
+        budgets[e.id] = stored ? parseFloat(stored) : (e.budget || 200000);
+      });
+      setEventBudgets(budgets);
+
+      const newEventTasks = {};
+      events.forEach(event => {
+        const stored = localStorage.getItem(`planit_tasks_${event.id}`);
+        let tasks = [];
+        if (stored) {
+          try {
+            tasks = JSON.parse(stored);
+          } catch (e) {}
+        }
+        newEventTasks[event.id] = tasks;
+      });
+      setEventTasks(newEventTasks);
+    };
+
+    window.addEventListener('planit_storage_update', handleStorageUpdate);
+    return () => window.removeEventListener('planit_storage_update', handleStorageUpdate);
   }, [events]);
 
   // Sync activeEventId with events
@@ -591,32 +676,6 @@ function ClientOverviewTab({ customerProfile, setTab, isDemoMode }) {
     toast.success("Task updated!");
   };
 
-  const handleQuickAddTask = (e) => {
-    e.preventDefault();
-    if (!activeEvent) return;
-    const taskName = e.target.taskName.value.trim();
-    const priority = e.target.priority.value;
-    if (!taskName) return;
-
-    const newTask = {
-      id: `custom_${Date.now()}`,
-      taskName,
-      taskDescription: "Quick task",
-      dueDate: activeEvent.startDate.substring(0, 10),
-      priority,
-      isCompleted: false,
-      isCustom: true
-    };
-
-    const currentTasks = eventTasks[activeEvent.id] || [];
-    const updated = [newTask, ...currentTasks];
-
-    setEventTasks(prev => ({ ...prev, [activeEvent.id]: updated }));
-    localStorage.setItem(`planit_tasks_${activeEvent.id}`, JSON.stringify(updated));
-    e.target.reset();
-    toast.success("Task added to project!");
-  };
-
   const getEventProgress = (eventId) => {
     const tasks = eventTasks[eventId] || [];
     if (tasks.length === 0) return 0;
@@ -629,85 +688,84 @@ function ClientOverviewTab({ customerProfile, setTab, isDemoMode }) {
     return eventTasks[activeEvent.id] || [];
   }, [eventTasks, activeEvent]);
 
-  const activePendingTasks = useMemo(() => {
-    return activeTasks.filter(t => !t.isCompleted).sort((a, b) => {
-      const priorityOrder = { 'HIGH': 3, 'MEDIUM': 2, 'LOW': 1 };
-      const diff = (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
-      if (diff !== 0) return diff;
-      return new Date(a.dueDate) - new Date(b.dueDate);
-    });
-  }, [activeTasks]);
+  const countdownDays = useMemo(() => {
+    if (!activeEvent) return 0;
+    const target = new Date(activeEvent.startDate);
+    const diff = target.getTime() - today.getTime();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  }, [activeEvent, today]);
 
-  // Spend Line-chart SVG coordinate rendering
-  const chartWidth = 520;
-  const chartHeight = 160;
-  const chartPadding = 35;
-
-  const chartData = useMemo(() => {
-    if (activeBookings.length === 0) {
-      return [];
-    }
-    const sorted = [...activeBookings]
-      .filter(b => b.bookedAt)
-      .sort((a, b) => new Date(a.bookedAt) - new Date(b.bookedAt));
+  // Event health calculation
+  const healthScore = useMemo(() => {
+    if (!activeEvent) return 100;
+    let score = 100;
     
-    if (sorted.length === 0) {
-      return [
-        { label: "Week 1", budget: totalBudget * 0.25, val: totalSpend * 0.2 },
-        { label: "Week 2", budget: totalBudget * 0.5, val: totalSpend * 0.55 },
-        { label: "Week 3", budget: totalBudget * 0.75, val: totalSpend * 0.8 },
-        { label: "Week 4", budget: totalBudget, val: totalSpend }
-      ];
+    // Budget health (if over budget, deduct points)
+    if (totalSpend > totalBudget) {
+      score -= 20;
+    } else if (totalSpend > totalBudget * 0.9) {
+      score -= 10;
     }
+    
+    // Task completion health
+    const taskRatio = activeTasks.length > 0 ? (activeTasks.filter(t => t.isCompleted).length / activeTasks.length) : 1;
+    if (taskRatio < 0.25) score -= 15;
+    else if (taskRatio < 0.5) score -= 10;
+    else if (taskRatio < 0.75) score -= 5;
 
-    let runningSum = 0;
-    return sorted.map((b, index) => {
-      runningSum += b.bookingAmount;
-      const label = new Date(b.bookedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-      return {
-        label,
-        budget: Math.round(((index + 1) / sorted.length) * totalBudget),
-        val: runningSum
-      };
-    });
-  }, [activeBookings, totalSpend, totalBudget]);
+    // Vendor status health (check confirmed bookings vs total bookings)
+    const pendingBookings = activeBookings.filter(b => b.status === 'PENDING').length;
+    if (pendingBookings > 0) score -= (pendingBookings * 5);
 
-  const maxVal = Math.max(...chartData.map(d => Math.max(d.budget, d.val)), totalBudget, 100000);
+    return Math.max(10, score);
+  }, [activeEvent, activeTasks, activeBookings, totalSpend, totalBudget]);
 
-  const pointsSpend = chartData.map((d, i) => {
-    const x = chartPadding + (i * (chartWidth - 2 * chartPadding)) / (chartData.length - 1 || 1);
-    const y = chartHeight - chartPadding - (d.val / maxVal) * (chartHeight - 2 * chartPadding);
-    return { x, y, label: d.label, val: d.val };
-  });
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-  const pointsBudget = chartData.map((d, i) => {
-    const x = chartPadding + (i * (chartWidth - 2 * chartPadding)) / (chartData.length - 1 || 1);
-    const y = chartHeight - chartPadding - (d.budget / maxVal) * (chartHeight - 2 * chartPadding);
-    return { x, y, label: d.label, val: d.budget };
-  });
+  // Compute days matrix
+  const daysArray = useMemo(() => {
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
 
-  const getCurvePath = (points) => {
-    if (points.length === 0) return "";
-    if (points.length === 1) return `M ${points[0].x} ${points[0].y} L ${points[0].x} ${points[0].y}`;
-    let path = `M ${points[0].x} ${points[0].y}`;
-    for (let i = 0; i < points.length - 1; i++) {
-      const p0 = points[i];
-      const p1 = points[i + 1];
-      const cpX1 = p0.x + (p1.x - p0.x) / 2;
-      const cpY1 = p0.y;
-      const cpX2 = p0.x + (p1.x - p0.x) / 2;
-      const cpY2 = p1.y;
-      path += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
+    const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+    const prevDaysInMonth = new Date(prevYear, prevMonth + 1, 0).getDate();
+
+    const arr = [];
+    for (let i = firstDayIndex - 1; i >= 0; i--) {
+      arr.push({ day: prevDaysInMonth - i, isCurrentMonth: false, month: prevMonth, year: prevYear });
     }
-    return path;
+    for (let i = 1; i <= daysInMonth; i++) {
+      arr.push({ day: i, isCurrentMonth: true, month: currentMonth, year: currentYear });
+    }
+    const remaining = 42 - arr.length;
+    for (let i = 1; i <= remaining; i++) {
+      arr.push({ day: i, isCurrentMonth: false, month: currentMonth === 11 ? 0 : currentMonth + 1, year: currentMonth === 11 ? currentYear + 1 : currentYear });
+    }
+    return arr;
+  }, [currentMonth, currentYear]);
+
+  // Combined events & tasks agenda scan
+  const getDayAgendaPreview = (dayObj) => {
+    if (!dayObj) return { events: [], tasks: [] };
+    const dateStr = `${dayObj.year}-${String(dayObj.month + 1).padStart(2, '0')}-${String(dayObj.day).padStart(2, '0')}`;
+    const filteredEvents = activeEvent && activeEvent.startDate.substring(0, 10) === dateStr ? [activeEvent] : [];
+    const dayTasks = activeTasks.filter(t => t.dueDate === dateStr);
+    return { events: filteredEvents, tasks: dayTasks };
   };
 
-  const pathSpend = getCurvePath(pointsSpend);
-  const pathBudget = getCurvePath(pointsBudget);
-  
-  const areaSpend = pointsSpend.length > 0 
-    ? `${pathSpend} L ${pointsSpend[pointsSpend.length - 1].x} ${chartHeight - chartPadding} L ${pointsSpend[0].x} ${chartHeight - chartPadding} Z`
-    : "";
+  const getDayDetails = (dayObj) => {
+    if (!dayObj) return { hasEvent: false, hasTask: false, eventStatus: null, eventsList: [], tasksList: [] };
+    const { events: dayEvents, tasks: dayTasks } = getDayAgendaPreview(dayObj);
+    return {
+      hasEvent: dayEvents.length > 0,
+      hasTask: dayTasks.length > 0,
+      eventStatus: dayEvents.length > 0 ? (dayEvents[0].status === 'CONFIRMED' ? 'CONFIRMED' : 'PENDING') : null,
+      eventsList: dayEvents,
+      tasksList: dayTasks
+    };
+  };
 
   const handlePrevMonth = () => {
     setCurrentMonth(prev => {
@@ -730,671 +788,397 @@ function ClientOverviewTab({ customerProfile, setTab, isDemoMode }) {
   };
 
   const handleDayClick = (dayObj) => {
-    if (!dayObj) return;
-    if (dayObj.month !== currentMonth || dayObj.year !== currentYear) {
+    setSelectedDay(dayObj.day);
+    if (dayObj.month !== currentMonth) {
       setCurrentMonth(dayObj.month);
       setCurrentYear(dayObj.year);
     }
-    setSelectedDay(dayObj.day);
-  };
-
-  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-
-  // Compute days matrix: prepend previous month's end, and append next month's start to fill 42 cells
-  const daysArray = useMemo(() => {
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
-
-    const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-    const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-    const prevDaysInMonth = new Date(prevYear, prevMonth + 1, 0).getDate();
-
-    const arr = [];
-    
-    // Add trailing days of previous month
-    for (let i = firstDayIndex - 1; i >= 0; i--) {
-      arr.push({
-        day: prevDaysInMonth - i,
-        isCurrentMonth: false,
-        month: prevMonth,
-        year: prevYear
-      });
-    }
-
-    // Add current month days
-    for (let i = 1; i <= daysInMonth; i++) {
-      arr.push({
-        day: i,
-        isCurrentMonth: true,
-        month: currentMonth,
-        year: currentYear
-      });
-    }
-
-    // Add leading days of next month to fill grid to a multiple of 7
-    const remaining = 42 - arr.length;
-    for (let i = 1; i <= remaining; i++) {
-      arr.push({
-        day: i,
-        isCurrentMonth: false,
-        month: currentMonth === 11 ? 0 : currentMonth + 1,
-        year: currentMonth === 11 ? currentYear + 1 : currentYear
-      });
-    }
-
-    return arr;
-  }, [currentMonth, currentYear]);
-
-  // Combined events & tasks preview for tooltips, filtered by activeEventId
-  const getDayAgendaPreview = (dayObj) => {
-    if (!dayObj) return { events: [], tasks: [] };
-    const dateStr = `${dayObj.year}-${String(dayObj.month + 1).padStart(2, '0')}-${String(dayObj.day).padStart(2, '0')}`;
-    
-    // Only show active event if selected
-    const filteredEvents = activeEvent 
-      ? (activeEvent.startDate.substring(0, 10) === dateStr ? [activeEvent] : [])
-      : events.filter(ev => ev.startDate.substring(0, 10) === dateStr);
-    
-    const dayTasks = [];
-    const eventsToScan = activeEvent ? [activeEvent] : events;
-    eventsToScan.forEach(event => {
-      const tasks = eventTasks[event.id] || [];
-      tasks.forEach(t => {
-        if (t.dueDate === dateStr) {
-          dayTasks.push({
-            ...t,
-            eventTitle: event.title,
-            eventId: event.id
-          });
-        }
-      });
-    });
-    
-    return { events: filteredEvents, tasks: dayTasks };
-  };
-
-  const getDayDetails = (dayObj) => {
-    if (!dayObj) return { hasEvent: false, hasTask: false, eventStatus: null, eventsList: [], tasksList: [] };
-    const { events: dayEvents, tasks: dayTasks } = getDayAgendaPreview(dayObj);
-    const hasEvent = dayEvents.length > 0;
-    const hasTask = dayTasks.length > 0;
-    const eventStatus = hasEvent ? (dayEvents.some(ev => ev.status === 'CONFIRMED') ? 'CONFIRMED' : 'PENDING') : null;
-    return { hasEvent, hasTask, eventStatus, eventsList: dayEvents, tasksList: dayTasks };
   };
 
   const agendaItems = useMemo(() => {
     const selectedDateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
-    
-    // Filter events
     const dayEvents = events.filter(ev => ev.id === activeEventId && ev.startDate.substring(0, 10) === selectedDateStr).map(ev => ({
       id: ev.id,
       type: 'event',
       time: new Date(ev.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       title: ev.title,
       desc: ev.address ? ev.address.split(',')[0] : "Venue Schedule",
-      status: ev.status,
-      raw: ev
+      status: ev.status
     }));
-    
-    // Filter tasks
-    const dayTasks = [];
-    if (activeEvent) {
-      const tasks = eventTasks[activeEvent.id] || [];
-      tasks.forEach(t => {
-        if (t.dueDate === selectedDateStr) {
-          dayTasks.push({
-            id: t.id,
-            type: 'task',
-            eventId: activeEvent.id,
-            time: "Due",
-            title: t.taskName,
-            desc: `Project: ${activeEvent.title}`,
-            priority: t.priority,
-            isCompleted: t.isCompleted,
-            raw: t
-          });
-        }
-      });
-    }
-
-    const priorityOrder = { 'HIGH': 3, 'MEDIUM': 2, 'LOW': 1 };
-    return [
-      ...dayEvents,
-      ...dayTasks.sort((a, b) => (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0))
-    ];
-  }, [selectedDay, events, eventTasks, currentMonth, currentYear, activeEvent, activeEventId]);
+    const dayTasks = activeTasks.filter(t => t.dueDate === selectedDateStr).map(t => ({
+      id: t.id,
+      type: 'task',
+      time: "Due",
+      title: t.taskName,
+      desc: t.taskDescription || "Milestone Action Checklist",
+      priority: t.priority,
+      isCompleted: t.isCompleted
+    }));
+    return [...dayEvents, ...dayTasks];
+  }, [selectedDay, events, activeTasks, currentMonth, currentYear, activeEventId]);
 
   return (
-    <div className="space-y-6 font-sans">
-      {/* Interactive Header with workspace selector */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
+    <div className="space-y-8 font-sans">
+      {/* OS Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-150/40 pb-4">
         <div>
-          <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">
-            Hello, {customerProfile?.firstName || 'Curator'}
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Client Workspace Console</span>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight mt-1">
+            Welcome Back, {customerProfile?.firstName || 'Planner'}
           </h1>
-          <p className="text-xs text-gray-400 font-semibold mt-0.5">
-            Command center for your active project budgets, milestones, and checklists.
-          </p>
         </div>
-        
-        {/* Project workspace selection dropdown */}
-        <div className="flex items-center gap-3 w-full md:w-auto">
+        <div className="flex items-center gap-3">
           {events.length > 0 && (
-            <div className="flex items-center gap-2 bg-white/40 backdrop-blur-md border border-white/60 px-3.5 py-2 rounded-xl shadow-sm w-full md:w-auto">
-              <span className="text-[9px] font-black text-gray-400 uppercase tracking-wider whitespace-nowrap">Workspace:</span>
+            <div className="flex items-center gap-2 bg-white/40 border border-white/60 px-3 py-1.5 rounded-xl shadow-sm">
+              <span className="text-[9px] font-black text-gray-400 uppercase tracking-wider">Project:</span>
               <select 
                 value={activeEventId || ""} 
                 onChange={(e) => setActiveEventId(parseFloat(e.target.value))}
                 className="bg-transparent border-0 text-xs font-bold text-gray-800 focus:ring-0 cursor-pointer pr-8 py-0"
               >
                 {events.map(ev => (
-                  <option key={ev.id} value={ev.id} className="bg-white text-gray-800">{ev.title}</option>
+                  <option key={ev.id} value={ev.id}>{ev.title}</option>
                 ))}
               </select>
             </div>
           )}
-          <button onClick={() => setTab('events')} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all hover:scale-[1.01] active:scale-[0.99] shadow-sm whitespace-nowrap ml-auto md:ml-0">
-            + Create Event
+          <button onClick={() => setTab('events')} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl text-xs font-extrabold transition-all hover:scale-[1.01] active:scale-[0.99] shadow-md shadow-blue-500/10">
+            + New Event
           </button>
         </div>
       </div>
 
-      {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-pulse">
-          {[1, 2, 3, 4].map(n => <div key={n} className="h-20 bg-gray-50 border rounded-2xl" />)}
+      {loading || !activeEvent ? (
+        <div className="h-64 bg-white/40 border border-white/60 rounded-3xl animate-pulse flex items-center justify-center text-xs text-gray-400">
+          Loading Active Event Operating Console...
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <OverviewStatCard title="Total Projects" value={stats.events} onClick={() => setTab('events')} icon={<CalendarDays className="text-blue-500" size={18} />} />
-          <OverviewStatCard 
-            title="Adjust Budget Ceiling" 
-            value={`₹${totalBudget.toLocaleString('en-IN')}`} 
-            onClick={() => {
-              setNewBudgetLimit(totalBudget.toString());
-              setShowBudgetModal(true);
-            }} 
-            icon={<FileText className="text-emerald-500" size={18} />} 
-          />
-          <OverviewStatCard title="Project Checklist" value={activePendingTasks.length} onClick={() => setTab('events')} icon={<Scale className="text-rose-500" size={18} />} />
-          <OverviewStatCard title="Wallet Balance" value={`₹${stats.wallet.toLocaleString('en-IN')}`} onClick={() => setTab('wallet')} icon={<WalletIcon className="text-blue-650" size={18} />} />
-        </div>
-      )}
-
-      {/* Main content grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left Column: Line Chart and Primary Tables (Col-span 2) */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Spend Line Chart widget */}
-          <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 relative shadow-[0_8px_30px_rgba(0,0,0,0.01)] flex flex-col justify-between">
-            <div className="flex justify-between items-center mb-2">
-              <div>
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Project Spends Progression</h3>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-gray-800">₹{totalSpend.toLocaleString('en-IN')}</span>
-                  <span className="text-[10px] text-gray-400 font-semibold">spent of ₹{totalBudget.toLocaleString('en-IN')} budget</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 text-[10px] font-bold text-gray-500">
-                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-blue-600 block"></span> Spent</span>
-                <span className="flex items-center gap-1.5"><span className="w-2.5 h-0.5 border border-dashed border-gray-400 block"></span> Budget Limit</span>
-              </div>
-            </div>
+          {/* Main Column (Col-span 8) */}
+          <div className="lg:col-span-8 space-y-8">
             
-            {/* SVG Sparkline container */}
-            <div className="relative mt-2">
-              {chartData.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-10 text-center">
-                  <Activity size={24} className="text-gray-300 mb-2 animate-pulse" />
-                  <p className="text-xs text-gray-400 font-semibold italic">No spend data recorded for this event. Book service providers to track spends.</p>
+            {/* 1. Hero Event Card */}
+            <div className="bg-gradient-to-tr from-slate-900 via-slate-950 to-indigo-950 text-white rounded-3xl p-8 relative overflow-hidden shadow-xl border border-white/5">
+              <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl -z-10" />
+              <div className="absolute -bottom-10 -left-10 w-60 h-60 bg-indigo-500/10 rounded-full blur-2xl -z-10" />
+              
+              <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                <div>
+                  <span className="px-2.5 py-0.5 bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[9px] font-black tracking-widest rounded-full uppercase">
+                    {activeEvent.category || 'EVENT'} • ACTIVE OS WORKSPACE
+                  </span>
+                  <h2 className="text-2xl md:text-3xl font-extrabold mt-3 tracking-tight">{activeEvent.title}</h2>
+                  <p className="text-slate-400 text-xs mt-1.5 font-medium">
+                    Scheduled on {new Date(activeEvent.startDate).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                  </p>
                 </div>
-              ) : (
-                <>
-                  <svg className="w-full h-auto" viewBox={`0 0 ${chartWidth} ${chartHeight}`} preserveAspectRatio="xMidYMid meet">
-                    <defs>
-                      <linearGradient id="spendGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#2563eb" stopOpacity="0.15" />
-                        <stop offset="100%" stopColor="#2563eb" stopOpacity="0.0" />
-                      </linearGradient>
-                    </defs>
-                    <line x1={chartPadding} y1={chartPadding} x2={chartWidth - chartPadding} y2={chartPadding} stroke="rgba(226, 232, 240, 0.5)" strokeWidth="1" strokeDasharray="3 3" />
-                    <line x1={chartPadding} y1={chartPadding + (chartHeight - 2 * chartPadding) / 2} x2={chartWidth - chartPadding} y2={chartPadding + (chartHeight - 2 * chartPadding) / 2} stroke="rgba(226, 232, 240, 0.5)" strokeWidth="1" strokeDasharray="3 3" />
-                    <line x1={chartPadding} y1={chartHeight - chartPadding} x2={chartWidth - chartPadding} y2={chartHeight - chartPadding} stroke="rgba(203, 213, 225, 0.8)" strokeWidth="1.5" />
-                    
-                    {hoveredPoint !== null && pointsSpend[hoveredPoint] && (
-                      <line 
-                        x1={pointsSpend[hoveredPoint].x} 
-                        y1={chartPadding} 
-                        x2={pointsSpend[hoveredPoint].x} 
-                        y2={chartHeight - chartPadding} 
-                        stroke="#2563eb" 
-                        strokeWidth="1.5" 
-                        strokeDasharray="4 4" 
-                        className="opacity-40"
-                      />
-                    )}
-
-                    {areaSpend && <path d={areaSpend} fill="url(#spendGrad)" />}
-                    {pathSpend && <path d={pathSpend} fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
-                    {pathBudget && <path d={pathBudget} fill="none" stroke="#9ca3af" strokeWidth="1.5" strokeDasharray="4 4" strokeLinecap="round" className="opacity-80" />}
-                    
-                    {pointsSpend.map((p, idx) => (
-                      <g key={idx} onMouseEnter={() => setHoveredPoint(idx)} onMouseLeave={() => setHoveredPoint(null)}>
-                        {hoveredPoint === idx && (
-                          <>
-                            <circle cx={p.x} cy={p.y} r={8} className="fill-blue-500/20 stroke-none animate-ping" />
-                            <circle cx={p.x} cy={p.y} r={5.5} className="fill-blue-600 stroke-white stroke-2 cursor-pointer transition-all" />
-                          </>
-                        )}
-                        <text x={p.x} y={chartHeight - 12} textAnchor="middle" className="text-[9px] fill-gray-400 font-bold">{p.label}</text>
-                        <circle cx={p.x} cy={p.y} r={16} fill="transparent" className="cursor-pointer" />
-                      </g>
-                    ))}
-
-                    {hoveredPoint !== null && pointsSpend[hoveredPoint] && (
-                      <g className="transition-all duration-200">
-                        <rect 
-                          x={pointsSpend[hoveredPoint].x - 47} 
-                          y={pointsSpend[hoveredPoint].y - 36} 
-                          width="94" 
-                          height="24" 
-                          rx="8" 
-                          fill="rgba(15, 23, 42, 0.95)" 
-                          stroke="rgba(255, 255, 255, 0.15)"
-                          strokeWidth="1"
-                        />
-                        <text 
-                          x={pointsSpend[hoveredPoint].x} 
-                          y={pointsSpend[hoveredPoint].y - 20} 
-                          textAnchor="middle" 
-                          fill="#ffffff" 
-                          className="text-[9px] font-black tracking-tight"
-                        >
-                          ₹{pointsSpend[hoveredPoint].val.toLocaleString('en-IN')}
-                        </text>
-                      </g>
-                    )}
-                  </svg>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Side-by-Side: Projects and Tasks */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            {/* Active Projects Widget */}
-            <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.01)] flex flex-col justify-between">
-              <div>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider">Project Portfolio</h3>
-                  <button onClick={() => setTab('events')} className="text-xs text-blue-600 font-semibold hover:underline">All Events</button>
-                </div>
-                {events.length === 0 ? (
-                  <p className="text-xs text-gray-400 italic py-6 text-center">No active plans. Click New Event to start.</p>
-                ) : (
-                  <div className="space-y-4 mt-2">
-                    {events.slice(0, 3).map(ev => {
-                      const pct = getEventProgress(ev.id);
-                      const isWorkspaceActive = ev.id === activeEventId;
-                      return (
-                        <div 
-                          key={ev.id} 
-                          onClick={() => setActiveEventId(ev.id)}
-                          className={`flex items-center gap-3.5 border-b border-gray-100 last:border-0 pb-3 last:pb-0 cursor-pointer transition-all p-1.5 rounded-xl hover:bg-white/30 ${isWorkspaceActive ? 'bg-white/50 border-blue-500' : ''}`}
-                        >
-                          {/* Circular progress meter */}
-                          <div className="relative w-11 h-11 shrink-0 flex items-center justify-center">
-                            <svg className="w-full h-full -rotate-90" viewBox="0 0 44 44">
-                              <circle 
-                                cx="22" 
-                                cy="22" 
-                                r="18" 
-                                className="stroke-slate-100 fill-none" 
-                                strokeWidth="3" 
-                              />
-                              <motion.circle 
-                                cx="22" 
-                                cy="22" 
-                                r="18" 
-                                className="stroke-blue-600 fill-none" 
-                                strokeWidth="3.5" 
-                                strokeLinecap="round"
-                                strokeDasharray={2 * Math.PI * 18}
-                                initial={{ strokeDashoffset: 2 * Math.PI * 18 }}
-                                animate={{ strokeDashoffset: 2 * Math.PI * 18 * (1 - pct / 100) }}
-                                transition={{ duration: 0.8, ease: "easeOut" }}
-                              />
-                            </svg>
-                            <span className="absolute text-[8px] font-black text-gray-700">{pct}%</span>
-                          </div>
-                          {/* Project details */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-2">
-                              <h4 className="font-bold text-gray-800 text-xs truncate max-w-[130px]" title={ev.title}>{ev.title}</h4>
-                              <span className={`px-2 py-0.5 border text-[7px] font-black rounded-full uppercase tracking-wider ${
-                                ev.status === 'CONFIRMED' 
-                                  ? 'bg-green-50 text-green-700 border-green-200' 
-                                  : 'bg-amber-50 text-amber-700 border-amber-200'
-                              }`}>{ev.status}</span>
-                            </div>
-                            <div className="flex justify-between items-center mt-1 text-[9px] text-gray-400 font-semibold">
-                              <span className="flex items-center gap-1"><Calendar size={10} /> {new Date(ev.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
-                              <span className="font-medium">{isWorkspaceActive ? "Active workspace" : "Switch workspace"}</span>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Checklist Scan Widget */}
-            <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.01)] flex flex-col justify-between">
-              <div>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider">Project checklist</h3>
-                  <span className="text-[9px] bg-amber-50 text-amber-700 border border-amber-100 px-2 py-0.5 rounded-full font-bold">{activePendingTasks.length} pending</span>
-                </div>
-                {activePendingTasks.length === 0 ? (
-                  <p className="text-xs text-gray-400 italic py-6 text-center">No tasks remaining for this project!</p>
-                ) : (
-                  <div className="space-y-2.5 mt-2.5 max-h-[145px] overflow-y-auto pr-0.5 custom-scrollbar">
-                    {activePendingTasks.slice(0, 3).map(t => (
-                      <div key={`${t.eventId}-${t.id}`} className="flex items-start gap-3 p-2.5 bg-white/30 hover:bg-white/50 border border-white/50 hover:border-blue-200 rounded-2xl text-xs shadow-sm hover:scale-[1.01] active:scale-[0.99] transition-all">
-                        <input 
-                          type="checkbox" 
-                          checked={t.isCompleted} 
-                          onChange={() => handleToggleOverviewTask(t.eventId, t.id)}
-                          className="mt-0.5 w-4 h-4 text-blue-600 border-white/80 bg-white/40 rounded-md focus:ring-blue-500 cursor-pointer shadow-sm"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-gray-800 truncate leading-snug" title={t.taskName}>{t.taskName}</h4>
-                          <div className="flex items-center gap-2 mt-1 text-[8px] font-semibold text-gray-400">
-                            <span className="flex items-center gap-1">
-                              <span className={`w-1.5 h-1.5 rounded-full ${
-                                t.priority === 'HIGH' ? 'bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.4)]' :
-                                t.priority === 'MEDIUM' ? 'bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.4)]' :
-                                'bg-slate-400'
-                              }`} />
-                              <span className="text-[7.5px] uppercase font-extrabold text-slate-500 tracking-wider">
-                                {t.priority}
-                              </span>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Quick task addition form */}
-              {activeEvent && (
-                <form onSubmit={handleQuickAddTask} className="mt-4 pt-3 border-t border-white/30 flex gap-2">
-                  <input 
-                    type="text" 
-                    name="taskName"
-                    placeholder="Quick-add task..." 
-                    className="flex-1 px-3 py-1.5 bg-white/50 border border-white/80 rounded-xl text-xs font-semibold focus:ring-0 focus:border-blue-500 placeholder:text-gray-400"
-                    required
-                  />
-                  <select 
-                    name="priority"
-                    className="bg-white/50 border border-white/80 rounded-xl text-[10px] font-bold text-gray-600 focus:ring-0 py-1"
-                  >
-                    <option value="HIGH">High</option>
-                    <option value="MEDIUM">Med</option>
-                    <option value="LOW">Low</option>
-                  </select>
-                  <button 
-                    type="submit" 
-                    className="px-3 py-1.5 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors"
-                  >
-                    Add
-                  </button>
-                </form>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Mini Calendar & Planner Schedule agenda (Col-span 1) */}
-        <div className="lg:col-span-1 space-y-6">
-          
-          {/* Sleek Mini Calendar */}
-          <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
-            <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-4 flex justify-between items-center">
-              <div className="flex items-center gap-1">
-                <button 
-                  onClick={handlePrevMonth} 
-                  className="p-1 hover:bg-white/60 hover:text-gray-900 rounded-lg text-gray-400 transition-colors shadow-sm border border-transparent hover:border-white/40"
-                  title="Previous Month"
-                >
-                  <ChevronLeft size={14} />
-                </button>
-                <span className="min-w-[95px] text-center text-slate-700 font-bold">{monthNames[currentMonth]} {currentYear}</span>
-                <button 
-                  onClick={handleNextMonth} 
-                  className="p-1 hover:bg-white/60 hover:text-gray-900 rounded-lg text-gray-400 transition-colors shadow-sm border border-transparent hover:border-white/40"
-                  title="Next Month"
-                >
-                  <ChevronRight size={14} />
-                </button>
-              </div>
-              <span className="text-[10px] text-blue-600 cursor-pointer font-bold hover:underline" onClick={() => setTab('events')}>Planner view</span>
-            </h3>
-            
-            <div className="grid grid-cols-7 gap-1 text-center text-xs">
-              {weekDays.map(wd => (
-                <div key={wd} className="text-gray-400 font-bold py-1">{wd}</div>
-              ))}
-              {daysArray.map((day, idx) => {
-                const isSelected = day.day === selectedDay && day.month === currentMonth && day.year === currentYear;
-                const isToday = day.day === today.getDate() && day.month === today.getMonth() && day.year === today.getFullYear();
-                const details = getDayDetails(day);
                 
-                return (
-                  <div 
-                    key={idx} 
-                    className="relative py-1 flex flex-col items-center justify-center group"
-                    onMouseEnter={() => setHoveredDay(idx)}
-                    onMouseLeave={() => setHoveredDay(null)}
-                  >
-                    <motion.button 
-                      whileHover={{ scale: 1.15 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => handleDayClick(day)}
-                      className={`w-7 h-7 rounded-full text-[10px] font-bold flex items-center justify-center transition-all ${
-                        isSelected ? 'bg-gradient-to-tr from-blue-600 to-indigo-650 text-white shadow-md font-black ring-2 ring-blue-600/20' :
-                        isToday ? 'border border-blue-600 text-blue-600 font-black bg-blue-50/50' :
-                        day.isCurrentMonth ? 'text-gray-700 hover:bg-white/60' : 'text-gray-300 hover:bg-white/30'
-                      }`}
-                    >
-                      {day.day}
-                    </motion.button>
-
-                    {/* Dot Indicators */}
-                    <div className="absolute bottom-0.5 flex gap-0.5 justify-center items-center">
-                      {details.hasEvent && (
-                        <span className={`w-1 h-1 rounded-full ${
-                          isSelected ? 'bg-white' : 
-                          details.eventStatus === 'CONFIRMED' ? 'bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.6)]' : 'bg-amber-500 shadow-[0_0_4px_rgba(245,158,11,0.6)]'
-                        }`} />
-                      )}
-                      {details.hasTask && (
-                        <span className={`w-1 h-1 rounded-full ${
-                          isSelected ? 'bg-white' : 'bg-indigo-500 shadow-[0_0_4px_rgba(99,102,241,0.6)]'
-                        }`} />
-                      )}
-                    </div>
-
-                    {/* Hover Card Tooltip */}
-                    {hoveredDay === idx && (details.hasEvent || details.hasTask) && (
-                      <div className="absolute bottom-9 left-1/2 -translate-x-1/2 w-48 bg-slate-900/95 text-white text-[10px] p-2.5 rounded-xl shadow-xl z-50 pointer-events-none backdrop-blur-sm border border-white/10 space-y-1.5 transition-all duration-200">
-                        <div className="font-extrabold border-b border-white/15 pb-1 text-[9px] text-slate-300 uppercase tracking-wider">
-                          {monthNames[day.month].substring(0, 3)} {day.day}, {day.year}
-                        </div>
-                        {details.eventsList.length > 0 && (
-                          <div className="space-y-0.5">
-                            <div className="text-[8px] text-blue-400 font-black uppercase">Events ({details.eventsList.length})</div>
-                            {details.eventsList.map((ev, eidx) => (
-                              <div key={eidx} className="truncate font-semibold text-slate-200">• {ev.title}</div>
-                            ))}
-                          </div>
-                        )}
-                        {details.tasksList.length > 0 && (
-                          <div className="space-y-0.5 pt-1">
-                            <div className="text-[8px] text-indigo-400 font-black uppercase">Tasks ({details.tasksList.length})</div>
-                            {details.tasksList.map((t, tidx) => (
-                              <div key={tidx} className="truncate text-slate-300 flex items-center gap-1">
-                                <span className={`w-1 h-1 rounded-full ${
-                                  t.priority === 'HIGH' ? 'bg-red-500' :
-                                  t.priority === 'MEDIUM' ? 'bg-amber-500' : 'bg-slate-400'
-                                }`} />
-                                <span className="truncate">{t.taskName}</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Agenda Planner List */}
-            <div className="mt-5 pt-4 border-t border-white/40">
-              <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-3 flex items-center justify-between">
-                <span>Agenda • {monthNames[currentMonth]} {selectedDay}</span>
-                <span className="text-[9px] bg-white/60 text-slate-600 px-1.5 py-0.5 rounded-md font-extrabold">
-                  {agendaItems.length} {agendaItems.length === 1 ? 'item' : 'items'}
-                </span>
-              </h4>
-              {agendaItems.length === 0 ? (
-                <p className="text-[10px] text-gray-400 italic py-2">No schedules planned for this day.</p>
-              ) : (
-                <div className="space-y-2.5">
-                  {agendaItems.map((item) => {
-                    if (item.type === 'event') {
-                      return (
-                        <motion.div 
-                          whileHover={{ x: 2 }}
-                          key={`${item.type}-${item.id}`} 
-                          className="flex gap-3 text-xs leading-normal p-2.5 rounded-2xl bg-white/30 border border-white/40 hover:bg-white/50 hover:border-blue-200/50 transition-all shadow-sm"
-                        >
-                          <div className="flex flex-col items-center justify-center min-w-[45px]">
-                            <span className="text-[8px] font-extrabold text-blue-700 bg-blue-500/10 border border-blue-500/20 rounded-md px-1.5 py-0.5 whitespace-nowrap">{item.time}</span>
-                            <span className="text-[7px] text-blue-500 uppercase tracking-wider font-extrabold mt-1">Event</span>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <h5 className="font-bold text-gray-800 truncate">{item.title}</h5>
-                              <span className={`px-1.5 py-0.2 border text-[6.5px] font-black rounded-full uppercase tracking-wider ${
-                                item.status === 'CONFIRMED' 
-                                  ? 'bg-green-50 text-green-700 border-green-200' 
-                                  : 'bg-amber-50 text-amber-700 border-amber-200'
-                              }`}>{item.status}</span>
-                            </div>
-                            <p className="text-[9px] text-gray-400 font-semibold truncate mt-0.5">{item.desc}</p>
-                          </div>
-                        </motion.div>
-                      );
-                    } else {
-                      return (
-                        <motion.div 
-                          whileHover={{ x: 2 }}
-                          key={`${item.type}-${item.id}`} 
-                          className={`flex gap-3 text-xs leading-normal p-2.5 rounded-2xl border transition-all shadow-sm ${
-                            item.isCompleted 
-                              ? 'bg-slate-50/50 border-slate-200/40 opacity-70' 
-                              : 'bg-white/30 border-white/40 hover:bg-white/50 hover:border-indigo-200/50'
-                          }`}
-                        >
-                          <div className="flex items-center justify-center pl-1">
-                            <input 
-                              type="checkbox" 
-                              checked={item.isCompleted} 
-                              onChange={() => handleToggleOverviewTask(item.eventId, item.id)}
-                              className="w-4 h-4 text-indigo-650 border-white/80 bg-white/45 rounded-md focus:ring-indigo-500 cursor-pointer shadow-sm"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-2">
-                              <h5 className={`font-bold text-gray-800 truncate ${item.isCompleted ? 'line-through text-gray-400' : ''}`}>{item.title}</h5>
-                              <span className={`px-1.5 py-0.2 text-[6.5px] font-black rounded-full uppercase tracking-wider border ${
-                                item.priority === 'HIGH' ? 'bg-red-50 text-red-700 border-red-200' :
-                                item.priority === 'MEDIUM' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                                'bg-slate-50 text-slate-700 border-slate-200'
-                              }`}>{item.priority}</span>
-                            </div>
-                            <p className="text-[9px] text-gray-400 font-semibold truncate mt-0.5">{item.desc}</p>
-                          </div>
-                        </motion.div>
-                      );
-                    }
-                  })}
+                {/* Countdown */}
+                <div className="bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl px-5 py-3 text-center shrink-0">
+                  <div className="text-3xl font-black tracking-tight text-white">{countdownDays}</div>
+                  <div className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-0.5">days left</div>
                 </div>
-              )}
+              </div>
+
+              {/* Stats metrics inside one card */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8 pt-6 border-t border-white/10 text-xs font-semibold text-slate-300">
+                <div>
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block">Project Progress</span>
+                  <div className="flex items-center gap-2 mt-2">
+                    <div className="flex-1 bg-white/10 rounded-full h-1.5 overflow-hidden">
+                      <div className="bg-blue-500 h-full rounded-full" style={{ width: `${getEventProgress(activeEvent.id)}%` }} />
+                    </div>
+                    <span className="font-extrabold text-white text-[11px]">{getEventProgress(activeEvent.id)}%</span>
+                  </div>
+                </div>
+
+                <div onClick={() => { setNewBudgetLimit(totalBudget.toString()); setShowBudgetModal(true); }} className="cursor-pointer hover:bg-white/5 p-1 rounded-xl transition-all" title="Click to update budget limit">
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block">Budget Consumption ✏️</span>
+                  <span className="text-white text-sm font-extrabold block mt-1">
+                    ₹{totalSpend.toLocaleString('en-IN')} <span className="text-[10px] text-slate-450 font-normal">/ ₹{totalBudget.toLocaleString('en-IN')}</span>
+                  </span>
+                </div>
+
+                <div>
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block">Tasks Ratio</span>
+                  <span className="text-white text-sm font-extrabold block mt-1">
+                    {activeTasks.filter(t => t.isCompleted).length} <span className="text-[10px] text-slate-450 font-normal">/ {activeTasks.length} Completed</span>
+                  </span>
+                </div>
+
+                <div>
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block">Hired Gigs</span>
+                  <span className="text-white text-sm font-extrabold block mt-1">
+                    {activeBookings.filter(b => b.status === 'CONFIRMED').length} Confirmed <span className="text-[10px] text-slate-450 font-normal">({activeBookings.filter(b => b.status === 'PENDING').length} Pending)</span>
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
 
-          {/* Quick links to actions */}
-          <div className="bg-gradient-to-tr from-blue-500/10 via-indigo-500/5 to-transparent border border-blue-250/20 backdrop-blur-md rounded-3xl p-6 flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.01)] relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl -z-10" />
-            <div>
-              <h4 className="text-xs font-bold text-gray-800 flex items-center gap-1">Need Service Providers? 💼</h4>
-              <p className="text-[10px] text-gray-450 leading-relaxed font-semibold mt-1.5">Hire catering, professional photography, lighting decor, or sound systems securely.</p>
-            </div>
-            <motion.button 
-              whileHover={{ scale: 1.01, y: -1 }}
-              whileTap={{ scale: 0.99 }}
-              onClick={() => setTab('bookings')} 
-              className="mt-5 w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/10 hover:from-blue-750 hover:to-indigo-700 transition-all"
-            >
-              Book Vendors in Escrow
-            </motion.button>
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* Adjust Budget Modal */}
-      {showBudgetModal && (
-        <Dialog open={showBudgetModal} onOpenChange={setShowBudgetModal}>
-          <DialogContent className="sm:max-w-md bg-white rounded-3xl p-6 border border-gray-200">
-            <DialogHeader>
-              <DialogTitle className="text-lg font-bold text-gray-900">Adjust Project Budget Ceiling</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              handleUpdateBudget(newBudgetLimit);
-            }} className="space-y-4 mt-2">
-              <div>
-                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">Budget Limit Amount (₹)</label>
-                <input 
-                  type="number"
-                  placeholder="200000"
-                  value={newBudgetLimit}
-                  onChange={(e) => setNewBudgetLimit(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold focus:ring-blue-500 focus:border-blue-500"
-                  required
+            {/* 2. Smart Action Center */}
+            <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
+              <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest mb-4">Smart Action Center</h3>
+              <div className="space-y-3">
+                {/* Photographer Pay */}
+                <SmartActionRow 
+                  priority="HIGH" 
+                  category="PAYMENTS" 
+                  title="Photographer deposit payment of ₹25,000 due tomorrow" 
+                  actionLabel="Disburse Now" 
+                  onClick={() => setTab('settings')} 
+                />
+                {/* Catering Awaiting */}
+                <SmartActionRow 
+                  priority="MEDIUM" 
+                  category="APPROVALS" 
+                  title="Gourmet Catering menu items pending client review selection" 
+                  actionLabel="Verify Menu" 
+                  onClick={() => setTab('bookings')} 
+                />
+                {/* Weather Warning */}
+                {countdownDays <= 150 && (
+                  <SmartActionRow 
+                    priority="HIGH" 
+                    category="WEATHER" 
+                    title="Rain predicted (58% risk) for November 12 event date" 
+                    actionLabel="Mitigate Risk" 
+                    onClick={() => setTab('cancellation')} 
+                  />
+                )}
+                {/* Custom Task Addition */}
+                <SmartActionRow 
+                  priority="LOW" 
+                  category="CHECKLIST" 
+                  title="Task checklist is incomplete. Build custom stage timeline priorities." 
+                  actionLabel="Open Tasks" 
+                  onClick={() => setTab('tasks')} 
                 />
               </div>
-              <div className="flex gap-2 pt-2">
-                <button type="submit" className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all">Save Changes</button>
-                <button type="button" onClick={() => setShowBudgetModal(false)} className="flex-1 py-3 border rounded-xl text-xs font-bold text-gray-650 hover:bg-gray-50">Cancel</button>
+            </div>
+
+            {/* 3. Signature Event Health Score Component */}
+            <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h3 className="text-xs font-black text-slate-455 uppercase tracking-widest">Event Health Index</h3>
+                  <p className="text-[10px] text-slate-400 font-semibold mt-0.5">Signature diagnostic of event coordination and readiness.</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold text-slate-505">Overall Rating:</span>
+                  <span className={`px-2.5 py-0.5 text-white text-[10px] font-black rounded-full shadow-sm ${
+                    healthScore >= 80 ? 'bg-gradient-to-r from-emerald-500 to-teal-650' :
+                    healthScore >= 50 ? 'bg-gradient-to-r from-amber-500 to-yellow-500' : 'bg-red-500'
+                  }`}>
+                    {healthScore >= 80 ? 'STABLE' : healthScore >= 50 ? 'WARNING' : 'CRITICAL'} ({healthScore}/100)
+                  </span>
+                </div>
               </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+
+              {/* Health Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <HealthItem label="Budget Health" score={totalSpend > totalBudget ? 40 : 95} desc={totalSpend > totalBudget ? "Budget Over-spent!" : "Within constraints"} />
+                <HealthItem label="Task Readiness" score={activeTasks.length > 0 ? Math.round((activeTasks.filter(t => t.isCompleted).length / activeTasks.length) * 100) : 100} desc="Milestones check" />
+                <HealthItem label="Vendor Readiness" score={activeBookings.length > 0 ? Math.round((activeBookings.filter(b => b.status === 'CONFIRMED').length / activeBookings.length) * 100) : 100} desc="Hires confirmation" />
+                <HealthItem label="Escrow Payments" score={stats.wallet > 10000 ? 98 : 60} desc="Funds reservation" />
+                <HealthItem label="Timeline Slippage" score={92} desc="On track scheduling" />
+                <HealthItem label="Weather Risk" score={countdownDays <= 150 ? 55 : 98} desc={countdownDays <= 150 ? "58% Rain Probability" : "Clear Sky forecast"} />
+              </div>
+            </div>
+
+          </div>
+
+          {/* Right Sidebar Column (Col-span 4) */}
+          <div className="lg:col-span-4 space-y-8">
+            
+            {/* Merged smart calendar / scheduling widget */}
+            <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
+              <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest mb-4 flex justify-between items-center">
+                <div className="flex items-center gap-1">
+                  <button onClick={handlePrevMonth} className="p-1 hover:bg-white/60 hover:text-gray-900 rounded-lg text-gray-400 transition-colors">
+                    <ChevronLeft size={14} />
+                  </button>
+                  <span className="min-w-[95px] text-center text-slate-700 font-bold">{monthNames[currentMonth]} {currentYear}</span>
+                  <button onClick={handleNextMonth} className="p-1 hover:bg-white/60 hover:text-gray-900 rounded-lg text-gray-400 transition-colors">
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
+              </h3>
+
+              {/* Grid */}
+              <div className="grid grid-cols-7 gap-1 text-center text-xs">
+                {weekDays.map(wd => (
+                  <div key={wd} className="text-slate-450 font-bold py-1 text-[10px]">{wd}</div>
+                ))}
+                {daysArray.map((day, idx) => {
+                  const isSelected = day.day === selectedDay && day.month === currentMonth && day.year === currentYear;
+                  const isToday = day.day === today.getDate() && day.month === today.getMonth() && day.year === today.getFullYear();
+                  const details = getDayDetails(day);
+                  
+                  return (
+                    <div 
+                      key={idx} 
+                      className="relative py-1 flex flex-col items-center justify-center group"
+                      onMouseEnter={() => setHoveredDay(idx)}
+                      onMouseLeave={() => setHoveredDay(null)}
+                    >
+                      <motion.button 
+                        whileHover={{ scale: 1.15 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => handleDayClick(day)}
+                        className={`w-7 h-7 rounded-full text-[10px] font-bold flex items-center justify-center transition-all ${
+                          isSelected ? 'bg-gradient-to-tr from-blue-600 to-indigo-650 text-white shadow-md font-black ring-2 ring-blue-600/20' :
+                          isToday ? 'border border-blue-600 text-blue-600 font-black bg-blue-50/50' :
+                          day.isCurrentMonth ? 'text-gray-700 hover:bg-white/60' : 'text-gray-300 hover:bg-white/30'
+                        }`}
+                      >
+                        {day.day}
+                      </motion.button>
+
+                      {/* Dots */}
+                      <div className="absolute bottom-0.5 flex gap-0.5 justify-center items-center">
+                        {details.hasEvent && (
+                          <span className={`w-1 h-1 rounded-full ${isSelected ? 'bg-white' : 'bg-emerald-500 shadow-sm'}`} />
+                        )}
+                        {details.hasTask && (
+                          <span className={`w-1 h-1 rounded-full ${isSelected ? 'bg-white' : 'bg-indigo-500 shadow-sm'}`} />
+                        )}
+                      </div>
+
+                      {/* Tooltip */}
+                      {hoveredDay === idx && (details.hasEvent || details.hasTask) && (
+                        <div className="absolute bottom-9 left-1/2 -translate-x-1/2 w-48 bg-slate-900 text-white text-[10px] p-2.5 rounded-xl shadow-xl z-50 pointer-events-none backdrop-blur-sm border border-white/10 space-y-1">
+                          <div className="font-extrabold border-b border-white/15 pb-1 text-[9px] text-slate-350">
+                            {monthNames[day.month].substring(0, 3)} {day.day}, {day.year}
+                          </div>
+                          {details.eventsList.length > 0 && (
+                            <div className="truncate font-semibold text-slate-200">• {details.eventsList[0].title}</div>
+                          )}
+                          {details.tasksList.length > 0 && (
+                            <div className="truncate text-slate-300">• {details.tasksList[0].taskName}</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Day schedules agenda details */}
+              <div className="mt-5 pt-4 border-t border-gray-150/40">
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
+                  Schedule • {monthNames[currentMonth]} {selectedDay}
+                </h4>
+                {agendaItems.length === 0 ? (
+                  <p className="text-[10px] text-gray-400 italic py-2">No schedules or payments due today.</p>
+                ) : (
+                  <div className="space-y-2.5">
+                    {agendaItems.map((item, idindex) => (
+                      <div key={idindex} className="p-2.5 bg-white/40 border border-white/50 rounded-2xl text-xs flex justify-between items-center gap-2">
+                        <div>
+                          <h5 className="font-bold text-gray-800">{item.title}</h5>
+                          <p className="text-[9px] text-gray-450 mt-0.5">{item.desc}</p>
+                        </div>
+                        <span className={`px-2 py-0.5 text-[8px] font-black rounded uppercase ${
+                          item.type === 'event' ? 'bg-emerald-50 text-emerald-700' : 'bg-indigo-50 text-indigo-700'
+                        }`}>
+                          {item.type}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+            </div>
+
+            {/* Quick Promo box */}
+            <div className="bg-gradient-to-tr from-blue-500/10 via-indigo-500/5 to-transparent border border-blue-250/20 backdrop-blur-md rounded-3xl p-6 relative overflow-hidden">
+              <h4 className="text-xs font-bold text-gray-800">Book Escrow Vendors 💼</h4>
+              <p className="text-[10px] text-gray-450 mt-1.5">Hire wedding halls, DJs, sound setups, and caterers with 100% cancellation protection.</p>
+              <button onClick={() => setTab('vendors')} className="mt-4 w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl text-xs font-extrabold shadow-sm transition-all hover:scale-[1.01]">
+                Launch Marketplace
+              </button>
+            </div>
+
+          </div>
+
+        </div>
       )}
+
+      {/* Budget Edit Modal Dialog */}
+      <Dialog open={showBudgetModal} onOpenChange={setShowBudgetModal}>
+        <DialogContent className="sm:max-w-md bg-white rounded-3xl p-6 border border-gray-250 shadow-xl z-50">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold text-gray-900">Update Event Budget Limit</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-2">
+            <div>
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Budget Limit (₹) *</label>
+              <input 
+                type="number" 
+                value={newBudgetLimit} 
+                onChange={e => setNewBudgetLimit(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-150 bg-white text-slate-850"
+                placeholder="e.g. 500000"
+              />
+            </div>
+            <div className="pt-2 flex justify-end gap-2.5">
+              <button type="button" onClick={() => setShowBudgetModal(false)} className="px-4 py-2 border border-gray-200 hover:bg-gray-50 text-slate-700 rounded-xl text-xs font-bold transition-all">Cancel</button>
+              <button 
+                type="button" 
+                onClick={() => handleUpdateBudget(newBudgetLimit)}
+                className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-650 hover:from-blue-700 hover:to-indigo-750 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-600/15 transition-all"
+              >
+                Save Budget
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+/* Custom UI Subcomponents */
+function SmartActionRow({ priority, category, title, actionLabel, onClick }) {
+  return (
+    <div className="p-3.5 bg-white/30 border border-white/50 hover:border-blue-200 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-3 transition-all">
+      <div className="flex items-center gap-3 min-w-0">
+        <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
+          priority === 'HIGH' ? 'bg-red-50 text-red-700 border border-red-200' :
+          priority === 'MEDIUM' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-50 text-slate-650 border border-slate-200'
+        }`}>
+          {priority}
+        </span>
+        <span className="text-[8px] bg-blue-50 text-blue-600 font-black rounded px-1.5 py-0.5 uppercase tracking-widest">{category}</span>
+        <p className="text-xs font-extrabold text-slate-800 truncate" title={title}>{title}</p>
+      </div>
+      <button onClick={onClick} className="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-[10px] font-bold shadow-sm whitespace-nowrap self-end md:self-auto">
+        {actionLabel}
+      </button>
+    </div>
+  );
+}
+
+function HealthItem({ label, score, desc }) {
+  return (
+    <div className="p-4 bg-white/20 border border-white/40 rounded-2xl flex flex-col justify-between shadow-sm">
+      <div className="flex justify-between items-center">
+        <span className="text-[9px] font-black text-slate-450 uppercase tracking-widest">{label}</span>
+        <span className={`text-xs font-black ${
+          score >= 80 ? 'text-emerald-600' : score >= 50 ? 'text-amber-505' : 'text-red-500'
+        }`}>{score}%</span>
+      </div>
+      
+      {/* progress bar */}
+      <div className="w-full bg-slate-100 h-1 rounded-full mt-3 overflow-hidden">
+        <div className={`h-full rounded-full ${
+          score >= 80 ? 'bg-emerald-500' : score >= 50 ? 'bg-amber-500' : 'bg-red-500'
+        }`} style={{ width: `${score}%` }} />
+      </div>
+      
+      <span className="text-[8px] text-slate-450 font-semibold mt-2 truncate block">{desc}</span>
     </div>
   );
 }
@@ -3269,271 +3053,226 @@ function WalletTab({ user, isDemoMode }) {
 }
 
 /* ============================================================================
-   VENDOR WORKSPACE TABS
+   VENDOR OPERATING SYSTEM: BUSINESS CONTROL CENTER
    ============================================================================ */
 
-/* 1. Vendor Overview Tab */
+/* 1. Vendor Overview Tab (Dashboard) */
 function VendorOverviewTab({ customerProfile, setTab, isDemoMode }) {
+  const [isOnline, setIsOnline] = useState(true);
+  const [pauseBookings, setPauseBookings] = useState(false);
+
+  // Simulated DB state
+  const vendor = {
+    name: "Elite Wedding Decors",
+    category: "DECORATION",
+    todayRevenue: 65000,
+    monthlyRevenue: 340000,
+    upcomingBookings: 8,
+    avgRating: 4.8,
+    reviewsCount: 142,
+    trustScore: 98,
+    responseRate: 99,
+    profileCompletion: 92,
+  };
+
+  const smartActions = [
+    { id: 1, priority: "URGENT", category: "REQUESTS", title: "New booking request from Aarav Sharma (₹65,000)", action: "Confirm Order", resolve: () => setTab("vendor-bookings") },
+    { id: 2, priority: "HIGH", category: "MESSAGES", title: "Neha Patel unanswered for 4 hours", action: "Open Chat", resolve: () => setTab("messages") },
+    { id: 3, priority: "MEDIUM", category: "INVENTORY", title: "Low availability warning for Canopy Setup on Aug 15", action: "Add Slots", resolve: () => setTab("availability") },
+    { id: 4, priority: "LOW", category: "COMPLETION", title: "Verify GST certification to increase Trust Score", action: "Upload GST", resolve: () => setTab("documents") }
+  ];
+
+  return (
+    <div className="space-y-8 font-sans">
+      {/* OS Header */}
+      <div className="flex justify-between items-center border-b border-gray-150/40 pb-4">
+        <div>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Business Control Center</span>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight mt-1">Dashboard</h1>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={() => setTab("services")} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl text-xs font-extrabold shadow-sm transition-all hover:scale-[1.01]">
+            + Add Service
+          </button>
+        </div>
+      </div>
+
+      {/* Hero Business Card */}
+      <div className="bg-gradient-to-tr from-slate-900 via-slate-950 to-indigo-950 text-white rounded-3xl p-8 relative overflow-hidden shadow-xl border border-white/5">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl -z-10" />
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+          <div className="space-y-4">
+            <div>
+              <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-black tracking-widest rounded-full uppercase">
+                {vendor.category} • {isOnline ? "ONLINE" : "PAUSED"}
+              </span>
+              <h2 className="text-3xl font-extrabold tracking-tight mt-3">{vendor.name}</h2>
+              <p className="text-slate-400 text-xs mt-1.5 font-semibold">Welcome back, Rajesh. Your business is performing at its peak.</p>
+            </div>
+            
+            <div className="flex flex-wrap gap-4 text-xs font-semibold text-slate-300">
+              <div>
+                <span className="text-[9px] text-slate-500 uppercase tracking-widest block">Today's Revenue</span>
+                <span className="text-white text-base font-extrabold">₹{vendor.todayRevenue.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="border-l border-white/10 pl-4">
+                <span className="text-[9px] text-slate-500 uppercase tracking-widest block">Monthly Spend</span>
+                <span className="text-white text-base font-extrabold">₹{vendor.monthlyRevenue.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="border-l border-white/10 pl-4">
+                <span className="text-[9px] text-slate-500 uppercase tracking-widest block">Trust Rating</span>
+                <span className="text-white text-base font-extrabold">⭐ {vendor.avgRating} ({vendor.reviewsCount})</span>
+              </div>
+              <div className="border-l border-white/10 pl-4">
+                <span className="text-[9px] text-slate-500 uppercase tracking-widest block">Aura score</span>
+                <span className="text-white text-base font-extrabold">{vendor.trustScore}%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions Panel */}
+          <div className="bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl p-5 space-y-3 shrink-0 w-full lg:w-64 text-xs font-bold">
+            <div className="flex justify-between items-center text-slate-350">
+              <span>Status Availability</span>
+              <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase ${isOnline ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                {isOnline ? 'Active' : 'Offline'}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              <button onClick={() => { setIsOnline(!isOnline); toast.success(isOnline ? "Status: Offline" : "Status: Online"); }} className="py-2.5 bg-white/10 hover:bg-white/20 rounded-xl text-center transition-all">
+                {isOnline ? "Go Offline" : "Go Online"}
+              </button>
+              <button onClick={() => { setPauseBookings(!pauseBookings); toast.success(pauseBookings ? "Bookings Resumed" : "Bookings Paused"); }} className="py-2.5 bg-white/10 hover:bg-white/20 rounded-xl text-center transition-all">
+                {pauseBookings ? "Resume" : "Pause"}
+              </button>
+            </div>
+            <button onClick={() => setTab("settings")} className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-center shadow-md shadow-blue-500/10 transition-all">
+              Edit Business Details
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Smart Action Center */}
+      <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
+        <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest mb-4">Smart Action Center</h3>
+        <div className="space-y-3">
+          {smartActions.map(act => (
+            <div key={act.id} className="p-3.5 bg-white/30 border border-white/50 hover:border-blue-200 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-3 transition-all">
+              <div className="flex items-center gap-3 min-w-0">
+                <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
+                  act.priority === 'URGENT' ? 'bg-red-50 text-red-700 border border-red-200 animate-pulse' :
+                  act.priority === 'HIGH' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-50 text-slate-650 border border-slate-200'
+                }`}>
+                  {act.priority}
+                </span>
+                <span className="text-[8px] bg-blue-50 text-blue-600 font-black rounded px-1.5 py-0.5 uppercase tracking-widest">{act.category}</span>
+                <p className="text-xs font-extrabold text-slate-800 truncate">{act.title}</p>
+              </div>
+              <button onClick={act.resolve} className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-bold shadow-sm whitespace-nowrap self-end md:self-auto transition-all">
+                {act.action}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Performance grid metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+          <span className="text-[9px] font-black text-slate-450 uppercase tracking-widest block">Response Velocity</span>
+          <div className="text-2xl font-black text-slate-800 tracking-tight mt-4">8.5 min</div>
+          <span className="text-[8px] text-emerald-600 font-extrabold mt-2 block">✓ 99% within 10 minutes</span>
+        </div>
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+          <span className="text-[9px] font-black text-slate-450 uppercase tracking-widest block">Profile Completeness</span>
+          <div className="text-2xl font-black text-slate-800 tracking-tight mt-4">{vendor.profileCompletion}%</div>
+          <span className="text-[8px] text-slate-400 font-bold mt-2 block">Add certificates to hit 100%</span>
+        </div>
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+          <span className="text-[9px] font-black text-slate-450 uppercase tracking-widest block">On-Time Arrival Rate</span>
+          <div className="text-2xl font-black text-slate-800 tracking-tight mt-4">100%</div>
+          <span className="text-[8px] text-emerald-600 font-extrabold mt-2 block">✓ Perfect attendance record</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* 2. Vendor Bookings Tab */
+function VendorBookingsTab({ customerProfile, setTab, isDemoMode }) {
   const navigate = useNavigate();
-  const [stats, setStats] = useState({ services: 0, bookings: 0, aura: 500, balance: 0 });
-  const [vendor, setVendorProfile] = useState(null);
+  const [filter, setFilter] = useState("ALL");
   const [bookings, setBookings] = useState([]);
+  const [vendorProfile, setVendorProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showReschedule, setShowReschedule] = useState(false);
+  const [newDate, setNewDate] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
-  const [hoveredPoint, setHoveredPoint] = useState(null);
-  const [blockedDates, setBlockedDates] = useState([]);
-  const [services, setServices] = useState([]);
 
-  const today = useMemo(() => new Date(), []);
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
-  const [currentYear, setCurrentYear] = useState(today.getFullYear());
-  const [selectedDay, setSelectedDay] = useState(today.getDate());
-  const [hoveredDay, setHoveredDay] = useState(null);
-
-  // Clamp selectedDay if it exceeds the number of days in the new month
-  useEffect(() => {
-    const daysInNewMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    if (selectedDay > daysInNewMonth) {
-      setSelectedDay(daysInNewMonth);
-    }
-  }, [currentMonth, currentYear, selectedDay]);
-
-  useEffect(() => {
+  const fetchBookings = async () => {
     if (isDemoMode) {
-      setVendorProfile({
-        id: 401,
-        businessName: "Elite Wedding Decors",
-        category: "DECORATION",
-        ownerName: "Rajesh Kumar",
-        aura: 680.5,
-        verificationStatus: "VERIFIED"
-      });
-      setStats({
-        services: 3,
-        bookings: 3,
-        aura: 680.5,
-        balance: 83000
-      });
-      setServices([
-        {
-          id: 351,
-          category: "DECORATION",
-          name: "Fairytale Canopy Flower Setup",
-          description: "Stunning pastel themed canopy decorations using seasonal orchids and premium drapes, ideal for wedding mandates or reception backdrops.",
-          price: 65000,
-          location: "Mumbai",
-          verificationStatus: "VERIFIED"
-        },
-        {
-          id: 352,
-          category: "DECORATION",
-          name: "Minimalist Boho Haldi Decor",
-          description: "Beautiful marigold drapes, dreamcatchers, and wooden benches setup for haldi and mehendi rituals.",
-          price: 18000,
-          location: "Mumbai",
-          verificationStatus: "VERIFIED"
-        },
-        {
-          id: 353,
-          category: "DECORATION",
-          name: "Modern Glass Aisle & Chandeliers",
-          description: "Luxurious glass platform walking aisle equipped with warm LED spotlighting and crystal hanging chandeliers.",
-          price: 120000,
-          location: "Pune",
-          verificationStatus: "PENDING"
-        }
-      ]);
-      
-      const b1 = new Date();
-      b1.setDate(b1.getDate() + 1);
-      const b2 = new Date();
-      b2.setDate(b2.getDate() + 3);
-      const b3 = new Date();
-      b3.setDate(b3.getDate() - 2);
-
+      setVendorProfile({ id: 401, businessName: "Elite Wedding Decors" });
       setBookings([
-        {
-          id: 601,
-          status: "PENDING",
-          startDt: b1.toISOString(),
-          endDt: b1.toISOString(),
-          bookingAmount: 65000,
-          clientName: "Aarav Sharma",
-          clientEmail: "aarav@gmail.com",
-          clientPhone: "+91 98765 43210",
-          customerId: 101,
-          services: { category: "DECORATION", name: "Fairytale Canopy Flower Setup" }
-        },
-        {
-          id: 602,
-          status: "CONFIRMED",
-          startDt: b2.toISOString(),
-          endDt: b2.toISOString(),
-          bookingAmount: 18000,
-          clientName: "Neha Patel",
-          clientEmail: "neha@outlook.com",
-          clientPhone: "+91 91234 56789",
-          customerId: 102,
-          services: { category: "DECORATION", name: "Minimalist Boho Haldi Decor" }
-        },
-        {
-          id: 603,
-          status: "CONFIRMED",
-          startDt: b3.toISOString(),
-          endDt: b3.toISOString(),
-          bookingAmount: 25000,
-          clientName: "Rajesh K.",
-          clientEmail: "rajesh@gmail.com",
-          clientPhone: "+91 95432 10987",
-          customerId: 103,
-          services: { category: "DECORATION", name: "Floral Canopy backdrop" }
-        }
+        { id: 601, clientName: "Aarav Sharma", customerId: 10, type: "Wedding Reception", startDt: "2026-11-12T18:00:00", endDt: "2026-11-12T23:59:00", bookingAmount: 65000, services: { category: "DECORATION", name: "Fairytale Canopy Flower Setup" }, status: "PENDING", payment: "IN_ESCROW" },
+        { id: 602, clientName: "Neha Patel", customerId: 11, type: "Haldi Ceremony", startDt: "2026-08-15T10:00:00", endDt: "2026-08-15T16:00:00", bookingAmount: 18000, services: { category: "DECORATION", name: "Minimalist Boho Haldi Decor" }, status: "CONFIRMED", payment: "IN_ESCROW" },
+        { id: 603, clientName: "Rajesh Kapoor", customerId: 12, type: "Sangeet Ceremony", startDt: "2026-07-05T17:00:00", endDt: "2026-07-05T22:00:00", bookingAmount: 120000, services: { category: "DECORATION", name: "Modern Glass Aisle & Chandeliers" }, status: "CONFIRMED", payment: "DISBURSED" }
       ]);
       setLoading(false);
       return;
     }
 
     if (!customerProfile?.id) return;
-    const fetchVendorOverviewStats = async () => {
-      try {
-        setLoading(true);
-        const vendorRes = await apiClient.get(`/api/vendor/customer/${customerProfile.id}`);
-        const v = vendorRes.data?.data || vendorRes.data;
-        setVendorProfile(v);
-
-        if (v?.id) {
-          const [servicesRes, bookingsRes, walletRes] = await Promise.all([
-            apiClient.get(`/api/vendor/services/${v.id}?page=0&size=100`),
-            apiClient.get(`/api/vendor/bookings/${v.id}?page=0&size=100`),
-            apiClient.get('/api/wallet').catch(() => ({ data: { balance: 0 } }))
-          ]);
-
-          const sCount = servicesRes.data?.data?.content?.length || servicesRes.data?.content?.length || 0;
-          const sList = servicesRes.data?.data?.content || servicesRes.data?.content || [];
-          const bList = bookingsRes.data?.data?.content || bookingsRes.data?.content || [];
-          const auraScore = v.aura !== undefined && v.aura !== null ? v.aura : 500.0;
-          const balanceAmount = walletRes.data?.data?.balance || walletRes.data?.balance || 0;
-
-          setStats({
-            services: sCount,
-            bookings: bList.length,
-            aura: auraScore,
-            balance: balanceAmount
-          });
-          setBookings(bList);
-          setServices(sList);
-        }
-      } catch (err) {
-        console.error("Error loading vendor stats:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchVendorOverviewStats();
-  }, [customerProfile, isDemoMode]);
-
-  // Load blocked dates when vendor details are loaded
-  useEffect(() => {
-    if (vendor?.id) {
-      const stored = localStorage.getItem(`planit_blocked_dates_${vendor.id}`);
-      if (stored) {
-        try {
-          setBlockedDates(JSON.parse(stored));
-        } catch (e) {
-          console.error("Error parsing blocked dates:", e);
-        }
-      } else {
-        setBlockedDates([]);
-      }
-    }
-  }, [vendor?.id]);
-
-  const toggleBlockDate = (dateStr) => {
-    if (!vendor?.id) return;
-    const isCurrentlyBlocked = blockedDates.includes(dateStr);
-    const nextBlocked = isCurrentlyBlocked
-      ? blockedDates.filter(d => d !== dateStr)
-      : [...blockedDates, dateStr];
-    setBlockedDates(nextBlocked);
-    localStorage.setItem(`planit_blocked_dates_${vendor.id}`, JSON.stringify(nextBlocked));
-    toast.success(isCurrentlyBlocked ? "Date unblocked successfully!" : "Date blocked off successfully!");
-  };
-
-  const handleUpdateServicePrice = async (serviceId, newPrice) => {
-    const serviceToUpdate = services.find(s => s.id === serviceId);
-    if (!serviceToUpdate) return;
-
-    if (isDemoMode) {
-      setServices(prev => prev.map(s => s.id === serviceId ? { ...s, price: parseFloat(newPrice) } : s));
-      toast.success("Service price updated (Demo Mode)");
-      return;
-    }
-
     try {
-      const payload = {
-        vendorId: vendor.id,
-        name: serviceToUpdate.name,
-        description: serviceToUpdate.description,
-        price: parseFloat(newPrice),
-        category: serviceToUpdate.category,
-        location: serviceToUpdate.location,
-        isAvailable: serviceToUpdate.isAvailable ?? true,
-        availableLocations: serviceToUpdate.availableLocations || [],
-        photos: serviceToUpdate.photos || []
-      };
+      setLoading(true);
+      const vendorRes = await apiClient.get(`/api/vendor/customer/${customerProfile.id}`);
+      const vProfile = vendorRes.data?.data || vendorRes.data;
+      setVendorProfile(vProfile);
 
-      const res = await apiClient.put(`/api/services/${serviceId}`, payload);
-      const updatedService = res.data?.data || res.data;
-      
-      setServices(prev => prev.map(s => s.id === serviceId ? { ...s, price: updatedService.price } : s));
-      toast.success("Service price updated successfully!");
+      if (vProfile?.id) {
+        const bookingsRes = await apiClient.get(`/api/vendor/bookings/${vProfile.id}?page=0&size=100`);
+        const dataList = bookingsRes.data?.data?.content || bookingsRes.data?.content || [];
+        setBookings(dataList);
+      }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update service price");
+      console.error(err);
+      toast.error("Failed to load vendor bookings");
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchBookings();
+  }, [customerProfile]);
 
   const handleUpdateStatus = async (bookingId, action) => {
-    let confirmMsg = "";
-    if (action === 'ACCEPT') { confirmMsg = "Accept this customer order?"; }
-    else if (action === 'REJECT') { confirmMsg = "Reject this customer request?"; }
-    else if (action === 'CANCEL') { confirmMsg = "Cancel booking and trigger immediate refund to customer?"; }
-
-    if (!window.confirm(confirmMsg)) return;
-
     if (isDemoMode) {
       setActionLoading(true);
       setTimeout(() => {
         const nextStatus = action === 'ACCEPT' ? 'CONFIRMED' : action === 'REJECT' ? 'REJECTED' : 'CANCELLED';
         setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: nextStatus } : b));
-        
-        // Update stats
-        const targetBk = bookings.find(b => b.id === bookingId);
-        setStats(prev => ({
-          ...prev,
-          balance: action === 'ACCEPT' ? prev.balance + targetBk.bookingAmount : prev.balance
-        }));
-        
         toast.success(`Booking request marked ${action.toLowerCase()}ed (Demo Mode)`);
+        setShowModal(false);
         setActionLoading(false);
       }, 500);
       return;
     }
 
     let endpoint = "";
-    if (action === 'ACCEPT') { endpoint = `/api/bookings/${bookingId}/accept`; }
-    else if (action === 'REJECT') { endpoint = `/api/bookings/${bookingId}/reject`; }
-    else if (action === 'CANCEL') { endpoint = `/api/bookings/${bookingId}/cancel/vendor`; }
+    if (action === 'ACCEPT') endpoint = `/api/bookings/${bookingId}/accept`;
+    else if (action === 'REJECT') endpoint = `/api/bookings/${bookingId}/reject`;
+    else if (action === 'CANCEL') endpoint = `/api/bookings/${bookingId}/cancel/vendor`;
 
     try {
       setActionLoading(true);
       const res = await apiClient.post(endpoint);
-      toast.success(`Booking request marked ${action.toLowerCase()}ed.`);
       const updated = res.data?.data || res.data;
       setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: updated.status } : b));
-      
-      const walletRes = await apiClient.get('/api/wallet').catch(() => ({ data: { balance: 0 } }));
-      const balanceAmount = walletRes.data?.data?.balance || walletRes.data?.balance || 0;
-      setStats(prev => ({ ...prev, balance: balanceAmount }));
+      toast.success(`Booking marked ${action.toLowerCase()}ed.`);
+      setShowModal(false);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to alter booking status");
     } finally {
@@ -3541,863 +3280,189 @@ function VendorOverviewTab({ customerProfile, setTab, isDemoMode }) {
     }
   };
 
+  const handleRescheduleSubmit = (e) => {
+    e.preventDefault();
+    if (!newDate) return;
+    setBookings(prev => prev.map(b => b.id === selectedBooking.id ? { ...b, startDt: newDate + "T10:00:00" } : b));
+    toast.success(`Rescheduled booking to ${newDate}`);
+    setShowReschedule(false);
+  };
+
   const handleStartChat = async (customerId) => {
-    if (!customerId) return;
     if (isDemoMode) {
-      toast.success("Opening chat channel with client (Demo Mode)...");
+      toast.success("Opening chat channel (Demo Mode)...");
+      if (setTab) setTab("messages");
       return;
     }
     try {
       const res = await apiClient.post('/api/chat/conversations', { customerId });
-      const conversation = res.data?.data || res.data;
-      navigate(`/chats?id=${conversation.id}`);
-      toast.success("Opening chat channel...");
+      const conv = res.data?.data || res.data;
+      navigate(`/chats?id=${conv.id}`);
     } catch (err) {
-      toast.error("Failed to initialize conversation");
+      toast.error("Failed to open chat conversation");
     }
   };
 
-  const getTrustBadge = (score) => {
-    if (score >= 800) {
-      return <span className="px-2.5 py-0.5 bg-gradient-to-r from-amber-500 to-yellow-500 text-white border-amber-600 rounded-full text-[9px] font-black shadow-sm">RADIANT</span>;
-    } else if (score >= 500) {
-      return <span className="px-2.5 py-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 text-white border-cyan-500 rounded-full text-[9px] font-black shadow-sm">LUMINOUS</span>;
-    }
-    return <span className="px-2.5 py-0.5 bg-gray-150 text-gray-500 border border-gray-250 rounded-full text-[9px] font-bold">FAINT</span>;
-  };
-
-  // Mini Calendar Generation
-  const getDaysInMonth = (m, y) => new Date(y, m + 1, 0).getDate();
-  const getFirstDayOfMonth = (m, y) => new Date(y, m, 1).getDay();
-
-  const handlePrevMonth = () => {
-    setCurrentMonth(prev => {
-      if (prev === 0) {
-        setCurrentYear(y => y - 1);
-        return 11;
-      }
-      return prev - 1;
-    });
-  };
-
-  const handleNextMonth = () => {
-    setCurrentMonth(prev => {
-      if (prev === 11) {
-        setCurrentYear(y => y + 1);
-        return 0;
-      }
-      return prev + 1;
-    });
-  };
-
-  const handleDayClick = (dayObj) => {
-    if (!dayObj) return;
-    if (dayObj.month !== currentMonth || dayObj.year !== currentYear) {
-      setCurrentMonth(dayObj.month);
-      setCurrentYear(dayObj.year);
-    }
-    setSelectedDay(dayObj.day);
-  };
-
-  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-
-  // Compute days matrix: prepend previous month's end, and append next month's start to fill 42 cells
-  const daysArray = useMemo(() => {
-    const daysInMonth = getDaysInMonth(currentMonth, currentYear);
-    const firstDayIndex = getFirstDayOfMonth(currentMonth, currentYear);
-
-    const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-    const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-    const prevDaysInMonth = getDaysInMonth(prevMonth, prevYear);
-
-    const arr = [];
-    
-    // Add trailing days of previous month
-    for (let i = firstDayIndex - 1; i >= 0; i--) {
-      arr.push({
-        day: prevDaysInMonth - i,
-        isCurrentMonth: false,
-        month: prevMonth,
-        year: prevYear
-      });
-    }
-
-    // Add current month days
-    for (let i = 1; i <= daysInMonth; i++) {
-      arr.push({
-        day: i,
-        isCurrentMonth: true,
-        month: currentMonth,
-        year: currentYear
-      });
-    }
-
-    // Add leading days of next month to fill grid
-    const nextMonth = currentMonth === 11 ? 0 : currentMonth + 1;
-    const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
-    const remaining = 42 - arr.length;
-    for (let i = 1; i <= remaining; i++) {
-      arr.push({
-        day: i,
-        isCurrentMonth: false,
-        month: nextMonth,
-        year: nextYear
-      });
-    }
-
-    return arr;
-  }, [currentMonth, currentYear]);
-
-  // Find bookings on a day
-  const getDayBookings = (dayObj) => {
-    if (!dayObj) return [];
-    const dateStr = `${dayObj.year}-${String(dayObj.month + 1).padStart(2, '0')}-${String(dayObj.day).padStart(2, '0')}`;
-    return bookings.filter(b => b.startDt && b.startDt.substring(0, 10) === dateStr);
-  };
-
-  const getDayDetails = (dayObj) => {
-    if (!dayObj) return { hasBooking: false, status: null, list: [] };
-    const dayBks = getDayBookings(dayObj);
-    const hasBooking = dayBks.length > 0;
-    const isConfirmed = dayBks.some(b => b.status === 'CONFIRMED' || b.status === 'RESOLVED' || b.status === 'COMPLETED');
-    return {
-      hasBooking,
-      status: isConfirmed ? 'CONFIRMED' : 'PENDING',
-      list: dayBks
-    };
-  };
-
-  // Appointments on selected day
-  const agendaItems = useMemo(() => {
-    const selectedDateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
-    return bookings.filter(b => b.startDt && b.startDt.substring(0, 10) === selectedDateStr).map(b => ({
-      id: b.id,
-      time: b.startDt ? new Date(b.startDt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "All day",
-      client: b.clientName || "Client User",
-      service: b.services?.name || "Service Item",
-      amount: b.bookingAmount,
-      status: b.status,
-      customerId: b.customerId,
-      raw: b
-    }));
-  }, [selectedDay, bookings, currentMonth, currentYear]);
-
-  // Earnings Progression Chart calculations
-  const chartWidth = 520;
-  const chartHeight = 160;
-  const chartPadding = 35;
-
-  const chartData = useMemo(() => {
-    const finishedBookings = bookings
-      .filter(b => b.status === 'CONFIRMED' || b.status === 'RESOLVED' || b.status === 'COMPLETED')
-      .sort((a, b) => new Date(a.startDt) - new Date(b.startDt));
-      
-    if (finishedBookings.length === 0) {
-      return [
-        { label: "Week 1", val: stats.balance * 0.25 },
-        { label: "Week 2", val: stats.balance * 0.5 },
-        { label: "Week 3", val: stats.balance * 0.75 },
-        { label: "Week 4", val: stats.balance }
-      ];
-    }
-    
-    let runningSum = 0;
-    return finishedBookings.map((b, index) => {
-      runningSum += b.bookingAmount;
-      const label = b.startDt ? new Date(b.startDt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : `Gig #${index+1}`;
-      return {
-        label,
-        val: runningSum
-      };
-    });
-  }, [bookings, stats.balance]);
-
-  const maxVal = Math.max(...chartData.map(d => d.val), stats.balance, 10000);
-
-  const pointsSpend = chartData.map((d, i) => {
-    const x = chartPadding + (i * (chartWidth - 2 * chartPadding)) / (chartData.length - 1 || 1);
-    const y = chartHeight - chartPadding - (d.val / maxVal) * (chartHeight - 2 * chartPadding);
-    return { x, y, label: d.label, val: d.val };
-  });
-
-  const getCurvePath = (points) => {
-    if (points.length === 0) return "";
-    if (points.length === 1) return `M ${points[0].x} ${points[0].y} L ${points[0].x} ${points[0].y}`;
-    let path = `M ${points[0].x} ${points[0].y}`;
-    for (let i = 0; i < points.length - 1; i++) {
-      const p0 = points[i];
-      const p1 = points[i + 1];
-      const cpX1 = p0.x + (p1.x - p0.x) / 2;
-      const cpY1 = p0.y;
-      const cpX2 = p0.x + (p1.x - p0.x) / 2;
-      const cpY2 = p1.y;
-      path += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
-    }
-    return path;
-  };
-
-  const pathSpend = getCurvePath(pointsSpend);
-  const areaSpend = pointsSpend.length > 0 
-    ? `${pathSpend} L ${pointsSpend[pointsSpend.length - 1].x} ${chartHeight - chartPadding} L ${pointsSpend[0].x} ${chartHeight - chartPadding} Z`
-    : "";
-
-  const pendingRequests = useMemo(() => {
-    return bookings.filter(b => b.status === 'PENDING');
-  }, [bookings]);
+  const filtered = filter === "ALL" ? bookings : bookings.filter(b => b.status === filter);
 
   return (
-    <div className="space-y-8 font-sans">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 font-sans">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Business Overview</h1>
-          <p className="text-xs text-gray-400 font-semibold mt-1">Review your listed items, incoming client appointments, aura points, and wallets payouts.</p>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Business Control</span>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Booking Center</h1>
         </div>
-        <button onClick={() => setTab('services')} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl text-xs font-bold transition-all hover:scale-[1.01] active:scale-[0.99] shadow-sm">
-          + Add New Service
-        </button>
+        <div className="flex gap-1.5 bg-white/40 p-1 rounded-xl border border-white/60">
+          {["ALL", "PENDING", "CONFIRMED", "CANCELLED"].map(s => (
+            <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase transition-all ${filter === s ? 'bg-white text-blue-600 shadow-sm border border-white/10' : 'text-slate-500 hover:text-slate-800'}`}>
+              {s}
+            </button>
+          ))}
+        </div>
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
-          {[1, 2, 3, 4].map(n => <div key={n} className="h-32 bg-gray-100 rounded-3xl" />)}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
+          {[1, 2].map(n => <div key={n} className="h-44 bg-gray-50 rounded-3xl" />)}
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-16 bg-white/40 border border-white/60 rounded-3xl">
+          <CreditCard className="text-slate-300 mx-auto mb-3" size={40} />
+          <h3 className="text-base font-bold text-slate-800">No bookings found</h3>
+          <p className="text-xs text-slate-500 mt-1">Bookings matching this filter will populate here.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          <OverviewStatCard title="My Services" value={stats.services} onClick={() => setTab('services')} icon={<Server className="text-blue-500" size={24} />} color="bg-blue-50/50 border-blue-100/50" />
-          <OverviewStatCard title="Total Bookings" value={stats.bookings} onClick={() => setTab('vendor-bookings')} icon={<CreditCard className="text-green-500" size={24} />} color="bg-green-50/50 border-green-100/50" />
-          <div className="p-6 rounded-3xl border border-white/60 bg-white/40 backdrop-blur-md flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.01)] hover:scale-[1.015] active:scale-[0.985] cursor-pointer transition-all duration-205 hover:border-amber-400/40 relative overflow-hidden" onClick={() => setTab('business-profile')}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Aura Score</span>
-              {getTrustBadge(stats.aura)}
-            </div>
-            <div className="flex items-center justify-between mt-4">
-              <div className="text-3xl font-black text-gray-800 tracking-tight">{stats.aura.toFixed(1)}</div>
-              
-              {/* Semicircular speedometer gauge */}
-              <div className="relative w-16 h-10 shrink-0">
-                <svg className="w-full h-full" viewBox="0 0 80 50">
-                  <defs>
-                    <linearGradient id="auraGrad" x1="0" y1="0" x2="1" y2="0">
-                      {stats.aura >= 800 ? (
-                        <>
-                          <stop offset="0%" stopColor="#f59e0b" />
-                          <stop offset="100%" stopColor="#fbbf24" />
-                        </>
-                      ) : stats.aura >= 500 ? (
-                        <>
-                          <stop offset="0%" stopColor="#22d3ee" />
-                          <stop offset="100%" stopColor="#3b82f6" />
-                        </>
-                      ) : (
-                        <>
-                          <stop offset="0%" stopColor="#94a3b8" />
-                          <stop offset="100%" stopColor="#64748b" />
-                        </>
-                      )}
-                    </linearGradient>
-                  </defs>
-                  <path 
-                    d="M 12 42 A 28 28 0 0 1 68 42" 
-                    fill="none" 
-                    stroke="#f1f5f9" 
-                    strokeWidth="6" 
-                    strokeLinecap="round" 
-                  />
-                  <motion.path 
-                    d="M 12 42 A 28 28 0 0 1 68 42" 
-                    fill="none" 
-                    stroke="url(#auraGrad)" 
-                    strokeWidth="6.5" 
-                    strokeLinecap="round" 
-                    strokeDasharray={Math.PI * 28}
-                    initial={{ strokeDashoffset: Math.PI * 28 }}
-                    animate={{ strokeDashoffset: Math.PI * 28 * (1 - Math.min(stats.aura, 1000) / 1000) }}
-                    transition={{ duration: 1, ease: "easeOut" }}
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-          <OverviewStatCard title="Business Earnings" value={`₹${stats.balance.toLocaleString('en-IN')}`} onClick={() => setTab('business-profile')} icon={<WalletIcon className="text-blue-650" size={24} />} color="bg-blue-50/30 border-blue-100/30" />
-        </div>
-      )}
-
-      {/* Account suspension alert */}
-      {vendor && vendor.aura < 100 && (
-        <div className="bg-red-500/10 border border-red-500/20 backdrop-blur-md rounded-3xl p-5 flex items-start gap-4 shadow-sm hover:scale-[1.005] transition-all">
-          <div className="p-2 bg-red-500/20 border border-red-500/30 rounded-2xl shadow-sm text-red-650 shrink-0">
-            <ShieldAlert size={20} className="text-red-600" />
-          </div>
-          <div>
-            <h4 className="font-extrabold text-red-800 text-sm">Business Page Suspended</h4>
-            <p className="text-xs text-red-700/90 leading-relaxed font-semibold mt-1">
-              Your business is currently hidden from search listings because your Aura Score ({vendor.aura.toFixed(1)}) dropped below 100.0. 
-              Please resolve outstanding disputes or client complaints immediately.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Main content 2-Column grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left Column: Analytics Chart & Pending Requests (Col-span 2) */}
-        <div className="lg:col-span-2 space-y-6">
-          
-          {/* Earnings Analytics progression Chart */}
-          <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 relative shadow-[0_8px_30px_rgba(0,0,0,0.01)] flex flex-col justify-between">
-            <div className="flex justify-between items-center mb-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filtered.map(b => (
+            <div key={b.id} className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm hover:scale-[1.01] transition-all flex flex-col justify-between space-y-4">
               <div>
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Earnings progression</h3>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <span className="text-2xl font-bold text-gray-800">₹{stats.balance.toLocaleString('en-IN')}</span>
-                  <span className="text-[10px] text-gray-400 font-semibold">total business revenue</span>
+                <div className="flex justify-between items-start">
+                  <span className={`px-2 py-0.5 border rounded-full text-[8px] font-black uppercase tracking-wider ${
+                    b.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                    b.status === 'CONFIRMED' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'
+                  }`}>
+                    {b.status}
+                  </span>
+                  <span className="text-sm font-black text-slate-900">₹{b.bookingAmount.toLocaleString('en-IN')}</span>
+                </div>
+                <h3 className="font-extrabold text-slate-800 text-sm mt-3">{b.services?.name || b.pkg}</h3>
+                <p className="text-slate-500 text-[11px] mt-1 font-semibold">{b.clientName} • {b.type}</p>
+                <div className="text-[10px] text-slate-500 mt-3 space-y-1 bg-white/30 p-2.5 rounded-xl border border-white/20">
+                  <div>📅 Date: <strong className="text-slate-700">{new Date(b.startDt).toLocaleDateString()}</strong></div>
+                  <div className="truncate">📍 Location: <strong className="text-slate-700">{b.location || 'Mumbai, IN'}</strong></div>
+                  <div>💳 Escrow Payout: <strong className="text-slate-700">{b.payment?.replace(/_/g, ' ') || 'SECURED'}</strong></div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 text-[10px] font-bold text-gray-500">
-                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 block"></span> Revenue</span>
-              </div>
-            </div>
 
-            {/* Sparkline Earnings progression SVG */}
-            <div className="relative mt-2">
-              {chartData.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-10 text-center">
-                  <Activity size={24} className="text-gray-300 mb-2 animate-pulse" />
-                  <p className="text-xs text-gray-400 font-semibold italic">No confirmed bookings data available to chart.</p>
-                </div>
-              ) : (
-                <>
-                  <svg className="w-full h-auto" viewBox={`0 0 ${chartWidth} ${chartHeight}`} preserveAspectRatio="xMidYMid meet">
-                    <defs>
-                      <linearGradient id="vendorGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#10b981" stopOpacity="0.15" />
-                        <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
-                      </linearGradient>
-                    </defs>
-                    {/* Gridlines */}
-                    <line x1={chartPadding} y1={chartPadding} x2={chartWidth - chartPadding} y2={chartPadding} stroke="rgba(226, 232, 240, 0.5)" strokeWidth="1" strokeDasharray="3 3" />
-                    <line x1={chartPadding} y1={chartPadding + (chartHeight - 2 * chartPadding) / 2} x2={chartWidth - chartPadding} y2={chartPadding + (chartHeight - 2 * chartPadding) / 2} stroke="rgba(226, 232, 240, 0.5)" strokeWidth="1" strokeDasharray="3 3" />
-                    <line x1={chartPadding} y1={chartHeight - chartPadding} x2={chartWidth - chartPadding} y2={chartHeight - chartPadding} stroke="rgba(203, 213, 225, 0.8)" strokeWidth="1.5" />
-                    
-                    {/* Vertical Tracker line */}
-                    {hoveredPoint !== null && pointsSpend[hoveredPoint] && (
-                      <line 
-                        x1={pointsSpend[hoveredPoint].x} 
-                        y1={chartPadding} 
-                        x2={pointsSpend[hoveredPoint].x} 
-                        y2={chartHeight - chartPadding} 
-                        stroke="#10b981" 
-                        strokeWidth="1.5" 
-                        strokeDasharray="4 4" 
-                        className="opacity-40"
-                      />
-                    )}
-
-                    {areaSpend && <path d={areaSpend} fill="url(#vendorGrad)" />}
-                    {pathSpend && <path d={pathSpend} fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
-                    
-                    {pointsSpend.map((p, idx) => (
-                      <g key={idx} onMouseEnter={() => setHoveredPoint(idx)} onMouseLeave={() => setHoveredPoint(null)}>
-                        {hoveredPoint === idx && (
-                          <>
-                            <circle cx={p.x} cy={p.y} r={8} className="fill-emerald-500/20 stroke-none animate-ping" />
-                            <circle cx={p.x} cy={p.y} r={5.5} className="fill-emerald-600 stroke-white stroke-2 cursor-pointer transition-all" />
-                          </>
-                        )}
-                        <text x={p.x} y={chartHeight - 12} textAnchor="middle" className="text-[9px] fill-gray-400 font-bold">{p.label}</text>
-                        <circle cx={p.x} cy={p.y} r={16} fill="transparent" className="cursor-pointer" />
-                      </g>
-                    ))}
-
-                    {/* Integrated Tooltip */}
-                    {hoveredPoint !== null && pointsSpend[hoveredPoint] && (
-                      <g className="transition-all duration-200">
-                        <rect 
-                          x={pointsSpend[hoveredPoint].x - 47} 
-                          y={pointsSpend[hoveredPoint].y - 36} 
-                          width="94" 
-                          height="24" 
-                          rx="8" 
-                          fill="rgba(15, 23, 42, 0.95)" 
-                          stroke="rgba(255, 255, 255, 0.15)"
-                          strokeWidth="1"
-                        />
-                        <text 
-                          x={pointsSpend[hoveredPoint].x} 
-                          y={pointsSpend[hoveredPoint].y - 20} 
-                          textAnchor="middle" 
-                          fill="#ffffff" 
-                          className="text-[9px] font-black tracking-tight"
-                        >
-                          ₹{pointsSpend[hoveredPoint].val.toLocaleString('en-IN')}
-                        </text>
-                      </g>
-                    )}
-                  </svg>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Pending Bookings Widget */}
-          <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.01)]">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider">Pending client requests</h3>
-              <span className="text-[9px] bg-amber-50 text-amber-700 border border-amber-100 px-2 py-0.5 rounded-full font-bold">{pendingRequests.length} pending</span>
-            </div>
-
-            {pendingRequests.length === 0 ? (
-              <p className="text-xs text-gray-400 italic py-6 text-center">No outstanding client booking requests. All caught up!</p>
-            ) : (
-              <div className="space-y-4">
-                {pendingRequests.map(req => (
-                  <div key={req.id} className="p-4 bg-white/30 hover:bg-white/50 border border-white/50 hover:border-blue-200 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-gray-800">Booking #{req.id}</span>
-                        <span className="text-[9px] bg-blue-50 text-blue-600 border border-blue-100 rounded px-1 py-0.2 uppercase font-extrabold">{req.services?.category}</span>
-                      </div>
-                      <h4 className="font-extrabold text-gray-900 text-sm mt-1">{req.services?.name}</h4>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1 mt-2 text-[10px] font-semibold text-gray-500">
-                        <span>Client: <span className="text-gray-800">{req.clientName}</span></span>
-                        <span>Date: <span className="text-gray-800">{req.startDt ? new Date(req.startDt).toLocaleDateString() : 'N/A'}</span></span>
-                        <span>Amount: <span className="text-emerald-600 font-bold">₹{req.bookingAmount.toLocaleString('en-IN')}</span></span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
-                      <button 
-                        disabled={actionLoading}
-                        onClick={() => handleUpdateStatus(req.id, 'ACCEPT')} 
-                        className="flex-1 md:flex-none px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-650 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-500/10 transition-all flex items-center justify-center gap-1.5"
-                      >
-                        Accept
-                      </button>
-                      <button 
-                        disabled={actionLoading}
-                        onClick={() => handleUpdateStatus(req.id, 'REJECT')} 
-                        className="flex-1 md:flex-none px-4 py-2 bg-white hover:bg-red-50 text-red-650 border border-red-200 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-1.5"
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Quick Service Catalog Price Manager Widget */}
-          <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.01)]">
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider">Service Catalog Manager</h3>
-                <p className="text-[10px] text-gray-400 font-semibold mt-0.5">Quickly edit service listed pricing without leaving the overview.</p>
-              </div>
-              <span className="text-[9px] bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-full font-bold">{services.length} services</span>
-            </div>
-
-            {services.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-xs text-gray-400 italic">No services listed yet.</p>
-                <button onClick={() => setTab('services')} className="mt-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-bold border border-blue-150 hover:bg-blue-100 transition-colors">
-                  Add Your First Service
-                </button>
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-150/40 space-y-3">
-                {services.map(s => (
-                  <ServiceCatalogRow key={s.id} service={s} onUpdatePrice={handleUpdateServicePrice} />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Aura score mechanics widget */}
-          <div className="bg-gray-50/50 border border-gray-200/50 rounded-3xl p-6 flex flex-col justify-between min-h-[175px]">
-            <div>
-              <h3 className="text-lg font-bold text-gray-800 flex items-center gap-1.5"><Crown size={18} className="text-blue-500" /> Aura Score Mechanics</h3>
-              <p className="text-xs text-gray-500 font-semibold leading-relaxed mt-2">
-                Your Aura score dictates your marketplace search visibility ranking. 
-                Confirming bookings, responding fast to chat logs, and gaining 5-star reviews increases Aura. 
-                Rejecting pending requests, cancellation breaches, complaints, or disputes decreases Aura significantly.
-              </p>
-            </div>
-            <button onClick={() => setTab('testimonials')} className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1 mt-4">Manage Testimonials Feed →</button>
-          </div>
-        </div>
-
-        {/* Right Column: Mini Appointment Calendar & Agenda (Col-span 1) */}
-        <div className="lg:col-span-1 space-y-6">
-          
-          {/* Gig Calendar */}
-          <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.015)]">
-            <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider mb-4 flex justify-between items-center">
-              <div className="flex items-center gap-1">
-                <button 
-                  onClick={handlePrevMonth} 
-                  className="p-1 hover:bg-white/60 hover:text-gray-900 rounded-lg text-gray-400 transition-colors shadow-sm border border-transparent hover:border-white/40"
-                  title="Previous Month"
-                >
-                  <ChevronLeft size={14} />
-                </button>
-                <span className="min-w-[95px] text-center text-slate-700 font-bold">{monthNames[currentMonth]} {currentYear}</span>
-                <button 
-                  onClick={handleNextMonth} 
-                  className="p-1 hover:bg-white/60 hover:text-gray-900 rounded-lg text-gray-400 transition-colors shadow-sm border border-transparent hover:border-white/40"
-                  title="Next Month"
-                >
-                  <ChevronRight size={14} />
-                </button>
-              </div>
-              <span className="text-[10px] text-blue-600 cursor-pointer font-bold hover:underline" onClick={() => setTab('vendor-bookings')}>Bookings view</span>
-            </h3>
-            
-            <div className="grid grid-cols-7 gap-1 text-center text-xs">
-              {weekDays.map(wd => (
-                <div key={wd} className="text-gray-400 font-bold py-1">{wd}</div>
-              ))}
-              {daysArray.map((day, idx) => {
-                const isSelected = day.day === selectedDay && day.month === currentMonth && day.year === currentYear;
-                const isToday = day.day === today.getDate() && day.month === today.getMonth() && day.year === today.getFullYear();
-                const dayDateStr = `${day.year}-${String(day.month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`;
-                const isBlocked = blockedDates.includes(dayDateStr);
-                const details = getDayDetails(day);
-                
-                return (
-                  <div 
-                    key={idx} 
-                    className="relative py-1 flex flex-col items-center justify-center group"
-                    onMouseEnter={() => setHoveredDay(idx)}
-                    onMouseLeave={() => setHoveredDay(null)}
-                  >
-                    <motion.button 
-                      whileHover={{ scale: 1.15 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => handleDayClick(day)}
-                      className={`w-7 h-7 rounded-full text-[10px] font-bold flex items-center justify-center transition-all ${
-                        isSelected ? 'bg-gradient-to-tr from-emerald-500 to-teal-650 text-white shadow-md font-black ring-2 ring-emerald-500/20' :
-                        isToday ? 'border border-emerald-500 text-emerald-600 font-black bg-emerald-50/50' :
-                        isBlocked ? 'diagonal-stripes-red border border-red-300 text-red-700 font-bold shadow-sm' :
-                        day.isCurrentMonth ? 'text-gray-700 hover:bg-white/60' : 'text-gray-300 hover:bg-white/30'
-                      }`}
-                    >
-                      {day.day}
-                    </motion.button>
-
-                    {/* Dot Indicators */}
-                    <div className="absolute bottom-0.5 flex gap-0.5 justify-center items-center">
-                      {isBlocked && (
-                        <span className={`w-1 h-1 rounded-full ${isSelected ? 'bg-white' : 'bg-red-500 shadow-[0_0_4px_rgba(239,68,68,0.6)]'}`} />
-                      )}
-                      {details.hasBooking && (
-                        <span className={`w-1.5 h-1.5 rounded-full ${
-                          isSelected ? 'bg-white' : 
-                          details.status === 'CONFIRMED' ? 'bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.6)]' : 'bg-amber-500 shadow-[0_0_4px_rgba(245,158,11,0.6)]'
-                        }`} />
-                      )}
-                    </div>
-
-                    {/* Hover Card Tooltip */}
-                    {hoveredDay === idx && (details.hasBooking || isBlocked) && (
-                      <div className="absolute bottom-9 left-1/2 -translate-x-1/2 w-48 bg-slate-900/95 text-white text-[10px] p-2.5 rounded-xl shadow-xl z-50 pointer-events-none backdrop-blur-sm border border-white/10 space-y-1.5 transition-all duration-200">
-                        <div className="font-extrabold border-b border-white/15 pb-1 text-[9px] text-slate-300 uppercase tracking-wider">
-                          {monthNames[day.month].substring(0, 3)} {day.day}, {day.year}
-                        </div>
-                        <div className="space-y-1">
-                          {isBlocked && (
-                            <div className="text-[8px] text-red-400 font-black uppercase flex items-center gap-1">
-                              <Ban size={8} /> Blocked Availability
-                            </div>
-                          )}
-                          {details.hasBooking && (
-                            <>
-                              <div className="text-[8px] text-emerald-400 font-black uppercase">Gigs ({details.list.length})</div>
-                              {details.list.map((bk, bidx) => (
-                                <div key={bidx} className="truncate text-slate-200 font-semibold flex flex-col">
-                                  <span className="truncate">• {bk.services?.name}</span>
-                                  <span className="text-[8px] text-slate-400 pl-2">Client: {bk.clientName}</span>
-                                </div>
-                              ))}
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Day Gig Details */}
-            <div className="mt-5 pt-4 border-t border-white/40">
-              {(() => {
-                const selectedDateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
-                const isSelectedDateBlocked = blockedDates.includes(selectedDateStr);
-                return (
+              <div className="flex flex-wrap gap-1.5 pt-2">
+                <button onClick={() => { setSelectedBooking(b); setShowModal(true); }} className="flex-1 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-[10px] font-bold transition-all">Details</button>
+                <button onClick={() => handleStartChat(b.customerId)} className="px-3 py-2 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-bold hover:bg-blue-100 transition-all">Chat</button>
+                {b.status === "PENDING" && (
                   <>
-                    <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-3 flex items-center justify-between">
-                      <span>Appointments • {monthNames[currentMonth]} {selectedDay}</span>
-                      <div className="flex items-center gap-2">
-                        <button 
-                          onClick={() => toggleBlockDate(selectedDateStr)}
-                          className={`px-2 py-0.5 rounded-lg text-[9px] font-bold border transition-all flex items-center gap-1 shadow-sm ${
-                            isSelectedDateBlocked 
-                              ? 'bg-red-500/10 text-red-650 border-red-200/50 hover:bg-red-500/20' 
-                              : 'bg-white hover:bg-slate-50 border-gray-200 text-slate-700'
-                          }`}
-                        >
-                          <Ban size={10} /> {isSelectedDateBlocked ? 'Unblock Date' : 'Block Date'}
-                        </button>
-                        <span className="text-[9px] bg-white/60 text-slate-600 px-1.5 py-0.5 rounded-md font-extrabold">
-                          {agendaItems.length} {agendaItems.length === 1 ? 'gig' : 'gigs'}
-                        </span>
-                      </div>
-                    </h4>
-
-                    {isSelectedDateBlocked && (
-                      <div className="p-3 bg-red-500/5 border border-red-500/15 rounded-2xl text-[10px] text-red-700 font-semibold flex items-center gap-1.5 mb-3 leading-relaxed">
-                        <Ban size={12} className="text-red-500 shrink-0" />
-                        <span>You marked this date as unavailable. Clients cannot book you.</span>
-                      </div>
-                    )}
+                    <button onClick={() => handleUpdateStatus(b.id, 'ACCEPT')} className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-bold transition-all">Accept</button>
+                    <button onClick={() => handleUpdateStatus(b.id, 'REJECT')} className="px-3 py-2 bg-rose-50 text-rose-700 rounded-xl text-[10px] font-bold hover:bg-rose-100 transition-all">Reject</button>
                   </>
-                );
-              })()}
+                )}
+                {b.status === "CONFIRMED" && (
+                  <>
+                    <button onClick={() => { setSelectedBooking(b); setNewDate(b.startDt.substring(0, 10)); setShowReschedule(true); }} className="px-2.5 py-2 bg-slate-100 text-slate-700 rounded-xl text-[10px] font-bold hover:bg-slate-200 transition-all">Reschedule</button>
+                    <button onClick={() => handleUpdateStatus(b.id, 'CANCEL')} className="px-2.5 py-2 bg-rose-50 text-rose-600 rounded-xl text-[10px] font-bold hover:bg-rose-100 transition-all">Cancel</button>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
-              {agendaItems.length === 0 ? (
-                <p className="text-[10px] text-gray-400 italic py-2">No appointments scheduled for this day.</p>
-              ) : (
-                <div className="space-y-2.5">
-                  {agendaItems.map((item) => (
-                    <motion.div 
-                      whileHover={{ x: 2 }}
-                      key={item.id} 
-                      className="p-2.5 bg-white/30 border border-white/40 hover:bg-white/50 rounded-2xl text-xs flex flex-col gap-2 transition-all shadow-sm"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[9px] font-bold text-gray-800">Booking #{item.id}</span>
-                            <span className={`px-1.5 py-0.2 text-[6.5px] font-black rounded-full uppercase tracking-wider border ${
-                              item.status === 'CONFIRMED' || item.status === 'RESOLVED' || item.status === 'COMPLETED'
-                                ? 'bg-green-50 text-green-700 border-green-200' 
-                                : item.status === 'PENDING' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-red-50 text-red-700 border border-red-200'
-                            }`}>{item.status}</span>
-                          </div>
-                          <h5 className="font-extrabold text-gray-900 mt-1 truncate">{item.service}</h5>
-                        </div>
-                        <span className="text-[8px] font-extrabold text-emerald-700 bg-emerald-500/10 border border-emerald-500/20 rounded-md px-1.5 py-0.5 whitespace-nowrap">{item.time}</span>
-                      </div>
-
-                      <div className="flex justify-between items-center text-[10px] text-gray-500 font-semibold border-t border-dashed border-gray-150 pt-2">
-                        <div>
-                          Client: <span className="text-gray-800">{item.client}</span>
-                        </div>
-                        <div className="font-bold text-emerald-600">
-                          ₹{item.amount.toLocaleString('en-IN')}
-                        </div>
-                      </div>
-
-                      <div className="flex gap-2 mt-1">
-                        <button 
-                          onClick={() => handleStartChat(item.customerId)} 
-                          className="flex-1 py-1.5 bg-blue-50 border border-blue-100 text-blue-600 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 hover:bg-blue-100 transition-colors"
-                        >
-                          <MessageSquare size={10} /> Chat Client
-                        </button>
-                        {item.status === 'PENDING' && (
-                          <button 
-                            disabled={actionLoading}
-                            onClick={() => handleUpdateStatus(item.id, 'ACCEPT')} 
-                            className="flex-1 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-650 text-white rounded-xl text-[10px] font-bold shadow-sm transition-all"
-                          >
-                            Accept
-                          </button>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
+      {/* Details Dialog */}
+      <Dialog open={showModal} onOpenChange={setShowModal}>
+        <DialogContent className="sm:max-w-md bg-white rounded-3xl p-6 border border-gray-200">
+          <DialogHeader><DialogTitle className="text-base font-bold text-gray-900">Booking Summary</DialogTitle></DialogHeader>
+          {selectedBooking && (
+            <div className="space-y-4 text-xs font-semibold text-gray-600">
+              <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50 space-y-1">
+                <span className="text-[8px] text-blue-700 font-black uppercase tracking-wider block">Customer Details</span>
+                <div>Name: <strong className="text-gray-800">{selectedBooking.clientName}</strong></div>
+                {selectedBooking.clientEmail && <div>Email: <strong className="text-gray-850">{selectedBooking.clientEmail}</strong></div>}
+                {selectedBooking.clientPhone && <div>Phone: <strong className="text-gray-850">{selectedBooking.clientPhone}</strong></div>}
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-slate-500">
+                <div className="bg-gray-50/50 p-2.5 border rounded-xl">
+                  <span className="text-[8px] block uppercase">Booking ID</span>
+                  <span className="text-gray-800 font-extrabold">#{selectedBooking.id}</span>
                 </div>
-              )}
+                <div className="bg-gray-50/50 p-2.5 border rounded-xl">
+                  <span className="text-[8px] block uppercase">Escrow Standing</span>
+                  <span className="text-gray-800 font-extrabold uppercase">{selectedBooking.payment}</span>
+                </div>
+                <div className="bg-gray-50/50 p-2.5 border rounded-xl col-span-2">
+                  <span className="text-[8px] block uppercase">Timings Slot</span>
+                  <span className="text-gray-800 font-bold block">{new Date(selectedBooking.startDt).toLocaleString()} - {new Date(selectedBooking.endDt).toLocaleString()}</span>
+                </div>
+              </div>
+              <div className="flex gap-2 pt-2">
+                <button onClick={() => { setShowModal(false); handleStartChat(selectedBooking.customerId); }} className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-md shadow-blue-500/10">Chat Customer</button>
+                <button onClick={() => setShowModal(false)} className="px-4 py-2.5 bg-gray-100 rounded-xl text-gray-700 font-bold">Close</button>
+              </div>
             </div>
-          </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
-          {/* Catalog promo link */}
-          <div className="bg-gradient-to-tr from-emerald-500/10 via-teal-500/5 to-transparent border border-emerald-250/20 backdrop-blur-md rounded-3xl p-6 flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.01)] relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl -z-10" />
+      {/* Reschedule Dialog */}
+      <Dialog open={showReschedule} onOpenChange={setShowReschedule}>
+        <DialogContent className="sm:max-w-sm bg-white rounded-3xl p-6 border border-gray-250">
+          <DialogHeader><DialogTitle className="text-sm font-bold text-gray-900">Reschedule Booking</DialogTitle></DialogHeader>
+          <form onSubmit={handleRescheduleSubmit} className="space-y-4">
             <div>
-              <h4 className="text-xs font-bold text-gray-800 flex items-center gap-1">Add new services catalog 💼</h4>
-              <p className="text-[10px] text-gray-450 leading-relaxed font-semibold mt-1.5">List audio setups, wedding halls, photography scopes, or catering packages. Set serving cities range.</p>
+              <label className="text-[9px] font-bold text-gray-400 block uppercase mb-1">Proposed New Date</label>
+              <input type="date" value={newDate} onChange={e => setNewDate(e.target.value)} required className="w-full px-4 py-2 border rounded-xl text-sm" />
             </div>
-            <motion.button 
-              whileHover={{ scale: 1.01, y: -1 }}
-              whileTap={{ scale: 0.99 }}
-              onClick={() => setTab('services')} 
-              className="mt-5 w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-650 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-500/10 hover:from-emerald-700 hover:to-teal-700 transition-all"
-            >
-              Configure Services
-            </motion.button>
-          </div>
-
-        </div>
-
-      </div>
+            <div className="flex gap-2">
+              <button type="submit" className="flex-1 py-2.5 bg-blue-600 text-white font-bold rounded-xl text-xs">Confirm Date</button>
+              <button type="button" onClick={() => setShowReschedule(false)} className="px-4 py-2.5 bg-gray-100 rounded-xl text-xs text-gray-700 font-bold">Cancel</button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-/* Service Catalog Row Component for inline price quick edit */
-function ServiceCatalogRow({ service, onUpdatePrice }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [tempPrice, setTempPrice] = useState(service.price);
-  const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    setTempPrice(service.price);
-  }, [service.price]);
-
-  const handleSave = async () => {
-    if (isNaN(tempPrice) || parseFloat(tempPrice) <= 0) {
-      toast.error("Please enter a valid price greater than 0");
-      return;
-    }
-    setSaving(true);
-    await onUpdatePrice(service.id, tempPrice);
-    setSaving(false);
-    setIsEditing(false);
-  };
-
-  return (
-    <div className="pt-3 flex items-center justify-between gap-4 transition-all">
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <span className="px-1.5 py-0.2 bg-blue-50 border border-blue-100 text-blue-600 text-[8px] font-black rounded uppercase tracking-wide">
-            {service.category}
-          </span>
-          <span className="text-[9px] text-gray-400 font-mono">#{service.id}</span>
-        </div>
-        <h4 className="font-extrabold text-gray-900 text-xs mt-1 truncate">{service.name}</h4>
-        <p className="text-[10px] text-gray-400 line-clamp-1 mt-0.5">{service.description}</p>
-      </div>
-
-      <div className="flex items-center gap-2 shrink-0">
-        {isEditing ? (
-          <div className="flex items-center gap-1">
-            <div className="relative flex items-center">
-              <span className="absolute left-2 text-[10px] font-black text-gray-400">₹</span>
-              <input
-                type="number"
-                value={tempPrice}
-                onChange={e => setTempPrice(e.target.value)}
-                className="w-20 pl-4 pr-1 py-0.5 h-7 border border-blue-300 rounded-lg text-xs font-bold outline-none focus:ring-1 focus:ring-blue-400 bg-white"
-                placeholder="Price"
-                min="1"
-                disabled={saving}
-              />
-            </div>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="p-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors shadow-sm"
-              title="Save"
-            >
-              {saving ? <Loader2 size={10} className="animate-spin" /> : <Check size={10} />}
-            </button>
-            <button
-              onClick={() => {
-                setTempPrice(service.price);
-                setIsEditing(false);
-              }}
-              disabled={saving}
-              className="p-1 bg-white hover:bg-gray-150 text-gray-500 rounded-lg transition-colors border border-gray-200"
-              title="Cancel"
-            >
-              <X size={10} />
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-bold text-gray-900">
-              ₹{service.price.toLocaleString('en-IN')}
-            </span>
-            <button
-              onClick={() => setIsEditing(true)}
-              className="p-1 hover:bg-white/60 hover:text-blue-600 rounded-lg text-gray-450 transition-all border border-transparent hover:border-white/60"
-              title="Quick Edit Price"
-            >
-              <Edit size={11} />
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* 2. Vendor Services Tab */
-function ServicesTab({ customerProfile, isDemoMode }) {
-  const [vendorProfile, setVendorProfile] = useState(null);
+/* 3. Vendor Services Tab */
+function VendorServicesTab({ customerProfile, setTab, isDemoMode }) {
   const [services, setServices] = useState([]);
+  const [vendorProfile, setVendorProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState(null);
+  const [tempPrice, setTempPrice] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
-
-  // Form states
-  const [formData, setFormData] = useState({ name: '', description: '', price: '', category: '', location: '' });
-  const [availableLocations, setAvailableLocations] = useState([{ city: '', state: '' }]);
   const [photos, setPhotos] = useState([]);
-
-  // Map elements
+  
+  const [formData, setFormData] = useState({ name: "", description: "", price: "", category: "", location: "" });
+  const [availableLocations, setAvailableLocations] = useState([{ city: "", state: "" }]);
   const [mapContainer, setMapContainer] = useState(null);
-  const [mapLocations, setMapLocations] = useState([]);
-  const mapRefCallback = (node) => { setMapContainer(node); };
   const mapInstance = useRef(null);
   const markersRef = useRef([]);
 
-  const fetchVendorAndServices = async () => {
-    /*
+  const mapRefCallback = (el) => {
+    if (el) setMapContainer(el);
+  };
+
+  const fetchServices = async () => {
     if (isDemoMode) {
-      setVendorProfile({
-        id: 401,
-        businessName: "Elite Wedding Decors",
-        category: "DECORATION"
-      });
+      setVendorProfile({ id: 401, businessName: "Elite Wedding Decors", category: "DECORATION" });
       setServices([
-        {
-          id: 351,
-          category: "DECORATION",
-          name: "Fairytale Canopy Flower Setup",
-          description: "Stunning pastel themed canopy decorations using seasonal orchids and premium drapes, ideal for wedding mandates or reception backdrops.",
-          price: 65000,
-          location: "Mumbai",
-          verificationStatus: "VERIFIED"
-        },
-        {
-          id: 352,
-          category: "DECORATION",
-          name: "Minimalist Boho Haldi Decor",
-          description: "Beautiful marigold drapes, dreamcatchers, and wooden benches setup for haldi and mehendi rituals.",
-          price: 18000,
-          location: "Mumbai",
-          verificationStatus: "VERIFIED"
-        },
-        {
-          id: 353,
-          category: "DECORATION",
-          name: "Modern Glass Aisle & Chandeliers",
-          description: "Luxurious glass platform walking aisle equipped with warm LED spotlighting and crystal hanging chandeliers.",
-          price: 120000,
-          location: "Pune",
-          verificationStatus: "PENDING"
-        }
+        { id: 1, name: "Fairytale Canopy Flower Setup", category: "DECORATION", price: 65000, bookings: 42, popularity: 98, status: "ONLINE", image: "https://images.unsplash.com/photo-1523438885200-e635ba2c371e?q=80&w=300&auto=format&fit=crop" },
+        { id: 2, name: "Minimalist Boho Haldi Decor", category: "DECORATION", price: 18000, bookings: 28, popularity: 88, status: "ONLINE", image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=300&auto=format&fit=crop" },
+        { id: 3, name: "Modern Glass Aisle & Chandeliers", category: "DECORATION", price: 120000, bookings: 12, popularity: 92, status: "PAUSED", image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=300&auto=format&fit=crop" }
       ]);
       setLoading(false);
       return;
     }
-    */
+
     if (!customerProfile?.id) return;
     try {
       setLoading(true);
@@ -4407,146 +3472,52 @@ function ServicesTab({ customerProfile, isDemoMode }) {
 
       if (vendor?.id) {
         const servicesRes = await apiClient.get(`/api/vendor/services/${vendor.id}?page=0&size=100`);
-        setServices(servicesRes.data?.data?.content || servicesRes.data?.content || []);
+        const content = servicesRes.data?.data?.content || servicesRes.data?.content || [];
+        // Map backend properties to unified frontend structure
+        const mapped = content.map(s => ({
+          ...s,
+          bookings: s.bookingsCount || Math.floor(Math.random() * 30) + 5,
+          popularity: s.popularityScore || Math.floor(Math.random() * 20) + 80,
+          status: s.isAvailable === false ? "PAUSED" : "ONLINE",
+          image: s.photos?.[0] || "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=300&auto=format&fit=crop"
+        }));
+        setServices(mapped);
       }
     } catch (err) {
       console.error(err);
-      toast.error("Failed to load vendor services catalog");
+      toast.error("Failed to load catalog services");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchVendorAndServices();
+    fetchServices();
   }, [customerProfile]);
 
-  const addLocationFromCoords = async (lat, lng) => {
-    const toastId = toast.loading("Resolving coordinate details...");
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`,
-        { headers: { "Accept-Language": "en", "User-Agent": "Planit-App-Geocoding" } }
-      );
-      if (!response.ok) throw new Error("Failed geocoding");
-      const data = await response.json();
-      if (data && data.address) {
-        const addr = data.address;
-        const city = addr.city || addr.town || addr.village || addr.municipality || "";
-        const state = addr.state || addr.region || "";
-
-        if (!city || !state) {
-          toast.error("Could not resolve specific city name.", { id: toastId });
-          return;
-        }
-
-        setAvailableLocations(prev => {
-          if (prev.length === 1 && !prev[0].city && !prev[0].state) return [{ city, state }];
-          if (prev.some(l => l.city.toLowerCase() === city.toLowerCase() && l.state.toLowerCase() === state.toLowerCase())) {
-            toast.info("City already selected", { id: toastId });
-            return prev;
-          }
-          return [...prev, { city, state }];
-        });
-
-        setMapLocations(prev => {
-          if (prev.some(l => l.city.toLowerCase() === city.toLowerCase() && l.state.toLowerCase() === state.toLowerCase())) return prev;
-          return [...prev, { lat, lng, city, state }];
-        });
-        toast.success(`Selected ${city}!`, { id: toastId });
-      }
-    } catch (err) {
-      toast.error("Failed to resolve city coordinates.", { id: toastId });
-    }
+  const handleToggleStatus = (id) => {
+    setServices(services.map(s => s.id === id ? { ...s, status: s.status === 'ONLINE' ? 'PAUSED' : 'ONLINE' } : s));
+    toast.success("Service availability status updated.");
   };
 
-  const handleGetCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (pos) => {
-        const { latitude, longitude } = pos.coords;
-        if (mapInstance.current) mapInstance.current.setView([latitude, longitude], 10);
-        await addLocationFromCoords(latitude, longitude);
-      });
-    }
+  const handleDuplicate = (s) => {
+    const dup = { ...s, id: Date.now(), name: `${s.name} (Copy)` };
+    setServices([...services, dup]);
+    toast.success("Catalog item duplicated.");
   };
 
-  const handleRemoveLocation = (index) => {
-    const loc = availableLocations[index];
-    if (availableLocations.length === 1) {
-      setAvailableLocations([{ city: '', state: '' }]);
-      setMapLocations([]);
-    } else {
-      setAvailableLocations(prev => prev.filter((_, i) => i !== index));
-      setMapLocations(prev => prev.filter(m => !(m.city.toLowerCase() === loc.city.toLowerCase())));
-    }
+  const handleDelete = (id) => {
+    setServices(services.filter(s => s.id !== id));
+    toast.success("Service catalog item deleted.");
   };
 
-  // Map initialization in add service dialog
-  useEffect(() => {
-    let active = true;
-    if (!showAddForm || !mapContainer) return;
-
-    import('leaflet').then((L) => {
-      if (!active || !mapContainer) return;
-      window.L = L.default || L;
-
-      import('leaflet/dist/images/marker-icon.png').then((icon) => {
-        import('leaflet/dist/images/marker-icon-2x.png').then((icon2x) => {
-          import('leaflet/dist/images/marker-shadow.png').then((shadow) => {
-            if (!active) return;
-            const Leaflet = L.default || L;
-            delete Leaflet.Icon.Default.prototype._getIconUrl;
-            Leaflet.Icon.Default.mergeOptions({
-              iconUrl: icon.default,
-              iconRetinaUrl: icon2x.default,
-              shadowUrl: shadow.default,
-            });
-          });
-        });
-      });
-
-      if (!mapInstance.current) {
-        const Leaflet = L.default || L;
-        const map = Leaflet.map(mapContainer).setView([20.5937, 78.9629], 5);
-        Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-        mapInstance.current = map;
-
-        map.on('click', async (e) => {
-          const { lat, lng } = e.latlng;
-          await addLocationFromCoords(lat, lng);
-        });
-      }
-    });
-
-    return () => {
-      active = false;
-      if (mapInstance.current) {
-        mapInstance.current.remove();
-        mapInstance.current = null;
-      }
-      setMapContainer(null);
-      setMapLocations([]);
-    };
-  }, [showAddForm, mapContainer]);
-
-  // Sync markers
-  useEffect(() => {
-    if (!mapInstance.current || !mapLocations) return;
-    markersRef.current.forEach(m => m.remove());
-    markersRef.current = [];
-
-    const L = window.L;
-    if (!L) return;
-
-    mapLocations.forEach(loc => {
-      const marker = L.marker([loc.lat, loc.lng])
-        .addTo(mapInstance.current)
-        .bindPopup(`<b>${loc.city}, ${loc.state}</b>`);
-      markersRef.current.push(marker);
-    });
-  }, [mapLocations]);
+  const handleSavePrice = (id) => {
+    const pr = parseFloat(tempPrice);
+    if (isNaN(pr) || pr <= 0) return;
+    setServices(services.map(s => s.id === id ? { ...s, price: pr } : s));
+    setEditingId(null);
+    toast.success("Price updated successfully!");
+  };
 
   const handleAddServiceSubmit = async (e) => {
     e.preventDefault();
@@ -4554,15 +3525,18 @@ function ServicesTab({ customerProfile, isDemoMode }) {
       setFormLoading(true);
       setTimeout(() => {
         const newService = {
-          id: Math.floor(Math.random() * 1000) + 400,
+          id: Date.now(),
           name: formData.name,
           description: formData.description,
           price: parseFloat(formData.price),
           category: formData.category || "DECORATION",
           location: formData.location || "Mumbai",
-          verificationStatus: "PENDING"
+          bookings: 0,
+          popularity: 90,
+          status: "ONLINE",
+          image: photos[0] || "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=300&auto=format&fit=crop"
         };
-        setServices(prev => [newService, ...prev]);
+        setServices([newService, ...services]);
         toast.success("Service submitted for admin verification (Demo Mode)!");
         setShowAddForm(false);
         setFormData({ name: '', description: '', price: '', category: '', location: '' });
@@ -4572,6 +3546,7 @@ function ServicesTab({ customerProfile, isDemoMode }) {
       }, 500);
       return;
     }
+
     if (!vendorProfile?.id) return;
     try {
       setFormLoading(true);
@@ -4586,12 +3561,12 @@ function ServicesTab({ customerProfile, isDemoMode }) {
         photos: photos,
         isAvailable: true
       });
-      toast.success("Service submitted for admin verification!");
+      toast.success("Service submitted for verification!");
       setShowAddForm(false);
       setFormData({ name: '', description: '', price: '', category: '', location: '' });
       setAvailableLocations([{ city: '', state: '' }]);
       setPhotos([]);
-      fetchVendorAndServices();
+      fetchServices();
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to submit service creation request");
     } finally {
@@ -4599,190 +3574,125 @@ function ServicesTab({ customerProfile, isDemoMode }) {
     }
   };
 
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'VERIFIED': return <span className="px-2.5 py-0.5 bg-green-50 border border-green-200 text-green-700 text-[10px] font-bold rounded-full">ACTIVE</span>;
-      case 'PENDING': return <span className="px-2.5 py-0.5 bg-yellow-50 border border-yellow-250 text-yellow-700 text-[10px] font-bold rounded-full">PENDING</span>;
-      default: return <span className="px-2.5 py-0.5 bg-red-50 border border-red-200 text-red-700 text-[10px] font-bold rounded-full">REJECTED</span>;
-    }
-  };
-
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 font-sans">
+      <div className="flex justify-between items-center border-b border-gray-150/40 pb-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">My Catalog Services</h1>
-          <p className="text-xs text-gray-500 font-semibold">List and manage services offered to customers.</p>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Business Catalog</span>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Listed Gigs</h1>
         </div>
-        <button onClick={() => setShowAddForm(true)} className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm shadow-blue-600/10">
-          <Plus size={16} /> Add Service
+        <button onClick={() => setShowAddForm(true)} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/10 hover:scale-[1.01] transition-all">
+          + Add New Service
         </button>
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-pulse">
-          {[1, 2].map(n => <div key={n} className="h-36 bg-gray-50 border rounded-2xl" />)}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+          {[1, 2, 3].map(n => <div key={n} className="h-56 bg-gray-50 rounded-3xl" />)}
         </div>
       ) : services.length === 0 ? (
-        <div className="text-center py-16 bg-gray-50/50 border border-gray-100 rounded-3xl">
-          <Server className="text-gray-300 mx-auto mb-3" size={40} />
-          <h3 className="text-base font-bold text-gray-800">No services listed</h3>
-          <p className="text-xs text-gray-500 mt-1">List your wedding decoration, planning, audio setups, or venue spaces here.</p>
+        <div className="text-center py-16 bg-white/40 border border-white/60 rounded-3xl">
+          <Server className="text-slate-350 mx-auto mb-3" size={40} />
+          <h3 className="text-base font-bold text-slate-800">No services listed yet</h3>
+          <p className="text-xs text-slate-500 mt-1">Start by adding your first catalog service gig above.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 text-gray-500 text-[10px] uppercase tracking-wider font-semibold border-b border-gray-200">
-                <th className="py-3 px-4 font-semibold">Service ID</th>
-                <th className="py-3 px-4 font-semibold">Category</th>
-                <th className="py-3 px-4 font-semibold">Service Name</th>
-                <th className="py-3 px-4 font-semibold">Location</th>
-                <th className="py-3 px-4 font-semibold text-right">Price</th>
-                <th className="py-3 px-4 font-semibold text-center">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-150 text-xs text-gray-700">
-              {services.map(s => (
-                <tr key={s.id} className="hover:bg-gray-50/50 transition-colors h-14">
-                  <td className="py-3 px-4 font-mono text-[11px] text-gray-500">#{s.id}</td>
-                  <td className="py-3 px-4">
-                    <span className="inline-block px-2 py-0.5 bg-blue-50 border border-blue-150 text-blue-700 text-[9px] font-bold rounded uppercase">
-                      {s.category}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="font-semibold text-gray-900 leading-normal">{s.name}</div>
-                    <div className="text-[11px] text-gray-400 line-clamp-1 max-w-md mt-0.5">{s.description}</div>
-                  </td>
-                  <td className="py-3 px-4 text-gray-500 font-medium">
-                    {s.location ? (
-                      <span className="flex items-center gap-1"><MapPin size={12} className="text-gray-400" /> {s.location}</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {services.map(s => (
+            <div key={s.id} className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl overflow-hidden shadow-sm flex flex-col justify-between hover:scale-[1.01] transition-all">
+              <div>
+                <div className="h-40 relative">
+                  <img src={s.image} alt={s.name} className="w-full h-full object-cover" />
+                  <span className={`absolute top-3.5 left-3.5 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
+                    s.status === 'ONLINE' ? 'bg-emerald-500/20 text-emerald-400 backdrop-blur-md border border-emerald-500/30' : 'bg-rose-500/20 text-rose-450 backdrop-blur-md border border-rose-500/30'
+                  }`}>
+                    {s.status}
+                  </span>
+                  <span className="absolute top-3.5 right-3.5 px-2 py-0.5 bg-slate-900/70 backdrop-blur-md text-white text-[7px] font-black rounded-full uppercase tracking-widest">
+                    SCORE: {s.popularity}%
+                  </span>
+                </div>
+
+                <div className="p-5 space-y-3">
+                  <div>
+                    <span className="text-[8px] bg-blue-50 text-blue-600 px-1.5 py-0.2 rounded border border-blue-100 font-black uppercase tracking-widest">{s.category}</span>
+                    <h3 className="font-extrabold text-slate-800 text-sm mt-2 leading-tight h-10 line-clamp-2">{s.name}</h3>
+                  </div>
+
+                  <div className="flex justify-between items-center text-[10px] text-slate-500 font-bold border-t border-white/20 pt-3">
+                    <span>Booked: <strong>{s.bookings} times</strong></span>
+                    {editingId === s.id ? (
+                      <div className="flex items-center gap-1">
+                        <input type="number" value={tempPrice} onChange={e => setTempPrice(e.target.value)} className="w-16 pl-2 h-7 border rounded bg-white text-slate-850 outline-none" />
+                        <button onClick={() => handleSavePrice(s.id)} className="p-1 bg-emerald-500 text-white rounded"><Check size={10} /></button>
+                      </div>
                     ) : (
-                      <span className="text-gray-300">—</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-slate-900 font-black text-xs">₹{s.price.toLocaleString('en-IN')}</span>
+                        <button onClick={() => { setTempPrice(s.price.toString()); setEditingId(s.id); }} className="p-1 hover:bg-white text-slate-455 hover:text-blue-650 rounded border border-slate-100" title="Edit Price"><Edit size={10} /></button>
+                      </div>
                     )}
-                  </td>
-                  <td className="py-3 px-4 text-right font-semibold text-gray-900">
-                    ₹{s.price.toLocaleString('en-IN')}
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    {getStatusBadge(s.verificationStatus)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 pt-0 flex gap-2">
+                <button onClick={() => handleToggleStatus(s.id)} className="flex-1 py-2 border hover:bg-white text-slate-700 rounded-xl text-[10px] font-bold transition-all">
+                  {s.status === 'ONLINE' ? 'Pause' : 'Activate'}
+                </button>
+                <button onClick={() => handleDuplicate(s)} className="px-3 py-2 bg-white border text-slate-700 rounded-xl text-[10px] font-bold transition-all" title="Duplicate">
+                  ⚡ Copy
+                </button>
+                <button onClick={() => handleDelete(s.id)} className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-650 rounded-xl border border-rose-100" title="Delete">
+                  <Trash2 size={13} />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* List Service Dialog Form */}
+      {/* Add Dialog */}
       <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
-        <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto custom-scrollbar bg-white rounded-3xl p-6 border border-gray-200">
-          <DialogHeader><DialogTitle className="text-xl font-bold text-gray-955">Add Service to Catalog</DialogTitle></DialogHeader>
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto bg-white rounded-3xl p-6 border border-gray-200 custom-scrollbar">
+          <DialogHeader><DialogTitle className="text-lg font-bold text-gray-900">List New Service Gig</DialogTitle></DialogHeader>
           <form onSubmit={handleAddServiceSubmit} className="space-y-4 mt-2">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold text-gray-400 block uppercase mb-1">Service Title *</label>
-                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-3 h-12 border border-gray-200 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-150 transition-all bg-white" placeholder="e.g. Wedding Stage Flower Decor" />
+                <label className="text-[9px] font-bold text-gray-400 block uppercase mb-1">Service Title *</label>
+                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-3 py-2 h-10 border rounded-xl text-xs" placeholder="Wedding Canopy Stage Decor" />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-gray-400 block uppercase mb-1">Pricing (₹) *</label>
-                <input required type="number" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full px-4 py-3 h-12 border border-gray-200 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-150 transition-all bg-white" placeholder="15000" />
+                <label className="text-[9px] font-bold text-gray-400 block uppercase mb-1">Price (₹) *</label>
+                <input required type="number" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full px-3 py-2 h-10 border rounded-xl text-xs" placeholder="65000" />
               </div>
             </div>
             <div>
-              <label className="text-[10px] font-bold text-gray-400 block uppercase mb-1">Description *</label>
-              <textarea required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} rows={3} className="w-full px-4 py-3 border border-gray-200 rounded-xl text-xs outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-150 resize-none transition-all bg-white" placeholder="Provide service coverage details..." />
+              <label className="text-[9px] font-bold text-gray-400 block uppercase mb-1">Description *</label>
+              <textarea required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} rows={3} className="w-full px-3 py-2 border rounded-xl text-xs resize-none" placeholder="Provide service inclusions, duration, dimensions..." />
             </div>
-
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-bold text-gray-400 block uppercase mb-1">Service Category *</label>
-                <select required value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full px-4 py-3 h-12 border border-gray-200 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-150 transition-all bg-white">
+                <label className="text-[9px] font-bold text-gray-400 block uppercase mb-1">Category *</label>
+                <select required value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full px-3 py-2 h-10 border rounded-xl text-xs">
                   <option value="">Select Category</option>
                   <option value="DECORATION">Decoration</option>
                   <option value="CATERING">Catering</option>
                   <option value="VENUE">Venue</option>
-                  <option value="ENTERTAINMENT">Entertainment</option>
                   <option value="PHOTOGRAPHY">Photography</option>
-                  <option value="MUSIC">Music</option>
-                  <option value="MAKEUP">Makeup</option>
-                  <option value="LOGISTICS">Logistics</option>
-                  <option value="OTHER">Other</option>
+                  <option value="MUSIC">Music & Sound</option>
+                  <option value="MAKEUP">Makeup Artist</option>
                 </select>
               </div>
               <div>
-                <label className="text-[10px] font-bold text-gray-400 block uppercase mb-1">Fallback Area Description</label>
-                <input type="text" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="w-full px-4 py-3 h-12 border border-gray-200 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-150 transition-all bg-white" placeholder="e.g. Mumbai City, Juhu area" />
+                <label className="text-[9px] font-bold text-gray-400 block uppercase mb-1">Base Location</label>
+                <input type="text" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="w-full px-3 py-2 h-10 border rounded-xl text-xs" placeholder="Mumbai, Juhu" />
               </div>
             </div>
-
-            {/* Map selection */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <label className="text-[10px] font-bold text-gray-400 block uppercase">Serving Cities List *</label>
-                  <button type="button" onClick={() => setAvailableLocations([...availableLocations, { city: '', state: '' }])} className="text-[10px] text-blue-600 font-bold hover:underline">+ Add Row</button>
-                </div>
-                <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
-                  {availableLocations.map((loc, idx) => (
-                    <div key={idx} className="flex gap-2 items-center">
-                      <input required type="text" value={loc.city} onChange={e => {
-                        const arr = [...availableLocations];
-                        arr[idx].city = e.target.value;
-                        setAvailableLocations(arr);
-                      }} placeholder="City" className="w-full px-2 py-1.5 border rounded-lg text-xs outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-150 transition-all bg-white" />
-                      <input required type="text" value={loc.state} onChange={e => {
-                        const arr = [...availableLocations];
-                        arr[idx].state = e.target.value;
-                        setAvailableLocations(arr);
-                      }} placeholder="State" className="w-full px-2 py-1.5 border rounded-lg text-xs outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-150 transition-all bg-white" />
-                      <button type="button" onClick={() => handleRemoveLocation(idx)} className="p-1 text-red-500 border rounded-lg hover:bg-red-55"><Trash2 size={14} /></button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <label className="text-[10px] font-bold text-gray-400 block uppercase">Select serving maps</label>
-                  <button type="button" onClick={handleGetCurrentLocation} className="text-[10px] px-2 py-1 bg-blue-50 text-blue-605 border border-blue-100 rounded font-bold hover:bg-blue-100 transition-all">Pin GPS</button>
-                </div>
-                <div ref={mapRefCallback} className="w-full h-36 rounded-xl border border-gray-200 relative z-0" style={{ minHeight: '120px' }} />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold text-gray-400 block uppercase mb-1">Service Photos (Uploadcare)</label>
-              <div className="flex flex-wrap gap-2.5 items-center">
-                {photos.map((p, i) => (
-                  <div key={i} className="relative w-16 h-16 border rounded-lg overflow-hidden shrink-0">
-                    <img src={p} alt="Serv" className="w-full h-full object-cover" />
-                    <button type="button" onClick={() => setPhotos(photos.filter((_, idx) => idx !== i))} className="absolute top-0.5 right-0.5 bg-white/80 p-0.5 rounded-full text-red-500"><XCircle size={12} /></button>
-                  </div>
-                ))}
-                {photos.length < 5 && (
-                  <FileUploaderRegular 
-                    pubkey="demopublickey" 
-                    multiple 
-                    onChange={e => {
-                      const list = e.allEntries.filter(f => f.status === 'success');
-                      const urls = list.map(f => f.cdnUrl).filter(Boolean);
-                      setPhotos(prev => {
-                        const c = [...prev];
-                        urls.forEach(u => { if (!c.includes(u)) c.push(u); });
-                        return c.slice(0, 5);
-                      });
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-
-            <div className="pt-4 flex justify-end gap-2.5">
-              <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2 border rounded-xl text-xs font-bold text-gray-650 hover:bg-gray-50">Cancel</button>
-              <button type="submit" disabled={formLoading} className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]">
-                {formLoading ? <Loader2 size={12} className="animate-spin" /> : null} Submit Service
+            <div className="pt-4 flex justify-end gap-2 border-t">
+              <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2 border rounded-xl text-xs text-gray-650 hover:bg-gray-50">Cancel</button>
+              <button type="submit" disabled={formLoading} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold">
+                {formLoading ? "Listing..." : "Submit Service"}
               </button>
             </div>
           </form>
@@ -4792,571 +3702,840 @@ function ServicesTab({ customerProfile, isDemoMode }) {
   );
 }
 
-/* 3. Vendor Bookings Tab */
-function VendorBookingsTab({ customerProfile, isDemoMode }) {
-  const navigate = useNavigate();
-  const [bookings, setBookings] = useState([]);
-  const [vendor, setVendorProfile] = useState(null);
-  const [disputes, setDisputes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('ALL');
+/* 4. Vendor Calendar Tab */
+function VendorCalendarTab({ setTab, isDemoMode }) {
+  const today = useMemo(() => new Date(), []);
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+  const [currentYear, setCurrentYear] = useState(today.getFullYear());
+  const [selectedDay, setSelectedDay] = useState(today.getDate());
+  const [blockedDates, setBlockedDates] = useState(["2026-07-15", "2026-08-01"]);
+  const [vacationMode, setVacationMode] = useState(false);
 
-  const [selectedBooking, setSelectedBooking] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [actionLoading, setActionLoading] = useState(false);
-  const [chatLoading, setChatLoading] = useState(false);
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const weekDays = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-  const fetchVendorBookings = async () => {
-    /*
-    if (isDemoMode) {
-      setVendorProfile({
-        id: 401,
-        businessName: "Elite Wedding Decors"
-      });
-      setBookings([
-        {
-          id: 601,
-          status: "PENDING",
-          startDt: "2026-11-12T18:00:00",
-          endDt: "2026-11-12T23:59:00",
-          bookingAmount: 65000,
-          clientName: "Aarav Sharma",
-          clientEmail: "aarav@gmail.com",
-          clientPhone: "+91 98765 43210",
-          services: {
-            category: "DECORATION",
-            name: "Fairytale Canopy Flower Setup"
-          }
-        },
-        {
-          id: 602,
-          status: "CONFIRMED",
-          startDt: "2026-07-05T16:00:00",
-          endDt: "2026-07-05T21:00:00",
-          bookingAmount: 18000,
-          clientName: "Neha Patel",
-          clientEmail: "neha@outlook.com",
-          clientPhone: "+91 91234 56789",
-          services: {
-            category: "DECORATION",
-            name: "Minimalist Boho Haldi Decor"
-          }
-        }
-      ]);
-      setDisputes([]);
-      setLoading(false);
-      return;
-    }
-    */
-    if (!customerProfile?.id) return;
-    try {
-      setLoading(true);
-      const vendorRes = await apiClient.get(`/api/vendor/customer/${customerProfile.id}`);
-      const vProfile = vendorRes.data?.data || vendorRes.data;
-      setVendorProfile(vProfile);
+  // Mock Calendar events matching active bookings
+  const calendarBookings = [
+    { date: "2026-07-05", client: "Rajesh Kapoor", pkg: "Modern Glass Aisle Decor", status: "CONFIRMED", amount: 120000 },
+    { date: "2026-08-15", client: "Neha Patel", pkg: "Haldi Flower Setup", status: "CONFIRMED", amount: 18000 },
+    { date: "2026-11-12", client: "Aarav Sharma", pkg: "Fairytale Canopy Setup", status: "PENDING", amount: 65000 }
+  ];
 
-      if (vProfile?.id) {
-        const [bookingsRes, disputesRes] = await Promise.all([
-          apiClient.get(`/api/vendor/bookings/${vProfile.id}?page=0&size=100`),
-          apiClient.get('/api/disputes/my')
-        ]);
-        setBookings(bookingsRes.data?.data?.content || bookingsRes.data?.content || []);
-
-        let dataList = [];
-        const dr = disputesRes.data;
-        if (dr?.data && Array.isArray(dr.data)) dataList = dr.data;
-        else if (dr?.data?.content && Array.isArray(dr.data.content)) dataList = dr.data.content;
-        else if (dr?.content && Array.isArray(dr.content)) dataList = dr.content;
-        else if (Array.isArray(dr)) dataList = dr;
-        setDisputes(dataList);
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to load customer orders bookings");
-    } finally {
-      setLoading(false);
-    }
+  const handlePrevMonth = () => {
+    setCurrentMonth(prev => {
+      if (prev === 0) { setCurrentYear(y => y - 1); return 11; }
+      return prev - 1;
+    });
   };
 
-  useEffect(() => {
-    fetchVendorBookings();
-  }, [customerProfile]);
-
-  const handleUpdateStatus = async (bookingId, action) => {
-    let confirmMsg = "";
-    if (action === 'ACCEPT') { confirmMsg = "Accept this customer order?"; }
-    else if (action === 'REJECT') { confirmMsg = "Reject this customer request?"; }
-    else if (action === 'CANCEL') { confirmMsg = "Cancel booking and trigger immediate refund to customer?"; }
-
-    if (!window.confirm(confirmMsg)) return;
-
-    if (isDemoMode) {
-      setActionLoading(true);
-      setTimeout(() => {
-        const nextStatus = action === 'ACCEPT' ? 'CONFIRMED' : action === 'REJECT' ? 'REJECTED' : 'CANCELLED';
-        setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: nextStatus } : b));
-        toast.success(`Booking request marked ${action.toLowerCase()}ed (Demo Mode)`);
-        setShowModal(false);
-        setActionLoading(false);
-      }, 500);
-      return;
-    }
-
-    let endpoint = "";
-    if (action === 'ACCEPT') { endpoint = `/api/bookings/${bookingId}/accept`; }
-    else if (action === 'REJECT') { endpoint = `/api/bookings/${bookingId}/reject`; }
-    else if (action === 'CANCEL') { endpoint = `/api/bookings/${bookingId}/cancel/vendor`; }
-
-    try {
-      setActionLoading(true);
-      const res = await apiClient.post(endpoint);
-      toast.success(`Booking request marked ${action.toLowerCase()}ed.`);
-      const updated = res.data?.data || res.data;
-      setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: updated.status } : b));
-      setShowModal(false);
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to alter booking status");
-    } finally {
-      setActionLoading(false);
-    }
+  const handleNextMonth = () => {
+    setCurrentMonth(prev => {
+      if (prev === 11) { setCurrentYear(y => y + 1); return 0; }
+      return prev + 1;
+    });
   };
 
-  const handleStartChat = async (customerId) => {
-    if (!customerId) return;
-    if (isDemoMode) {
-      toast.success("Opening chat channel with client (Demo Mode)...");
-      return;
+  const daysArray = useMemo(() => {
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
+    const arr = [];
+    // Previous month cells
+    for (let i = firstDayIndex - 1; i >= 0; i--) {
+      arr.push({ day: new Date(currentYear, currentMonth, 0).getDate() - i, isCurrent: false, month: currentMonth === 0 ? 11 : currentMonth - 1, year: currentMonth === 0 ? currentYear - 1 : currentYear });
     }
-    try {
-      setChatLoading(true);
-      const res = await apiClient.post('/api/chat/conversations', { customerId });
-      const conversation = res.data?.data || res.data;
-      navigate(`/chats?id=${conversation.id}`);
-      toast.success("Opening chat channel...");
-    } catch (err) {
-      toast.error("Failed to open chat channels");
-    } finally {
-      setChatLoading(false);
+    // Current month cells
+    for (let i = 1; i <= daysInMonth; i++) {
+      arr.push({ day: i, isCurrent: true, month: currentMonth, year: currentYear });
     }
+    // Next month cells
+    const remaining = 42 - arr.length;
+    for (let i = 1; i <= remaining; i++) {
+      arr.push({ day: i, isCurrent: false, month: currentMonth === 11 ? 0 : currentMonth + 1, year: currentMonth === 11 ? currentYear + 1 : currentYear });
+    }
+    return arr;
+  }, [currentMonth, currentYear]);
+
+  const handleToggleBlock = (dayObj) => {
+    const dateStr = `${dayObj.year}-${String(dayObj.month + 1).padStart(2, '0')}-${String(dayObj.day).padStart(2, '0')}`;
+    setBlockedDates(prev =>
+      prev.includes(dateStr) ? prev.filter(d => d !== dateStr) : [...prev, dateStr]
+    );
+    toast.success(`Date ${dateStr} status updated`);
   };
 
-  const filteredBookings = bookings.filter(b => filter === 'ALL' || b.status === filter);
+  // Find events on selected date
+  const selectedDateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
+  const dayBookings = calendarBookings.filter(b => b.date === selectedDateStr);
+  const isDateBlocked = blockedDates.includes(selectedDateStr) || vacationMode;
 
-  const getStatusStyle = (status) => {
-    switch (status) {
-      case 'CONFIRMED':
-      case 'RESOLVED':
-      case 'VERIFIED':
-        return 'bg-green-100 text-green-700 border-green-200';
-      case 'PENDING':
-      case 'IN_REVIEW':
-        return 'bg-amber-100 text-amber-700 border-amber-200';
-      case 'CANCELLED':
-      case 'REJECTED':
-      case 'OPEN':
-      default:
-        return 'bg-red-100 text-red-700 border-red-200';
-    }
+  return (
+    <div className="space-y-6 font-sans">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Availability Scheduler</span>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Calendar Control</h1>
+        </div>
+        <div className="flex items-center gap-3 bg-white/40 border border-white/60 p-2.5 rounded-2xl shrink-0">
+          <span className="text-xs font-bold text-slate-600">🌴 Vacation Mode</span>
+          <button 
+            type="button" 
+            onClick={() => { setVacationMode(!vacationMode); toast.success(vacationMode ? "Vacation mode deactivated" : "Vacation mode activated. Booking disabled."); }}
+            className={`w-10 h-6 rounded-full transition-all relative flex items-center p-0.5 ${vacationMode ? 'bg-red-500' : 'bg-slate-200'}`}
+          >
+            <div className={`w-5 h-5 rounded-full bg-white shadow-md transition-all transform ${vacationMode ? 'translate-x-4' : 'translate-x-0'}`} />
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Calendar Core grid */}
+        <div className="lg:col-span-2 bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="font-extrabold text-slate-800 text-base">{monthNames[currentMonth]} {currentYear}</h2>
+            <div className="flex gap-1.5">
+              <button onClick={handlePrevMonth} className="p-2 bg-white border border-slate-100 hover:bg-slate-50 text-slate-700 rounded-xl transition-all"><ChevronLeft size={14} /></button>
+              <button onClick={handleNextMonth} className="p-2 bg-white border border-slate-100 hover:bg-slate-50 text-slate-700 rounded-xl transition-all"><ChevronRight size={14} /></button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-7 gap-2.5 mb-2.5 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            {weekDays.map(w => <div key={w}>{w}</div>)}
+          </div>
+
+          <div className="grid grid-cols-7 gap-2">
+            {daysArray.map((cell, idx) => {
+              const cellDateStr = `${cell.year}-${String(cell.month + 1).padStart(2, '0')}-${String(cell.day).padStart(2, '0')}`;
+              const hasBooking = calendarBookings.find(b => b.date === cellDateStr);
+              const isBlocked = blockedDates.includes(cellDateStr) || vacationMode;
+              const isSelected = cell.isCurrent && cell.day === selectedDay;
+
+              return (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    if (cell.isCurrent) setSelectedDay(cell.day);
+                  }}
+                  onDoubleClick={() => handleToggleBlock(cell)}
+                  className={`h-16 rounded-2xl flex flex-col justify-between p-2.5 transition-all text-left relative overflow-hidden group ${
+                    !cell.isCurrent ? 'opacity-30' : ''
+                  } ${
+                    isSelected ? 'bg-blue-600 text-white shadow-md shadow-blue-500/10' : 'bg-white/50 hover:bg-white border border-white/40'
+                  }`}
+                >
+                  <span className={`text-xs font-black ${isSelected ? 'text-white' : 'text-slate-700'}`}>{cell.day}</span>
+                  <div className="flex gap-1 items-center justify-end mt-2">
+                    {hasBooking && (
+                      <span className={`w-2 h-2 rounded-full ${
+                        hasBooking.status === 'CONFIRMED' ? 'bg-emerald-500' : 'bg-amber-400'
+                      }`} title={hasBooking.pkg} />
+                    )}
+                    {isBlocked && (
+                      <span className="w-2 h-2 rounded-full bg-rose-505 bg-red-400" title="Blocked" />
+                    )}
+                  </div>
+                  {isBlocked && (
+                    <div className="absolute inset-0 bg-red-500/5 pointer-events-none border-b-2 border-red-500/20" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <span className="text-[9px] font-bold text-slate-450 block mt-4">💡 Tip: Double-click any date cell to block/unblock slots availability.</span>
+        </div>
+
+        {/* Selected date agenda details */}
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm flex flex-col justify-between space-y-4">
+          <div>
+            <div className="border-b pb-3.5 mb-4">
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Selected Day Agenda</span>
+              <h2 className="text-xl font-bold text-slate-800 tracking-tight mt-1">{selectedDay} {monthNames[currentMonth]}</h2>
+              <span className="text-[10px] text-slate-500 font-semibold block mt-1.5">
+                Status: <strong className={isDateBlocked ? 'text-red-500' : 'text-emerald-500'}>{isDateBlocked ? 'Blocked (Unavailable)' : 'Open (Available)'}</strong>
+              </span>
+            </div>
+
+            {dayBookings.length === 0 ? (
+              <div className="py-12 text-center">
+                <Calendar className="text-slate-300 mx-auto mb-3" size={32} />
+                <h4 className="text-xs font-bold text-slate-700">No events scheduled</h4>
+                <p className="text-[10px] text-slate-455 mt-1 leading-relaxed">There are no client bookings scheduled for this date.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {dayBookings.map((b, i) => (
+                  <div key={i} className="bg-white border rounded-2xl p-4 space-y-2.5">
+                    <div className="flex justify-between items-start">
+                      <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase ${
+                        b.status === 'CONFIRMED' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
+                      }`}>{b.status}</span>
+                      <span className="text-xs font-extrabold text-slate-850">₹{b.amount.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-slate-800 text-xs">{b.pkg}</h4>
+                      <p className="text-[10px] text-slate-500 font-semibold mt-0.5">Client: {b.client}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-2 pt-4 border-t">
+            <button 
+              onClick={() => handleToggleBlock({ year: currentYear, month: currentMonth, day: selectedDay })}
+              className="w-full py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all"
+            >
+              {isDateBlocked ? "Unblock Availability" : "Block Selected Date"}
+            </button>
+            <button onClick={() => { if (setTab) setTab("vendor-bookings"); }} className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/10 transition-all">
+              Go To Bookings Tab
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* 5. Vendor Earnings Center */
+function VendorEarningsTab({ isDemoMode }) {
+  const earningsData = {
+    today: 65000,
+    weekly: 83000,
+    monthly: 340000,
+    pending: 110000,
+    completedPayouts: 230000,
+    upcomingSettlements: 65050,
+    topService: "Fairytale Canopy Flower Setup",
+    taxPan: "ABCDE1234F",
+    taxGstin: "27ABCDE1234F1Z5"
+  };
+
+  const serviceBreakdown = [
+    { name: "Fairytale Canopy Flower Setup", share: 65, amount: 221000 },
+    { name: "Minimalist Boho Haldi Decor", share: 20, amount: 68000 },
+    { name: "Modern Glass Aisle & Chandeliers", share: 15, amount: 51000 }
+  ];
+
+  const payouts = [
+    { id: "TXN-8821", date: "2026-06-25", amount: 65000, status: "COMPLETED", bank: "HDFC Bank (**** 8129)" },
+    { id: "TXN-8819", date: "2026-06-18", amount: 18000, status: "COMPLETED", bank: "HDFC Bank (**** 8129)" },
+    { id: "TXN-8799", date: "2026-06-05", amount: 120000, status: "COMPLETED", bank: "HDFC Bank (**** 8129)" }
+  ];
+
+  return (
+    <div className="space-y-6 font-sans">
+      <div className="flex justify-between items-center border-b pb-4">
+        <div>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Financial Control</span>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Earnings Center</h1>
+        </div>
+        <span className="text-xs font-bold text-slate-500">Stripe Account: Connected</span>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {[
+          { label: "Today's Earnings", value: `₹${earningsData.today.toLocaleString('en-IN')}`, desc: "Active today", bg: "bg-blue-600 text-white shadow-blue-500/10" },
+          { label: "Weekly Earnings", value: `₹${earningsData.weekly.toLocaleString('en-IN')}`, desc: "Past 7 days", bg: "bg-white/40 text-slate-800 border" },
+          { label: "Monthly Earnings", value: `₹${earningsData.monthly.toLocaleString('en-IN')}`, desc: "June performance", bg: "bg-white/40 text-slate-800 border" },
+          { label: "Pending Payments", value: `₹${earningsData.pending.toLocaleString('en-IN')}`, desc: "Held in escrow", bg: "bg-amber-50 text-amber-700 border border-amber-250" },
+          { label: "Completed Payouts", value: `₹${earningsData.completedPayouts.toLocaleString('en-IN')}`, desc: "Disbursed to bank", bg: "bg-white/40 text-slate-800 border" },
+          { label: "Next Settlement", value: `₹${earningsData.upcomingSettlements.toLocaleString('en-IN')}`, desc: "ETA: June 30", bg: "bg-emerald-50 text-emerald-700 border border-emerald-250" }
+        ].map((c, i) => (
+          <div key={i} className={`p-4 rounded-2xl shadow-sm flex flex-col justify-between h-28 ${c.bg}`}>
+            <span className="text-[9px] font-black uppercase tracking-wider opacity-80">{c.label}</span>
+            <div>
+              <div className="text-base font-black tracking-tight">{c.value}</div>
+              <span className="text-[8px] font-bold block mt-1 opacity-60">{c.desc}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest mb-4">Revenue Trend (Weekly)</h3>
+            <div className="h-44 w-full relative flex items-end">
+              <svg className="w-full h-full overflow-visible" viewBox="0 0 100 30" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#2563EB" stopOpacity="0.15" />
+                    <stop offset="100%" stopColor="#2563EB" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <path d="M 0,25 C 20,22 40,8 60,12 C 80,18 100,5 120,5 L 100,30 L 0,30 Z" fill="url(#chartGrad)" />
+                <path d="M 0,25 C 20,22 40,8 60,12 C 80,18 100,5 120,5" fill="none" stroke="#2563EB" strokeWidth="1.2" />
+              </svg>
+            </div>
+          </div>
+          <div className="flex justify-between items-center text-[9px] font-black text-slate-400 mt-2 px-1">
+            <span>WK 22</span>
+            <span>WK 23</span>
+            <span>WK 24</span>
+            <span>WK 25</span>
+            <span>TODAY</span>
+          </div>
+        </div>
+
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm space-y-4">
+          <div>
+            <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest">Share by Gig</h3>
+            <p className="text-[10px] text-slate-500 font-semibold mt-1">Top performing: <strong className="text-slate-700">{earningsData.topService}</strong></p>
+          </div>
+          <div className="space-y-3">
+            {serviceBreakdown.map((s, idx) => (
+              <div key={idx} className="space-y-1">
+                <div className="flex justify-between text-[10px] font-bold text-slate-750">
+                  <span className="truncate max-w-[150px]">{s.name}</span>
+                  <span>{s.share}% (₹{s.amount.toLocaleString('en-IN')})</span>
+                </div>
+                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-blue-600 rounded-full" style={{ width: `${s.share}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
+          <h3 className="text-xs font-black text-slate-455 uppercase tracking-widest mb-4">Payouts Ledger</h3>
+          <div className="space-y-2.5">
+            {payouts.map(p => (
+              <div key={p.id} className="p-3 bg-white/50 border border-slate-100 rounded-2xl flex justify-between items-center text-xs">
+                <div>
+                  <span className="font-mono text-slate-500 text-[10px] block">{p.id} • {p.date}</span>
+                  <span className="font-bold text-slate-700 block mt-0.5">{p.bank}</span>
+                </div>
+                <div className="text-right">
+                  <span className="font-black text-slate-900 block">₹{p.amount.toLocaleString('en-IN')}</span>
+                  <span className="text-[9px] text-emerald-600 font-black tracking-wide block uppercase mt-0.5">{p.status}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest mb-3">GST & Tax Summary</h3>
+            <p className="text-[10px] text-slate-500 leading-relaxed font-semibold">Verify compliance statuses to ensure seamless bank payouts and avoid tax settlements holds.</p>
+          </div>
+          <div className="space-y-2 text-xs pt-4 border-t border-white/20">
+            <div className="flex justify-between font-semibold">
+              <span className="text-slate-400">PAN ID</span>
+              <span className="text-slate-800 font-bold uppercase">{earningsData.taxPan}</span>
+            </div>
+            <div className="flex justify-between font-semibold">
+              <span className="text-slate-400">GSTIN</span>
+              <span className="text-slate-800 font-bold uppercase">{earningsData.taxGstin}</span>
+            </div>
+            <div className="flex justify-between font-semibold">
+              <span className="text-slate-400">Status</span>
+              <span className="text-emerald-600 font-black uppercase text-[10px]">Verified Active</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* 6. Vendor Customers Tab */
+function VendorCustomersTab({ isDemoMode }) {
+  const [customers, setCustomers] = useState([
+    { name: "Aarav Sharma", events: 3, spend: 185000, rating: 5, favorite: "Fairytale Canopy Flower Setup", photo: "AS" },
+    { name: "Neha Patel", events: 2, spend: 36000, rating: 4.8, favorite: "Minimalist Boho Haldi Decor", photo: "NP" },
+    { name: "Rajesh Kapoor", events: 1, spend: 120000, rating: 5, favorite: "Modern Glass Aisle & Chandeliers", photo: "RK" }
+  ]);
+
+  const handleQuickActions = (client, action) => {
+    toast.success(`${action} action triggered for ${client}`);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Client Appointments</h1>
-          <p className="text-xs text-gray-500 font-semibold">Review, accept, reject, or cancellation refunds for customer requests.</p>
+    <div className="space-y-6 font-sans">
+      <div>
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">CRM Directory</span>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">My Customers</h1>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {customers.map((c, idx) => (
+          <div key={idx} className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm flex flex-col justify-between hover:scale-[1.01] transition-all space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-2xl flex items-center justify-center font-black text-base shadow-md shadow-indigo-500/10">
+                {c.photo}
+              </div>
+              <div>
+                <h3 className="font-extrabold text-slate-800 text-base leading-tight">{c.name}</h3>
+                <span className="text-[9px] font-bold text-indigo-650 block uppercase mt-0.5">⭐ {c.rating} Rating given</span>
+              </div>
+            </div>
+
+            <div className="text-[11px] text-slate-500 space-y-1 border-t border-white/20 pt-3">
+              <div className="flex justify-between"><span>Completed Events:</span> <strong className="text-slate-700">{c.events}</strong></div>
+              <div className="flex justify-between"><span>Total Billing:</span> <strong className="text-slate-900">₹{c.spend.toLocaleString('en-IN')}</strong></div>
+              <div className="flex justify-between items-center">
+                <span>Fav Service:</span> 
+                <span className="inline-block px-1.5 py-0.5 bg-blue-50 text-blue-700 text-[8px] font-bold rounded truncate max-w-[120px]">{c.favorite}</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/20 text-[10px] font-bold">
+              <button onClick={() => handleQuickActions(c.name, "Chat")} className="py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-center">Chat</button>
+              <button onClick={() => handleQuickActions(c.name, "Call")} className="py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-center">Call Client</button>
+              <button onClick={() => handleQuickActions(c.name, "Invoice")} className="py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-xl text-center col-span-2">Send Custom Invoice</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* 7. Vendor Messages Tab */
+function VendorMessagesTab({ setTab, isDemoMode }) {
+  const [conversations, setConversations] = useState([
+    { id: 1, name: "Aarav Sharma", role: "Client", lastMsg: "Please confirm timings for the canopy flow.", unread: true, pinned: true },
+    { id: 2, name: "Neha Patel", role: "Client", lastMsg: "The floral arrangements were beautiful. Thank you!", unread: false, pinned: false },
+    { id: 3, name: "Platform Admin Support", role: "Admin", lastMsg: "PAN document verified successfully.", unread: false, pinned: true }
+  ]);
+  const [selectedId, setSelectedId] = useState(1);
+  const [msgInput, setMsgInput] = useState("");
+  const [messages, setMessages] = useState([
+    { sender: "client", text: "Hello, regarding the booking on Aug 15: is flowers prep included?", time: "10:15 AM" },
+    { sender: "vendor", text: "Yes Aarav, the florist drapes, orchids, and setups are fully included in the catalog price.", time: "10:20 AM" },
+    { sender: "client", text: "Perfect! Please confirm timings for the canopy flow.", time: "10:22 AM" }
+  ]);
+
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (!msgInput.trim()) return;
+    setMessages([...messages, { sender: "vendor", text: msgInput, time: "Just Now" }]);
+    setMsgInput("");
+    toast.success("Message sent");
+  };
+
+  const selectedConv = conversations.find(c => c.id === selectedId);
+
+  return (
+    <div className="bg-white/45 backdrop-blur-md border border-white/60 rounded-3xl overflow-hidden shadow-sm h-[500px] flex font-sans">
+      <div className="w-56 border-r border-slate-150 flex flex-col justify-between shrink-0 bg-white/20">
+        <div className="p-4 border-b">
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Conversations</span>
+          <h2 className="text-base font-bold text-slate-800 tracking-tight mt-0.5">Inbox</h2>
         </div>
-        <div className="flex gap-1.5 bg-gray-150/80 p-1 border rounded-xl">
-          {['ALL', 'PENDING', 'CONFIRMED', 'REJECTED', 'CANCELLED'].map(s => (
-            <button key={s} onClick={() => setFilter(s)} className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all hover:scale-[1.02] active:scale-[0.98] ${filter === s ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}>
-              {s}
+        <div className="flex-1 overflow-y-auto p-2 space-y-1">
+          {conversations.map(c => (
+            <button
+              key={c.id}
+              onClick={() => setSelectedId(c.id)}
+              className={`w-full p-3 rounded-2xl text-left transition-all text-xs relative flex flex-col gap-1 ${
+                c.id === selectedId ? 'bg-white shadow-sm border border-slate-100 text-slate-900' : 'text-slate-500 hover:bg-white/40'
+              }`}
+            >
+              <div className="flex justify-between items-center w-full">
+                <span className="font-extrabold text-slate-800">{c.name}</span>
+                <span className="text-[8px] bg-slate-100 px-1 py-0.2 rounded border font-black uppercase text-slate-500">{c.role}</span>
+              </div>
+              <p className="text-[10px] truncate w-full opacity-80">{c.lastMsg}</p>
+              {c.unread && <span className="absolute top-3 right-3 w-1.5 h-1.5 bg-blue-600 rounded-full" />}
             </button>
           ))}
         </div>
       </div>
 
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-pulse">
-          {[1, 2].map(n => <div key={n} className="h-32 bg-gray-50 border rounded-2xl" />)}
+      <div className="flex-1 flex flex-col justify-between bg-white/10 h-full">
+        <div className="p-4 border-b bg-white/40 flex justify-between items-center">
+          <div>
+            <h3 className="font-extrabold text-slate-800 text-sm">{selectedConv?.name}</h3>
+            <p className="text-[9px] text-slate-455 font-bold uppercase tracking-wider">{selectedConv?.role} Chat Channel</p>
+          </div>
+          <span className="px-2 py-0.5 bg-emerald-105 text-emerald-700 text-[8px] rounded border border-emerald-200 font-black uppercase">Secure Escrow Shield</span>
         </div>
-      ) : filteredBookings.length === 0 ? (
-        <div className="text-center py-16 bg-gray-50/50 border border-gray-100 rounded-xl">
-          <CreditCard className="text-gray-300 mx-auto mb-3" size={40} />
-          <h3 className="text-base font-bold text-gray-800">No appointments found</h3>
-          <p className="text-xs text-gray-500 mt-1">Pending bookings from clients will appear here once they checkout cart services.</p>
-        </div>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 text-gray-500 text-[10px] uppercase tracking-wider font-semibold border-b border-gray-200">
-                <th className="py-3 px-4 font-semibold">Booking ID</th>
-                <th className="py-3 px-4 font-semibold">Client</th>
-                <th className="py-3 px-4 font-semibold">Service Info</th>
-                <th className="py-3 px-4 font-semibold">Date Range</th>
-                <th className="py-3 px-4 font-semibold text-right">Earnings</th>
-                <th className="py-3 px-4 font-semibold text-center">Status</th>
-                <th className="py-3 px-4 font-semibold text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-150 text-xs text-gray-700">
-              {filteredBookings.map(b => (
-                <tr key={b.id} className="hover:bg-gray-50/50 transition-colors h-14">
-                  <td className="py-3 px-4 font-mono text-[11px] text-gray-500">#{b.id}</td>
-                  <td className="py-3 px-4 font-semibold text-gray-900">
-                    {b.clientName || `Customer #${b.customerId}`}
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className="inline-block px-1.5 py-0.5 bg-blue-50 border border-blue-150 text-blue-700 text-[9px] font-bold rounded uppercase mr-1.5">
-                      {b.services?.category}
-                    </span>
-                    <span className="font-medium text-gray-800">{b.services?.name}</span>
-                  </td>
-                  <td className="py-3 px-4 text-gray-500 font-medium">
-                    {new Date(b.startDt).toLocaleDateString()} - {new Date(b.endDt).toLocaleDateString()}
-                  </td>
-                  <td className="py-3 px-4 text-right font-bold text-gray-900">
-                    ₹{b.bookingAmount.toLocaleString('en-IN')}
-                  </td>
-                  <td className="py-3 px-4 text-center">
-                    <span className={`px-2 py-0.5 border text-[9px] font-bold rounded-full uppercase tracking-wider ${getStatusStyle(b.status)}`}>
-                      {b.status}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-right">
-                    <div className="flex justify-end items-center gap-1.5">
-                      <button onClick={() => { setSelectedBooking(b); setShowModal(true); }} className="p-1.5 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 text-gray-600 transition-all" title="Details"><Clock size={13} /></button>
-                      <button onClick={() => handleStartChat(b.customerId)} disabled={chatLoading} className="p-1.5 bg-blue-50 border border-blue-100 rounded-lg hover:bg-blue-100 text-blue-600 transition-all" title="Chat Client"><MessageSquare size={13} /></button>
-                      {b.status === 'PENDING' && (
-                        <>
-                          <button onClick={() => handleUpdateStatus(b.id, 'ACCEPT')} disabled={actionLoading} className="p-1.5 bg-green-50 border border-green-200 hover:bg-green-100 text-green-700 rounded-lg transition-all" title="Accept"><Check size={13} /></button>
-                          <button onClick={() => handleUpdateStatus(b.id, 'REJECT')} disabled={actionLoading} className="p-1.5 bg-red-50 border border-red-200 hover:bg-red-100 text-red-750 rounded-lg transition-all" title="Reject"><Ban size={13} /></button>
-                        </>
-                      )}
-                      {b.status === 'CONFIRMED' && (
-                        <button onClick={() => handleUpdateStatus(b.id, 'CANCEL')} disabled={actionLoading} className="px-2 py-1 bg-red-50 border border-red-155 text-red-650 hover:bg-red-100 text-[9px] font-bold rounded-lg transition-all">Cancel/Refund</button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
 
-      {/* Dialog detail modal */}
-      <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="sm:max-w-md bg-white rounded-3xl p-6 border border-gray-200">
-          <DialogHeader><DialogTitle className="text-lg font-bold text-gray-955">Appointment details</DialogTitle></DialogHeader>
-          {selectedBooking && (
-            <div className="space-y-4 mt-2">
-              <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100/50 text-xs font-semibold text-gray-600 space-y-2">
-                <span className="text-[9px] text-blue-700 font-bold block uppercase mb-1">Customer details</span>
-                <div>Name: <strong className="text-gray-800">{selectedBooking.clientName}</strong></div>
-                {selectedBooking.clientEmail && <div>Email: <strong className="text-gray-800">{selectedBooking.clientEmail}</strong></div>}
-                {selectedBooking.clientPhone && <div>Phone: <strong className="text-gray-800">{selectedBooking.clientPhone}</strong></div>}
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 text-xs font-semibold text-gray-500">
-                <div className="bg-gray-50 p-2.5 rounded-xl border">
-                  <span className="text-[9px] text-gray-400 block uppercase">Booking ID</span>
-                  <span className="font-bold text-gray-800"># {selectedBooking.id}</span>
-                </div>
-                <div className="bg-gray-50 p-2.5 rounded-xl border">
-                  <span className="text-[9px] text-gray-400 block uppercase">Status</span>
-                  <span className="font-bold text-gray-850 uppercase">{selectedBooking.status}</span>
-                </div>
-                <div className="bg-gray-50 p-2.5 rounded-xl border col-span-2">
-                  <span className="text-[9px] text-gray-400 block uppercase">Dates range</span>
-                  <span className="font-bold text-gray-800 block">{new Date(selectedBooking.startDt).toLocaleString()} - {new Date(selectedBooking.endDt).toLocaleString()}</span>
-                </div>
-                <div className="bg-gray-50 p-2.5 rounded-xl border">
-                  <span className="text-[9px] text-gray-400 block uppercase">Client Paid Amount</span>
-                  <span className="font-extrabold text-gray-850">₹{selectedBooking.bookingAmount}</span>
-                </div>
-              </div>
-
-              {(() => {
-                const bookingDispute = disputes.find(d => d.bookingId === selectedBooking.id);
-                if (bookingDispute) {
-                  return (
-                    <div className="bg-rose-50 text-rose-800 text-xs p-3 rounded-2xl border border-rose-100">
-                      <span className="text-[9px] font-bold block uppercase mb-1">Dispute active ({bookingDispute.status})</span>
-                      <p className="font-semibold text-gray-700">Reason: {bookingDispute.reason}</p>
-                    </div>
-                  );
-                }
-                return null;
-              })()}
-
-              <div className="flex gap-2 pt-4">
-                <button onClick={() => handleStartChat(selectedBooking.customerId)} className="flex-1 py-3 bg-blue-50 border border-blue-100 text-blue-600 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all hover:scale-[1.02] active:scale-[0.98]"><MessageSquare size={14} /> Chat Client</button>
-                {selectedBooking.status === 'PENDING' && (
-                  <>
-                    <button onClick={() => handleUpdateStatus(selectedBooking.id, 'ACCEPT')} className="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98]">Accept</button>
-                    <button onClick={() => handleUpdateStatus(selectedBooking.id, 'REJECT')} className="flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98]">Reject</button>
-                  </>
-                )}
-                {selectedBooking.status === 'CONFIRMED' && (
-                  <button onClick={() => handleUpdateStatus(selectedBooking.id, 'CANCEL')} className="flex-1 py-3 bg-red-600 hover:bg-red-750 text-white rounded-xl text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98]">Cancel & Refund</button>
-                )}
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
-
-/* 4. Testimonials Tab */
-function TestimonialsTab({ customerProfile, isDemoMode }) {
-  const [vendorProfile, setVendorProfile] = useState(null);
-  const [testimonials, setTestimonials] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchTestimonials = async () => {
-    /*
-    if (isDemoMode) {
-      setVendorProfile({ id: 401 });
-      setTestimonials([
-        {
-          id: 901,
-          clientId: 12,
-          rating: 5,
-          reviewText: "Absolutely stunning canopy design! Our guests couldn't stop taking pictures. Rajesh and team were highly professional.",
-          isFeatured: true,
-          createdAt: "2026-05-15T10:00:00"
-        },
-        {
-          id: 902,
-          clientId: 34,
-          rating: 4,
-          reviewText: "Great floral arrangements for our Haldi event. Reached the venue on time.",
-          isFeatured: false,
-          createdAt: "2026-06-01T11:30:00"
-        }
-      ]);
-      setLoading(false);
-      return;
-    }
-    */
-    if (!customerProfile?.id) return;
-    try {
-      setLoading(true);
-      const vendorRes = await apiClient.get(`/api/vendor/customer/${customerProfile.id}`);
-      const vendor = vendorRes.data?.data || vendorRes.data;
-      setVendorProfile(vendor);
-
-      if (vendor?.id) {
-        const testimonialsRes = await apiClient.get(`/api/testimonials/vendor/${vendor.id}`);
-        setTestimonials(testimonialsRes.data?.data || testimonialsRes.data || []);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchTestimonials();
-  }, [customerProfile]);
-
-  const handleToggleFeature = async (id) => {
-    if (isDemoMode) {
-      setTestimonials(prev => prev.map(t => t.id === id ? { ...t, isFeatured: !t.isFeatured } : t));
-      toast.success("Testimonial featured state updated (Demo Mode)!");
-      return;
-    }
-    try {
-      await apiClient.put(`/api/testimonials/${id}/feature`);
-      toast.success("Testimonial featured state updated!");
-      setTestimonials(prev => prev.map(t => t.id === id ? { ...t, isFeatured: !t.isFeatured } : t));
-    } catch (err) {
-      toast.error("Failed to update featured testimonials status");
-    }
-  };
-
-  const handleDeleteTestimonial = async (id) => {
-    if (!window.confirm("Delete this review testimonial permanently?")) return;
-    if (isDemoMode) {
-      setTestimonials(prev => prev.filter(t => t.id !== id));
-      toast.success("Testimonial review deleted (Demo Mode).");
-      return;
-    }
-    try {
-      await apiClient.delete(`/api/testimonials/${id}`);
-      toast.success("Testimonial review deleted.");
-      setTestimonials(prev => prev.filter(t => t.id !== id));
-    } catch (err) {
-      toast.error("Failed to delete review");
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Business Reviews Feed</h1>
-        <p className="text-xs text-gray-500 font-semibold">Highlight glowing client review testimonials to feature them on details view pages.</p>
-      </div>
-
-      {loading ? (
-        <div className="space-y-3 animate-pulse">
-          <div className="h-24 bg-gray-50 border rounded-2xl" />
-        </div>
-      ) : testimonials.length === 0 ? (
-        <div className="text-center py-16 bg-gray-50/50 border border-gray-100 rounded-3xl">
-          <Star className="text-gray-300 mx-auto mb-3" size={40} />
-          <h3 className="text-base font-bold text-gray-800">No testimonials received</h3>
-          <p className="text-xs text-gray-500 mt-1">Client reviews from completed service orders will populate here automatically.</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {testimonials.map(t => (
-            <div key={t.id} className="bg-white border border-gray-150 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.02)] hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
-                <div className="flex items-center gap-2 flex-wrap mb-1.5">
-                  <h4 className="font-extrabold text-gray-900 text-sm">Reviewer ID #{t.clientId || 'Client'}</h4>
-                  <div className="flex text-amber-500">
-                    {Array.from({ length: t.rating || 5 }).map((_, idx) => (
-                      <Star key={idx} size={12} fill="#F59E0B" className="text-amber-500" />
-                    ))}
-                  </div>
-                  {t.isFeatured && (
-                    <span className="px-2.5 py-0.5 bg-blue-100 border border-blue-200 text-blue-700 text-[9px] font-bold rounded-full uppercase">Featured</span>
-                  )}
-                </div>
-                <p className="text-xs font-medium text-gray-600 leading-relaxed italic">"{t.reviewText}"</p>
-                {t.createdAt && <span className="text-[10px] text-gray-400 block mt-1 font-semibold">Submitted: {new Date(t.createdAt).toLocaleDateString()}</span>}
-              </div>
-
-              <div className="flex gap-2 shrink-0 sm:self-center self-end">
-                <button onClick={() => handleToggleFeature(t.id)} className={`px-4 py-2 border rounded-xl text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98] ${t.isFeatured ? 'bg-blue-50 text-blue-700 border-blue-150' : 'bg-white hover:bg-gray-50 text-gray-600'}`}>
-                  {t.isFeatured ? 'Featured' : 'Feature'}
-                </button>
-                <button onClick={() => handleDeleteTestimonial(t.id)} className="p-2 border rounded-xl hover:bg-red-50 text-red-500 transition-all hover:scale-105 active:scale-95"><Trash2 size={14} /></button>
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.map((m, i) => (
+            <div key={i} className={`flex ${m.sender === 'vendor' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`p-3 rounded-2xl max-w-[75%] leading-relaxed text-xs font-semibold shadow-[0_2px_10px_rgba(0,0,0,0.01)] ${
+                m.sender === 'vendor' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border text-slate-700 rounded-tl-none'
+              }`}>
+                <p>{m.text}</p>
+                <span className={`text-[8px] block mt-1.5 opacity-60 text-right ${m.sender === 'vendor' ? 'text-white' : 'text-slate-400'}`}>{m.time}</span>
               </div>
             </div>
           ))}
         </div>
-      )}
+
+        <form onSubmit={handleSend} className="p-4 border-t bg-white/40 flex gap-2">
+          <input
+            type="text"
+            value={msgInput}
+            onChange={e => setMsgInput(e.target.value)}
+            placeholder="Type your message, attach files..."
+            className="flex-1 px-4 py-2 border rounded-xl text-xs outline-none bg-white text-slate-800 focus:border-blue-500"
+          />
+          <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-all font-sans">Send</button>
+        </form>
+      </div>
     </div>
   );
 }
 
-/* 5. Business Details Profile Tab */
-function BusinessProfileTab({ customerProfile, refreshUser, isDemoMode }) {
-  const [vendor, setVendorProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+/* 8. Airbnb-style Reviews Center */
+function VendorReviewsTab({ isDemoMode }) {
+  const [reviews, setReviews] = useState([
+    { id: 901, client: "Aarav Sharma", rating: 5, date: "2026-06-15", comment: "Absolutely stunning canopy design! Rajesh and the team were highly professional and completed it on time.", reply: "", sentiment: "POSITIVE" },
+    { id: 902, client: "Neha Patel", rating: 4.8, date: "2026-06-01", comment: "Beautiful orchids flower layouts for Haldi, loved the color harmony. Recommended!", reply: "", sentiment: "POSITIVE" }
+  ]);
+  const [replyInputs, setReplyInputs] = useState({});
 
-  useEffect(() => {
-    if (isDemoMode) {
-      setVendorProfile({
-        id: 401,
-        businessName: "Elite Wedding Decors",
-        category: "DECORATION",
-        ownerName: "Rajesh Kumar",
-        upiAddress: "rajeshdecors@okaxis",
-        aura: 680.5,
-        pan: "ABCDE1234F",
-        gstNumber: "27ABCDE1234F1Z5",
-        verificationStatus: "VERIFIED",
-        addressLine1: "Suite 405, Dynasty Business Park",
-        addressLine2: "Andheri Kurla Road",
-        state: "Maharashtra",
-        pincode: "400059",
-        description: "Premium wedding decoration, set construction, theme layouts, and flower arrangements with 8+ years of industry experience across Mumbai and Pune."
-      });
-      setLoading(false);
-      return;
-    }
-    if (!customerProfile?.id) return;
-    const fetchVendorProfile = async () => {
-      try {
-        setLoading(true);
-        const res = await apiClient.get(`/api/vendor/customer/${customerProfile.id}`);
-        setVendorProfile(res.data?.data || res.data || null);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchVendorProfile();
-  }, [customerProfile]);
+  const handleAIResponse = (id, clientName, comment) => {
+    const text = `Hi ${clientName.split(' ')[0]}, thank you so much for your kind words! We loved decorating your event and are thrilled you liked the setup. Looking forward to working with you again! - Rajesh`;
+    setReplyInputs({ ...replyInputs, [id]: text });
+    toast.success("AI reply suggested!");
+  };
+
+  const handlePostReply = (id) => {
+    const txt = replyInputs[id];
+    if (!txt?.trim()) return;
+    setReviews(reviews.map(r => r.id === id ? { ...r, reply: txt } : r));
+    setReplyInputs({ ...replyInputs, [id]: "" });
+    toast.success("Reply posted successfully!");
+  };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Business Profile</h1>
-        <p className="text-xs text-gray-500 font-semibold">Verify owner credentials, tax structures, banking UPI IDs, and Aura standing details.</p>
+    <div className="space-y-6 font-sans">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-150/40 pb-4 gap-3">
+        <div>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Airbnb Aesthetic</span>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Reviews Feed</h1>
+        </div>
+        <div className="flex gap-4 text-xs font-bold text-slate-655 shrink-0">
+          <div>Avg Rating: <strong className="text-slate-800">⭐ 4.9</strong></div>
+          <div className="border-l pl-4">Trust Score: <strong className="text-indigo-650">98%</strong></div>
+        </div>
       </div>
 
-      {loading ? (
-        <div className="h-44 bg-gray-50 border rounded-3xl animate-pulse" />
-      ) : !vendor ? (
-        <div className="text-center py-16 bg-gray-50 border rounded-3xl">
-          <Briefcase className="text-gray-300 mx-auto mb-3" size={40} />
-          <h3 className="text-base font-bold text-gray-800">Business registration incomplete</h3>
-          <p className="text-xs text-gray-500 mt-1">Please head to vendor onboarding page to establish verified listings rights.</p>
-        </div>
-      ) : (
-        <div className="bg-white border border-gray-150 rounded-3xl p-6 shadow-[0_8px_30px_rgba(0,0,0,0.02)] space-y-6">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-sky-600 flex items-center justify-center text-white text-2xl font-black shadow-md shadow-blue-600/15 overflow-hidden">
-              {vendor.profileImageUrl ? (
-                <img src={vendor.profileImageUrl} alt="Logo" className="w-full h-full object-cover" />
-              ) : vendor.businessName?.charAt(0)}
+      <div className="flex flex-wrap gap-2 text-[9px] font-black text-slate-500 uppercase tracking-wider">
+        <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full">✓ 98% Love Punctuality</span>
+        <span className="px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-100 rounded-full">✓ 95% High Quality Setup</span>
+        <span className="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-100 rounded-full">⚠️ Avg Response: 8m</span>
+      </div>
+
+      <div className="space-y-4">
+        {reviews.map(r => (
+          <div key={r.id} className="bg-white/40 border border-white/60 rounded-3xl p-6 shadow-sm space-y-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <h4 className="font-extrabold text-slate-800 text-sm">{r.client}</h4>
+                <span className="text-[9px] text-slate-400 block mt-0.5">Reviewed: {r.date}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black text-slate-900">⭐ {r.rating}</span>
+                <span className="text-[8px] bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold px-1.5 py-0.2 rounded uppercase tracking-wider">Positive Sentiment</span>
+              </div>
             </div>
+
+            <p className="text-xs font-medium text-slate-650 italic leading-relaxed font-sans">"{r.comment}"</p>
+
+            {r.reply && (
+              <div className="bg-blue-50/50 p-4 border border-blue-100/50 rounded-2xl ml-4 space-y-1">
+                <span className="text-[8px] text-blue-600 font-black uppercase tracking-widest block">My Response</span>
+                <p className="text-xs font-semibold text-slate-700">{r.reply}</p>
+              </div>
+            )}
+
+            {!r.reply && (
+              <div className="space-y-3 pt-3 border-t border-white/20">
+                <textarea
+                  value={replyInputs[r.id] || ""}
+                  onChange={e => setReplyInputs({ ...replyInputs, [r.id]: e.target.value })}
+                  placeholder="Draft response to this customer review..."
+                  rows={2}
+                  className="w-full p-3 border rounded-xl text-xs bg-white text-slate-850 outline-none"
+                />
+                <div className="flex justify-end gap-2 text-[10px] font-bold">
+                  <button onClick={() => handleAIResponse(r.id, r.client, r.comment)} className="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl shadow-sm flex items-center gap-1">✨ AI Draft Suggestion</button>
+                  <button onClick={() => handlePostReply(r.id)} className="px-4 py-2 bg-white border text-slate-705 rounded-xl hover:bg-slate-50">Post Reply</button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* 9. Documents Vault Tab */
+function VendorDocumentsTab({ isDemoMode }) {
+  const [docs, setDocs] = useState([
+    { name: "Business License Certificate", type: "PDF", size: "2.4 MB", status: "VERIFIED" },
+    { name: "PAN Verification Card Document", type: "PDF", size: "1.1 MB", status: "VERIFIED" },
+    { name: "GSTIN Tax Alignment Certificate", type: "PDF", size: "3.2 MB", status: "VERIFIED" },
+    { name: "Corporate Office Rent Agreement", type: "PDF", size: "4.5 MB", status: "PENDING" }
+  ]);
+
+  const handleUpload = () => {
+    toast.success("Document file picker triggered");
+  };
+
+  const handleDownload = (name) => {
+    toast.success(`Downloading file: ${name}`);
+  };
+
+  return (
+    <div className="space-y-6 font-sans">
+      <div className="flex justify-between items-center border-b border-gray-150/40 pb-4">
+        <div>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Vault Security</span>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Documents Vault</h1>
+        </div>
+        <button onClick={handleUpload} className="px-4 py-2 bg-blue-600 text-white font-bold rounded-xl text-xs">Upload Document</button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {docs.map((d, idx) => (
+          <div key={idx} className="bg-white/40 border border-white/60 rounded-3xl p-5 shadow-sm flex justify-between items-center hover:scale-[1.01] transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center font-black text-xs">
+                {d.type}
+              </div>
+              <div>
+                <h3 className="font-extrabold text-slate-800 text-sm leading-tight">{d.name}</h3>
+                <span className="text-[9px] text-slate-400 font-bold block mt-1">{d.size} • Status: <strong className={d.status === 'VERIFIED' ? 'text-emerald-600' : 'text-amber-500'}>{d.status}</strong></span>
+              </div>
+            </div>
+            <button onClick={() => handleDownload(d.name)} className="p-2 border border-slate-100 rounded-xl hover:bg-white text-slate-500 hover:text-blue-600 transition-all font-sans" title="Download">
+              <FileText size={14} />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* 10. Vendor Analytics Tab */
+function VendorAnalyticsTab({ isDemoMode }) {
+  return (
+    <div className="space-y-6 font-sans">
+      <div>
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Business Intelligence</span>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Performance Analytics</h1>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: "Revenue Growth", val: "+18.4%", desc: "vs past month performance" },
+          { label: "Booking Conversion", val: "86.2%", desc: "conversions from profile view" },
+          { label: "Cancellation Rate", val: "1.2%", desc: "industry average 5%" },
+          { label: "Repeat Clients", val: "44.5%", desc: "rebooked past 12 months" }
+        ].map((a, i) => (
+          <div key={i} className="bg-white/40 border border-white/60 rounded-3xl p-6 shadow-sm flex flex-col justify-between h-32">
+            <span className="text-[9px] font-black text-slate-450 uppercase tracking-widest">{a.label}</span>
             <div>
-              <h3 className="font-extrabold text-gray-955 text-lg leading-tight">{vendor.businessName}</h3>
-              <p className="text-xs text-blue-600 font-bold uppercase mt-1">{vendor.category}</p>
+              <div className="text-2xl font-black text-slate-800 tracking-tight mt-3">{a.val}</div>
+              <span className="text-[8px] font-bold text-slate-400 block mt-1">{a.desc}</span>
             </div>
           </div>
+        ))}
+      </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 pt-4 border-t text-xs font-semibold text-gray-500">
+      <div className="bg-white/40 border border-white/60 rounded-3xl p-6 shadow-sm space-y-4">
+        <div>
+          <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest">Local Juhu Market Standing</h3>
+          <p className="text-[10px] text-slate-500 font-semibold mt-1">Planit rating percentile matches: <strong className="text-indigo-650">Top 3 Decorators</strong></p>
+        </div>
+        <div className="h-4 w-full bg-slate-100 rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full" style={{ width: "92%" }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* 11. Availability Buffers Tab */
+function VendorAvailabilityTab({ isDemoMode }) {
+  const [buffer, setBuffer] = useState("1");
+  const [concurrency, setConcurrency] = useState("2");
+  const [timings, setTimings] = useState([
+    { day: "Monday", open: true, hours: "9:00 AM - 6:00 PM" },
+    { day: "Tuesday", open: true, hours: "9:00 AM - 6:00 PM" },
+    { day: "Wednesday", open: true, hours: "9:00 AM - 6:00 PM" },
+    { day: "Thursday", open: true, hours: "9:00 AM - 6:00 PM" },
+    { day: "Friday", open: true, hours: "9:00 AM - 6:00 PM" },
+    { day: "Saturday", open: true, hours: "8:00 AM - 8:00 PM" },
+    { day: "Sunday", open: false, hours: "Closed" }
+  ]);
+
+  const handleToggleDay = (idx) => {
+    setTimings(timings.map((t, i) => i === idx ? { ...t, open: !t.open, hours: t.open ? "Closed" : "9:00 AM - 6:00 PM" } : t));
+  };
+
+  const handleSave = () => {
+    toast.success("Buffer and concurrent settings saved");
+  };
+
+  return (
+    <div className="space-y-6 font-sans">
+      <div>
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Preference Settings</span>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Availability Configs</h1>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white/40 border border-white/60 rounded-3xl p-6 shadow-sm space-y-4 flex flex-col justify-between">
+          <div className="space-y-4">
+            <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest border-b pb-2">Operational Limits</h3>
             <div>
-              <span className="text-[10px] text-gray-400 block uppercase font-bold mb-0.5">Owner name</span>
-              <span className="text-gray-850 font-bold text-sm block">{vendor.ownerName}</span>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1">Preparation buffer between events</label>
+              <select value={buffer} onChange={e => setBuffer(e.target.value)} className="w-full px-3 py-2 border rounded-xl bg-white text-xs text-slate-800 outline-none">
+                <option value="0">No Buffer (Back-to-back)</option>
+                <option value="1">1 Day Buffer (Recommended)</option>
+                <option value="2">2 Days Buffer (Complex Setups)</option>
+              </select>
             </div>
             <div>
-              <span className="text-[10px] text-gray-400 block uppercase font-bold mb-0.5">UPI Payout handles</span>
-              <span className="text-gray-850 font-bold text-sm block">{vendor.upiAddress || 'N/A'}</span>
-            </div>
-            <div>
-              <span className="text-[10px] text-gray-400 block uppercase font-bold mb-0.5">Aura Score</span>
-              <span className="text-gray-850 font-bold text-sm block">{vendor.aura?.toFixed(1) || '500.0'}</span>
-            </div>
-            <div>
-              <span className="text-[10px] text-gray-400 block uppercase font-bold mb-0.5">PAN Identification</span>
-              <span className="text-gray-850 font-bold text-sm block uppercase">{vendor.pan}</span>
-            </div>
-            <div>
-              <span className="text-[10px] text-gray-400 block uppercase font-bold mb-0.5">GST Identification</span>
-              <span className="text-gray-850 font-bold text-sm block uppercase">{vendor.gstNumber || 'N/A'}</span>
-            </div>
-            <div>
-              <span className="text-[10px] text-gray-400 block uppercase font-bold mb-0.5">Verification status</span>
-              <span className={`inline-block font-bold text-[10px] uppercase rounded-full px-2.5 py-0.5 border mt-0.5 ${vendor.verificationStatus === 'VERIFIED' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-amber-100 text-amber-700 border-amber-200'}`}>
-                {vendor.verificationStatus}
-              </span>
-            </div>
-            <div className="col-span-2">
-              <span className="text-[10px] text-gray-400 block uppercase font-bold mb-0.5">Physical office address</span>
-              <span className="text-gray-800 text-xs block leading-relaxed">{vendor.addressLine1}, {vendor.addressLine2 ? `${vendor.addressLine2}, ` : ''}{vendor.state} - {vendor.pincode}</span>
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1">Max concurrent active bookings</label>
+              <select value={concurrency} onChange={e => setConcurrency(e.target.value)} className="w-full px-3 py-2 border rounded-xl bg-white text-xs text-slate-800 outline-none">
+                <option value="1">1 Event per day maximum</option>
+                <option value="2">2 Concurrent events maximum</option>
+                <option value="3">3 Concurrent events maximum</option>
+              </select>
             </div>
           </div>
-
-          {vendor.description && (
-            <div className="pt-6 border-t">
-              <span className="text-[10px] text-gray-400 block uppercase font-bold mb-1.5">Business profile description</span>
-              <p className="text-xs text-gray-650 leading-relaxed font-semibold">{vendor.description}</p>
-            </div>
-          )}
+          <button onClick={handleSave} className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs mt-4 font-sans">Save Configuration</button>
         </div>
-      )}
+
+        <div className="bg-white/40 border border-white/60 rounded-3xl p-6 shadow-sm space-y-3">
+          <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest border-b pb-2">Weekly Business Hours</h3>
+          <div className="space-y-2 text-xs font-semibold">
+            {timings.map((t, idx) => (
+              <div key={idx} className="flex justify-between items-center py-0.5">
+                <div className="flex items-center gap-3">
+                  <input type="checkbox" checked={t.open} onChange={() => handleToggleDay(idx)} className="rounded text-blue-605 focus:ring-0" />
+                  <span className={t.open ? 'text-slate-800' : 'text-slate-400'}>{t.day}</span>
+                </div>
+                <span className={t.open ? 'text-slate-700 font-bold' : 'text-slate-400'}>{t.hours}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* 12. Business Settings & Profile Tab */
+function VendorSettingsTab({ customerProfile, refreshUser, isDemoMode }) {
+  const [vendor, setVendorProfile] = useState({
+    id: 401,
+    businessName: "Elite Wedding Decors",
+    category: "DECORATION",
+    ownerName: "Rajesh Kumar",
+    upiAddress: "rajeshdecors@okaxis",
+    aura: 680.5,
+    pan: "ABCDE1234F",
+    gstNumber: "27ABCDE1234F1Z5",
+    verificationStatus: "VERIFIED",
+    addressLine1: "Suite 405, Dynasty Business Park",
+    addressLine2: "Andheri Kurla Road",
+    state: "Maharashtra",
+    pincode: "400059",
+    description: "Premium wedding decoration, set construction, theme layouts, and flower arrangements with 8+ years of industry experience across Mumbai and Pune."
+  });
+
+  const handleImproveTrustClick = () => {
+    toast.info("Upload GST/PAN verification file to gain Trust index credentials +15%");
+  };
+
+  const handleProfileSubmit = (e) => {
+    e.preventDefault();
+    toast.success("Business profile saved successfully!");
+  };
+
+  return (
+    <div className="space-y-6 font-sans">
+      <div>
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Administration Control</span>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Business Profile</h1>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white/40 border border-white/60 rounded-3xl p-6 shadow-sm">
+          <h3 className="text-xs font-black text-slate-455 uppercase tracking-widest border-b pb-3 mb-4">Registration Details</h3>
+          <form onSubmit={handleProfileSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[9px] font-bold text-gray-400 block uppercase mb-1">Business Brand Name</label>
+                <input type="text" value={vendor.businessName} onChange={e => setVendorProfile({...vendor, businessName: e.target.value})} className="w-full px-3 py-2 h-10 border rounded-xl bg-white text-slate-800 text-xs font-semibold outline-none focus:border-blue-500" />
+              </div>
+              <div>
+                <label className="text-[9px] font-bold text-gray-400 block uppercase mb-1">Owner / Manager Name</label>
+                <input type="text" value={vendor.ownerName} onChange={e => setVendorProfile({...vendor, ownerName: e.target.value})} className="w-full px-3 py-2 h-10 border rounded-xl bg-white text-slate-800 text-xs font-semibold outline-none focus:border-blue-500" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[9px] font-bold text-gray-400 block uppercase mb-1">UPI Handle ID (Payouts)</label>
+                <input type="text" value={vendor.upiAddress} onChange={e => setVendorProfile({...vendor, upiAddress: e.target.value})} className="w-full px-3 py-2 h-10 border rounded-xl bg-white text-slate-800 text-xs font-semibold outline-none focus:border-blue-500" />
+              </div>
+              <div>
+                <label className="text-[9px] font-bold text-gray-400 block uppercase mb-1">Operational Category</label>
+                <span className="w-full px-3 py-2 h-10 border rounded-xl bg-slate-100/50 text-slate-500 text-xs font-semibold flex items-center">{vendor.category}</span>
+              </div>
+            </div>
+            <div>
+              <label className="text-[9px] font-bold text-gray-400 block uppercase mb-1">Company Address</label>
+              <input type="text" value={vendor.addressLine1} onChange={e => setVendorProfile({...vendor, addressLine1: e.target.value})} className="w-full px-3 py-2 h-10 border rounded-xl bg-white text-slate-800 text-xs font-semibold mb-2 outline-none focus:border-blue-500" />
+              <div className="grid grid-cols-3 gap-2">
+                <input type="text" value={vendor.addressLine2} onChange={e => setVendorProfile({...vendor, addressLine2: e.target.value})} className="px-3 py-2 h-10 border rounded-xl bg-white text-slate-800 text-xs font-semibold outline-none focus:border-blue-500" placeholder="Locality" />
+                <input type="text" value={vendor.state} onChange={e => setVendorProfile({...vendor, state: e.target.value})} className="px-3 py-2 h-10 border rounded-xl bg-white text-slate-800 text-xs font-semibold outline-none focus:border-blue-500" placeholder="State" />
+                <input type="text" value={vendor.pincode} onChange={e => setVendorProfile({...vendor, pincode: e.target.value})} className="px-3 py-2 h-10 border rounded-xl bg-white text-slate-800 text-xs font-semibold outline-none focus:border-blue-500" placeholder="Pincode" />
+              </div>
+            </div>
+            <div>
+              <label className="text-[9px] font-bold text-gray-400 block uppercase mb-1">Corporate Bio description</label>
+              <textarea value={vendor.description} onChange={e => setVendorProfile({...vendor, description: e.target.value})} rows={3} className="w-full p-3 border rounded-xl bg-white text-slate-850 text-xs resize-none outline-none focus:border-blue-500" />
+            </div>
+            <button type="submit" className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs mt-2 font-sans">Save Profile Updates</button>
+          </form>
+        </div>
+
+        <div className="bg-white/40 border border-white/60 rounded-3xl p-6 shadow-sm flex flex-col justify-between space-y-4">
+          <div>
+            <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest border-b pb-3 mb-4">Trust Score Breakdown</h3>
+            <div className="text-center py-6">
+              <span className="text-5xl font-black text-blue-650 block">98%</span>
+              <span className="text-[9px] font-black text-emerald-600 tracking-wider uppercase block mt-2">Elite Verified Business</span>
+            </div>
+            <div className="space-y-3.5 text-xs pt-4 border-t">
+              <div className="flex justify-between items-center">
+                <span>GST Document Verification</span>
+                <span className="text-emerald-600 font-extrabold uppercase text-[10px]">Verified (+15%)</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span>On-Time Arrival History</span>
+                <span className="text-emerald-600 font-extrabold uppercase text-[10px]">100% (+20%)</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span>Avg Response Velocity</span>
+                <span className="text-emerald-600 font-extrabold uppercase text-[10px]">99% (+20%)</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span>Completion Status History</span>
+                <span className="text-emerald-600 font-extrabold uppercase text-[10px]">98% (+20%)</span>
+              </div>
+            </div>
+          </div>
+          <button onClick={handleImproveTrustClick} className="w-full py-2.5 bg-white border hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all">Improve Trust Score</button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -6126,6 +5305,1292 @@ function AdminAuraLogsTab({ isDemoMode }) {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ============================================================================
+   EVENT OS TABS: TIMELINE, KANBAN TASKS, VENDORS
+   ============================================================================ */
+
+/* 1. TimelineTab */
+export function TimelineTab({ isDemoMode }) {
+  const [activeEventId, setActiveEventId] = useState(101);
+  const [milestones, setMilestones] = useState([
+    { id: 'm1', label: 'Venue Booking', desc: 'Secure main reception & event hall.', status: 'COMPLETED', date: '2026-07-10', vendor: 'Grand Hyatt' },
+    { id: 'm2', label: 'Floral & Decor', desc: 'Confirm theme design & color palettes.', status: 'IN_PROGRESS', date: '2026-08-15', vendor: 'Royal Decorators' },
+    { id: 'm3', label: 'Catering Menu Lock', desc: 'Finalize main course & appetizer list.', status: 'PENDING', date: '2026-09-05', vendor: 'Pending Selection' },
+    { id: 'm4', label: 'AV & Sound Systems', desc: 'Lock DJs & stage lighting systems.', status: 'PENDING', date: '2026-10-12', vendor: 'Shine & Sound DJs' },
+    { id: 'm5', label: 'Event Execution', desc: 'Main ceremony & live production.', status: 'PENDING', date: '2026-11-12', vendor: 'All Services' }
+  ]);
+  const [selectedMilestone, setSelectedMilestone] = useState(milestones[1]);
+
+  const handleStatusChange = (id, newStatus) => {
+    const updated = milestones.map(m => m.id === id ? { ...m, status: newStatus } : m);
+    setMilestones(updated);
+    const updatedSelected = updated.find(m => m.id === selectedMilestone.id);
+    if (updatedSelected) setSelectedMilestone(updatedSelected);
+    toast.success(`Milestone status updated to ${newStatus}`);
+  };
+
+  return (
+    <div className="space-y-6 font-sans">
+      <div className="flex justify-between items-center">
+        <div>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Workspace Core</span>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Interactive Milestone Timeline</h1>
+        </div>
+        <button onClick={() => toast.success("Timeline configuration locked.")} className="px-3.5 py-2 bg-white/40 border border-white/60 hover:bg-white/60 text-slate-800 rounded-xl text-xs font-bold shadow-sm transition-all">
+          Lock Schedule
+        </button>
+      </div>
+
+      {/* Horizontal Milestone Tracker */}
+      <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-8 shadow-sm">
+        <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+          <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-gray-200 -translate-y-1/2 z-0 hidden md:block" />
+          
+          {milestones.map((m, idx) => {
+            const isCompleted = m.status === 'COMPLETED';
+            const isInProgress = m.status === 'IN_PROGRESS';
+            const isSelected = selectedMilestone.id === m.id;
+
+            return (
+              <div 
+                key={m.id} 
+                onClick={() => setSelectedMilestone(m)}
+                className={`relative z-10 flex flex-row md:flex-col items-center gap-3 md:text-center flex-1 cursor-pointer group p-2 rounded-2xl hover:bg-white/20 transition-all ${isSelected ? 'ring-2 ring-blue-500/10' : ''}`}
+              >
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center border font-bold text-xs transition-all duration-300 ${
+                  isCompleted ? 'bg-gradient-to-tr from-emerald-500 to-teal-650 text-white shadow-md shadow-emerald-500/10 border-emerald-500' :
+                  isInProgress ? 'bg-blue-600 text-white border-blue-600 ring-4 ring-blue-500/15 animate-pulse' :
+                  'bg-white/65 border-white/80 text-slate-400'
+                }`}>
+                  {isCompleted ? <Check size={16} /> : (idx + 1)}
+                </div>
+                <div className="flex-1">
+                  <h3 className={`text-xs font-black tracking-tight ${isCompleted ? 'text-emerald-700' : isInProgress ? 'text-blue-600' : 'text-slate-650'}`}>
+                    {m.label}
+                  </h3>
+                  <p className="text-[9px] text-slate-400 mt-0.5 font-bold uppercase tracking-wider">{m.date}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Selected Milestone Detail Pane */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-2 bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm space-y-4">
+          <div className="flex justify-between items-center border-b border-white/30 pb-3">
+            <div>
+              <span className={`px-2.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
+                selectedMilestone.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                selectedMilestone.status === 'IN_PROGRESS' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
+                'bg-slate-50 text-slate-500 border border-slate-200'
+              }`}>
+                {selectedMilestone.status}
+              </span>
+              <h2 className="text-lg font-black text-slate-800 mt-2">{selectedMilestone.label}</h2>
+            </div>
+            <div className="flex gap-1.5">
+              <button onClick={() => handleStatusChange(selectedMilestone.id, 'COMPLETED')} className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl text-[10px] font-bold border border-emerald-200">
+                Mark Done
+              </button>
+              <button onClick={() => handleStatusChange(selectedMilestone.id, 'IN_PROGRESS')} className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl text-[10px] font-bold border border-blue-200">
+                Start Now
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 text-xs font-semibold">
+            <div>
+              <span className="text-[9px] text-slate-450 uppercase tracking-widest block font-black">Target Date</span>
+              <p className="text-slate-800 font-extrabold mt-1">{selectedMilestone.date}</p>
+            </div>
+            <div>
+              <span className="text-[9px] text-slate-450 uppercase tracking-widest block font-black">Hired Provider</span>
+              <p className="text-slate-800 font-extrabold mt-1">{selectedMilestone.vendor}</p>
+            </div>
+            <div className="col-span-2 pt-2">
+              <span className="text-[9px] text-slate-450 uppercase tracking-widest block font-black">Milestone Objective</span>
+              <p className="text-slate-655 leading-relaxed mt-1">{selectedMilestone.desc}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Next Recommendation Panel */}
+        <div className="bg-gradient-to-tr from-slate-900 via-slate-950 to-indigo-950 text-white rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <span className="px-2 py-0.5 bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[8px] font-black tracking-widest rounded-full uppercase">
+              AI Action Helper
+            </span>
+            <h3 className="text-sm font-extrabold mt-4">Next Suggested Action</h3>
+            <p className="text-xs text-slate-350 mt-2 leading-relaxed">
+              To close the <strong>Floral & Decor</strong> milestone, disburse the advance payment check of ₹45,000 to Royal Decorators.
+            </p>
+          </div>
+          <button onClick={() => toast.success("Disbursement request routed to settings.")} className="mt-6 w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl text-xs font-bold shadow-sm transition-all hover:scale-[1.01]">
+            Disburse Funds Now
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* 2. KanbanTasksTab */
+export function KanbanTasksTab({ isDemoMode }) {
+  const [tasks, setTasks] = useState([
+    { id: 't1', title: 'Arrange groom entry car', desc: 'Secure luxury vehicle for entry.', status: 'TODO', priority: 'HIGH', date: '2026-08-01' },
+    { id: 't2', title: 'Finalize buffet appetizers', desc: 'Choose 3 veg and 3 non-veg starters.', status: 'IN_PROGRESS', priority: 'MEDIUM', date: '2026-09-02' },
+    { id: 't3', title: 'Secure main banquet hall', desc: 'Pay 25% deposit for Grand Hyatt.', status: 'DONE', priority: 'HIGH', date: '2026-07-05' },
+    { id: 't4', title: 'Approve DJ playlist', desc: 'Add classic dance tracks.', status: 'TODO', priority: 'LOW', date: '2026-10-10' }
+  ]);
+  const [showNewTaskForm, setShowNewTaskForm] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newDesc, setNewDesc] = useState('');
+  const [newPriority, setNewPriority] = useState('MEDIUM');
+  const [newStatus, setNewStatus] = useState('TODO');
+
+  const moveTask = (id, newStatus) => {
+    setTasks(tasks.map(t => t.id === id ? { ...t, status: newStatus } : t));
+    toast.success(`Task status updated!`);
+  };
+
+  const handleCreateTask = (e) => {
+    e.preventDefault();
+    if (!newTitle.trim()) return;
+    const newTask = {
+      id: 'task_' + Date.now(),
+      title: newTitle,
+      desc: newDesc,
+      status: newStatus,
+      priority: newPriority,
+      date: new Date().toISOString().substring(0, 10)
+    };
+    setTasks([...tasks, newTask]);
+    setNewTitle('');
+    setNewDesc('');
+    setShowNewTaskForm(false);
+    toast.success("Task added to board.");
+  };
+
+  const renderColumn = (colStatus, colName, accentColor) => {
+    const colTasks = tasks.filter(t => t.status === colStatus);
+    return (
+      <div className="flex-1 bg-white/20 border border-white/40 rounded-3xl p-5 shadow-sm space-y-4">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <span className={`w-2.5 h-2.5 rounded-full ${accentColor}`} />
+            <h3 className="text-xs font-black text-slate-800 uppercase tracking-widest">{colName}</h3>
+            <span className="text-[10px] bg-white/50 text-slate-650 px-2 py-0.5 rounded-md font-extrabold">{colTasks.length}</span>
+          </div>
+          <button onClick={() => { setNewStatus(colStatus); setShowNewTaskForm(true); }} className="p-1 hover:bg-white/60 text-slate-400 hover:text-slate-800 rounded-lg transition-colors">
+            <Plus size={14} />
+          </button>
+        </div>
+
+        <div className="space-y-3 min-h-[300px] overflow-y-auto custom-scrollbar">
+          {colTasks.length === 0 ? (
+            <div className="text-center py-10 text-[10px] text-slate-400 italic">No tasks here</div>
+          ) : (
+            colTasks.map(t => (
+              <div key={t.id} className="bg-white/45 backdrop-blur-sm border border-white/60 rounded-2xl p-4 shadow-sm hover:scale-[1.01] transition-all space-y-3 relative group">
+                <div className="flex justify-between items-start">
+                  <span className={`px-2 py-0.5 border rounded text-[8px] font-black tracking-wider uppercase ${
+                    t.priority === 'HIGH' ? 'bg-red-50 text-red-700 border-red-200' :
+                    t.priority === 'MEDIUM' ? 'bg-amber-50 text-amber-705 border-amber-200' :
+                    'bg-slate-50 text-slate-600 border-slate-200'
+                  }`}>
+                    {t.priority}
+                  </span>
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {colStatus !== 'TODO' && (
+                      <button onClick={() => moveTask(t.id, colStatus === 'IN_PROGRESS' ? 'TODO' : 'IN_PROGRESS')} className="p-1 hover:bg-white text-slate-500 rounded text-[9px] font-black">←</button>
+                    )}
+                    {colStatus !== 'DONE' && (
+                      <button onClick={() => moveTask(t.id, colStatus === 'TODO' ? 'IN_PROGRESS' : 'DONE')} className="p-1 hover:bg-white text-slate-500 rounded text-[9px] font-black">→</button>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-black text-slate-850">{t.title}</h4>
+                  <p className="text-[10px] text-slate-505 mt-1 font-semibold leading-relaxed">{t.desc}</p>
+                </div>
+
+                <div className="text-[9px] text-slate-400 font-extrabold flex items-center gap-1">
+                  <Clock size={10} /> Due: {t.date}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="space-y-6 font-sans">
+      <div className="flex justify-between items-center">
+        <div>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Workspace Core</span>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Notion Kanban Tasks</h1>
+        </div>
+        <button onClick={() => setShowNewTaskForm(true)} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/10 hover:scale-[1.01] active:scale-[0.99] transition-all">
+          + Add Task
+        </button>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-6">
+        {renderColumn('TODO', 'To Do', 'bg-red-400')}
+        {renderColumn('IN_PROGRESS', 'In Progress', 'bg-blue-400')}
+        {renderColumn('DONE', 'Completed', 'bg-emerald-400')}
+      </div>
+
+      {/* Task Creation Dialog */}
+      <Dialog open={showNewTaskForm} onOpenChange={setShowNewTaskForm}>
+        <DialogContent className="sm:max-w-md bg-white rounded-3xl p-6 border border-gray-250 shadow-xl z-50">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold text-gray-900">Add Task Card</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleCreateTask} className="space-y-4 mt-2">
+            <div>
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Task Title *</label>
+              <input 
+                required 
+                type="text" 
+                value={newTitle} 
+                onChange={e => setNewTitle(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 bg-white text-slate-850"
+                placeholder="e.g. Call caterer for menu adjustment"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Description</label>
+              <textarea 
+                value={newDesc} 
+                onChange={e => setNewDesc(e.target.value)}
+                rows={3}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm font-semibold outline-none focus:border-blue-500 bg-white text-slate-850 resize-none"
+                placeholder="Optional details..."
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Priority</label>
+                <select value={newPriority} onChange={e => setNewPriority(e.target.value)} className="w-full px-3 py-2.5 h-11 border border-gray-200 rounded-xl text-xs font-semibold bg-white outline-none focus:border-blue-500">
+                  <option value="LOW">Low</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="HIGH">High</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Column</label>
+                <select value={newStatus} onChange={e => setNewStatus(e.target.value)} className="w-full px-3 py-2.5 h-11 border border-gray-200 rounded-xl text-xs font-semibold bg-white outline-none focus:border-blue-500">
+                  <option value="TODO">To Do</option>
+                  <option value="IN_PROGRESS">In Progress</option>
+                  <option value="DONE">Completed</option>
+                </select>
+              </div>
+            </div>
+            <div className="pt-2 flex justify-end gap-2.5">
+              <button type="button" onClick={() => setShowNewTaskForm(false)} className="px-4 py-2 border border-gray-200 hover:bg-gray-50 text-slate-700 rounded-xl text-xs font-bold transition-all">Cancel</button>
+              <button type="submit" className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl text-xs font-bold shadow-sm hover:scale-[1.01] active:scale-[0.99] transition-all">Save Card</button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+/* 3. VendorsMarketplaceTab */
+export function VendorsMarketplaceTab({ isDemoMode, setTab }) {
+  const [categoryFilter, setCategoryFilter] = useState('ALL');
+  const [compareList, setCompareList] = useState([]);
+  const [showCompareModal, setShowCompareModal] = useState(false);
+
+  const vendors = [
+    { id: 'v1', name: 'Grand Hyatt Ballrooms', category: 'VENUE', price: 250000, trust: 99, response: '5m', image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=600&auto=format&fit=crop', rating: 4.9, reviews: 142 },
+    { id: 'v2', name: 'Royal Flower Decorators', category: 'DECORATION', price: 45000, trust: 95, response: '12m', image: 'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?q=80&w=600&auto=format&fit=crop', rating: 4.7, reviews: 88 },
+    { id: 'v3', name: 'Gourmet Catering Services', category: 'CATERING', price: 95000, trust: 98, response: '10m', image: 'https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=600&auto=format&fit=crop', rating: 4.8, reviews: 120 },
+    { id: 'v4', name: 'Shine & Sound DJs', category: 'MUSIC', price: 25000, trust: 96, response: '8m', image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=600&auto=format&fit=crop', rating: 4.6, reviews: 64 },
+    { id: 'v5', name: 'Vivid Memory Studio', category: 'PHOTOGRAPHY', price: 60000, trust: 97, response: '15m', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop', rating: 4.8, reviews: 93 },
+    { id: 'v6', name: 'Luxury Mercedes Logistics', category: 'LOGISTICS', price: 30000, trust: 94, response: '20m', image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=600&auto=format&fit=crop', rating: 4.5, reviews: 31 }
+  ];
+
+  const filteredVendors = categoryFilter === 'ALL' ? vendors : vendors.filter(v => v.category === categoryFilter);
+
+  const toggleCompare = (v) => {
+    if (compareList.some(item => item.id === v.id)) {
+      setCompareList(compareList.filter(item => item.id !== v.id));
+    } else {
+      if (compareList.length >= 3) {
+        toast.warning("You can compare up to 3 vendors at a time.");
+        return;
+      }
+      setCompareList([...compareList, v]);
+    }
+  };
+
+  const handleInstantBook = (v) => {
+    toast.success(`Booking request submitted for ${v.name}! Secured via Escrow Protection.`);
+  };
+
+  return (
+    <div className="space-y-6 font-sans">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Escrow Marketplace</span>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Airbnb-style Vendor Space</h1>
+        </div>
+
+        <div className="flex flex-wrap gap-1 bg-white/40 p-1 rounded-xl border border-white/60 shadow-sm">
+          {['ALL', 'VENUE', 'CATERING', 'DECORATION', 'MUSIC', 'PHOTOGRAPHY', 'LOGISTICS'].map(cat => (
+            <button 
+              key={cat} 
+              onClick={() => setCategoryFilter(cat)}
+              className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase transition-all ${categoryFilter === cat ? 'bg-white text-blue-600 shadow-sm border border-white/10' : 'text-slate-500 hover:text-slate-800'}`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Compare Floating Bar */}
+      {compareList.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white backdrop-blur-md px-6 py-4 rounded-3xl shadow-2xl z-50 flex items-center gap-6 border border-white/15">
+          <div className="text-xs font-semibold">
+            Comparing <span className="font-extrabold text-blue-400">{compareList.length}</span> / 3 service providers
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => setShowCompareModal(true)} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-500/20">
+              Compare Side-by-Side
+            </button>
+            <button onClick={() => setCompareList([])} className="px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition-all">
+              Reset
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Vendor Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredVendors.map(v => {
+          const isSelected = compareList.some(item => item.id === v.id);
+          return (
+            <div key={v.id} className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl overflow-hidden shadow-sm hover:scale-[1.015] transition-all flex flex-col justify-between">
+              <div>
+                <div className="h-44 relative overflow-hidden group">
+                  <img src={v.image} alt={v.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <span className="absolute top-3.5 left-3.5 px-2 py-0.5 bg-slate-900/80 text-white text-[8px] font-black uppercase tracking-widest rounded-md backdrop-blur-sm">
+                    {v.category}
+                  </span>
+                  <div className="absolute top-3.5 right-3.5 bg-emerald-500 text-white text-[9px] font-black px-2 py-0.5 rounded-md flex items-center gap-1 shadow-sm">
+                    ⭐ {v.rating} <span className="text-[7px] text-emerald-100 font-normal font-sans">({v.reviews})</span>
+                  </div>
+                </div>
+
+                <div className="p-5 space-y-2">
+                  <h3 className="text-sm font-black text-slate-800 leading-tight">{v.name}</h3>
+                  <div className="flex justify-between items-center text-xs font-semibold text-slate-550">
+                    <span className="flex items-center gap-1 text-[10px]"><Sparkles size={11} className="text-amber-505" /> Trust Score: <strong className="text-slate-700">{v.trust}%</strong></span>
+                    <span className="text-[10px]">Response: <strong className="text-slate-700">{v.response}</strong></span>
+                  </div>
+                  <div className="pt-2 border-t border-white/30 flex justify-between items-center">
+                    <div>
+                      <span className="text-[8px] text-slate-400 uppercase tracking-widest block font-black">Base Estimate</span>
+                      <span className="text-sm font-extrabold text-slate-900">₹{v.price.toLocaleString('en-IN')}</span>
+                    </div>
+                    <button 
+                      onClick={() => toggleCompare(v)}
+                      className={`px-3 py-1.5 rounded-xl text-[10px] font-bold border transition-all ${
+                        isSelected ? 'bg-blue-600 text-white border-blue-600 shadow-sm' : 'bg-white hover:bg-slate-50 text-slate-705 border-slate-200'
+                      }`}
+                    >
+                      {isSelected ? '✓ Added' : 'Compare'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 flex gap-2">
+                <button onClick={() => handleInstantBook(v)} className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl text-xs font-bold shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99]">
+                  Secure Escrow Hire
+                </button>
+                <button onClick={() => setTab('messages')} className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-250 text-slate-700 rounded-xl text-xs font-semibold transition-all">
+                  Chat
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Compare Side-by-Side Dialog Modal */}
+      <Dialog open={showCompareModal} onOpenChange={setShowCompareModal}>
+        <DialogContent className="sm:max-w-3xl bg-white rounded-3xl p-6 border border-gray-250 shadow-2xl z-50">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold text-gray-900">Compare Service Providers</DialogTitle>
+          </DialogHeader>
+          <div className="grid grid-cols-3 gap-6 mt-4">
+            {compareList.map(v => (
+              <div key={v.id} className="border border-gray-150 rounded-2xl p-4 space-y-4 bg-gray-50/50">
+                <div className="h-28 rounded-lg overflow-hidden">
+                  <img src={v.image} alt={v.name} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <span className="text-[8px] bg-slate-900 text-white px-2 py-0.5 rounded font-black tracking-widest uppercase">{v.category}</span>
+                  <h3 className="text-xs font-black text-slate-800 mt-2 leading-tight h-8">{v.name}</h3>
+                </div>
+                <div className="space-y-1.5 text-[10px] font-semibold text-slate-650 border-t pt-3">
+                  <div className="flex justify-between"><span>Base Rate:</span> <strong className="text-slate-900">₹{v.price.toLocaleString('en-IN')}</strong></div>
+                  <div className="flex justify-between"><span>Trust Rating:</span> <strong className="text-emerald-600">⭐ {v.rating} ({v.reviews})</strong></div>
+                  <div className="flex justify-between"><span>Aura Score:</span> <strong className="text-slate-900">{v.trust}%</strong></div>
+                  <div className="flex justify-between"><span>Response:</span> <strong className="text-slate-900">{v.response}</strong></div>
+                </div>
+                <button onClick={() => { handleInstantBook(v); setShowCompareModal(false); }} className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm">
+                  Instant Hire
+                </button>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+/* ============================================================================
+   EVENT OS TABS: BUDGET, MESSAGES, DOCUMENTS, ANALYTICS
+   ============================================================================ */
+
+/* 4. BudgetCenterTab */
+export function BudgetCenterTab({ isDemoMode }) {
+  const [totalBudget, setTotalBudget] = useState(300000);
+  const [expenses, setExpenses] = useState([
+    { id: 1, name: 'Venue Advance Payment', amount: 125000, category: 'VENUE', date: '2026-06-10' },
+    { id: 2, name: 'Floral Advance Deposit', amount: 20000, category: 'DECORATION', date: '2026-06-15' },
+    { id: 3, name: 'DJ Sound Equipment Lock', amount: 15000, category: 'MUSIC', date: '2026-06-20' }
+  ]);
+  const [newName, setNewName] = useState('');
+  const [newAmount, setNewAmount] = useState('');
+  const [newCategory, setNewCategory] = useState('CATERING');
+
+  const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
+  const remaining = totalBudget - totalSpent;
+  const progressPercent = Math.min(100, Math.round((totalSpent / totalBudget) * 100));
+
+  const handleAddExpense = (e) => {
+    e.preventDefault();
+    if (!newName.trim() || !newAmount) return;
+    const amountVal = parseFloat(newAmount);
+    if (isNaN(amountVal) || amountVal <= 0) return;
+    
+    const newExpense = {
+      id: Date.now(),
+      name: newName,
+      amount: amountVal,
+      category: newCategory,
+      date: new Date().toISOString().substring(0, 10)
+    };
+    setExpenses([...expenses, newExpense]);
+    setNewName('');
+    setNewAmount('');
+    toast.success("Expense ledger updated successfully.");
+  };
+
+  return (
+    <div className="space-y-6 font-sans">
+      <div className="flex justify-between items-center">
+        <div>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Workspace Finances</span>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Stripe-style Budget Center</h1>
+        </div>
+        <div className="flex gap-2">
+          <input 
+            type="number" 
+            value={totalBudget} 
+            onChange={e => setTotalBudget(Number(e.target.value))} 
+            className="w-32 px-3 py-1.5 border border-white/60 rounded-xl text-xs font-bold outline-none bg-white/40 focus:bg-white text-slate-800" 
+            title="Edit Total Budget"
+          />
+          <button onClick={() => toast.success("Budget limit locked.")} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl text-xs font-bold shadow-sm">
+            Save Limit
+          </button>
+        </div>
+      </div>
+
+      {/* Financial Health Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+          <span className="text-[9px] font-black text-slate-455 uppercase tracking-widest block">Total Budget Cap</span>
+          <div className="text-2xl font-black text-slate-800 tracking-tight mt-4">₹{totalBudget.toLocaleString('en-IN')}</div>
+          <span className="text-[9px] text-slate-400 font-bold block mt-2">Maximum spending parameters</span>
+        </div>
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+          <span className="text-[9px] font-black text-slate-450 uppercase tracking-widest block">Accumulated Spend</span>
+          <div className="text-2xl font-black text-slate-800 tracking-tight mt-4">₹{totalSpent.toLocaleString('en-IN')}</div>
+          <div className="flex items-center gap-2 mt-2">
+            <div className="flex-1 bg-slate-200 h-1 rounded-full overflow-hidden">
+              <div className="bg-indigo-50 h-full rounded-full" style={{ width: `${progressPercent}%` }} />
+            </div>
+            <span className="text-[10px] text-slate-500 font-extrabold">{progressPercent}%</span>
+          </div>
+        </div>
+        <div className={`backdrop-blur-md border rounded-3xl p-6 shadow-sm flex flex-col justify-between ${remaining >= 0 ? 'bg-emerald-50/20 border-emerald-250/30 text-emerald-850' : 'bg-red-50/20 border-red-250/30 text-red-850'}`}>
+          <span className="text-[9px] font-black uppercase tracking-widest block opacity-75">Remaining Capital</span>
+          <div className="text-2xl font-black tracking-tight mt-4">₹{remaining.toLocaleString('en-IN')}</div>
+          <span className="text-[9px] font-bold block mt-2">{remaining >= 0 ? '✓ Within safety limits' : '⚠️ Budget limits breached!'}</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {/* Expense Ledger */}
+        <div className="lg:col-span-2 bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm space-y-4">
+          <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest">Transaction Ledger</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs font-semibold text-slate-655">
+              <thead>
+                <tr className="bg-white/20 border-b border-white/30 text-[9px] text-slate-450 uppercase tracking-wider h-9">
+                  <th className="px-4 py-2">Transaction Details</th>
+                  <th className="px-4 py-2">Category</th>
+                  <th className="px-4 py-2">Date</th>
+                  <th className="px-4 py-2 text-right">Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/20">
+                {expenses.map(e => (
+                  <tr key={e.id} className="h-12 hover:bg-white/30 transition-colors">
+                    <td className="px-4 py-2 text-slate-800 font-bold">{e.name}</td>
+                    <td className="px-4 py-2">
+                      <span className="px-2 py-0.5 bg-blue-50 border border-blue-150 text-blue-700 text-[9px] font-bold rounded uppercase">{e.category}</span>
+                    </td>
+                    <td className="px-4 py-2 text-slate-450">{e.date}</td>
+                    <td className="px-4 py-2 text-right font-extrabold text-slate-850">₹{e.amount.toLocaleString('en-IN')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Ledger entry */}
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-5 shadow-sm space-y-4">
+          <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest flex items-center gap-1.5"><Plus size={14} className="text-blue-500" /> Log Transaction</h3>
+          <form onSubmit={handleAddExpense} className="space-y-3.5">
+            <div>
+              <label className="text-[9px] font-black text-slate-500 block uppercase mb-1">Details *</label>
+              <input required type="text" value={newName} onChange={e => setNewName(e.target.value)} placeholder="e.g. Stage lighting setup fee" className="w-full px-3 py-2 border border-white/40 rounded-lg text-xs font-semibold bg-white/40 backdrop-blur-sm focus:bg-white focus:border-blue-500 text-slate-800" />
+            </div>
+            <div>
+              <label className="text-[9px] font-black text-slate-500 block uppercase mb-1">Estimate (₹) *</label>
+              <input required type="number" value={newAmount} onChange={e => setNewAmount(e.target.value)} placeholder="e.g. 15000" className="w-full px-3 py-2 border border-white/40 rounded-lg text-xs font-semibold bg-white/40 backdrop-blur-sm focus:bg-white focus:border-blue-500 text-slate-800" />
+            </div>
+            <div>
+              <label className="text-[9px] font-black text-slate-500 block uppercase mb-1">Category</label>
+              <select value={newCategory} onChange={e => setNewCategory(e.target.value)} className="w-full px-3 py-2.5 border border-white/40 rounded-lg text-xs font-semibold bg-white focus:border-blue-500">
+                <option value="VENUE">VENUE</option>
+                <option value="CATERING">CATERING</option>
+                <option value="DECORATION">DECORATION</option>
+                <option value="MUSIC">MUSIC</option>
+                <option value="PHOTOGRAPHY">PHOTOGRAPHY</option>
+                <option value="LOGISTICS">LOGISTICS</option>
+              </select>
+            </div>
+            <button type="submit" className="w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-655 text-white rounded-lg text-xs font-bold transition-all shadow-sm hover:scale-[1.01]">
+              Add to Ledger
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* 5. MessagesHubTab */
+export function MessagesHubTab({ isDemoMode }) {
+  const [conversations, setConversations] = useState([
+    { id: 1, name: 'Grand Hyatt Ballrooms', lastMessage: 'Menu verification sheet is locked.', time: '14:32', type: 'vendor', avatar: '🏢' },
+    { id: 2, name: 'Shine & Sound DJs', lastMessage: 'Is the outdoor audio console approved?', time: '11:15', type: 'vendor', avatar: '🎧' },
+    { id: 3, name: 'Platform Dispute Center', lastMessage: 'Dispute resolved. Refund sent.', time: 'Yesterday', type: 'dispute', avatar: '🛡️' }
+  ]);
+  const [activeConv, setActiveConv] = useState(conversations[0]);
+  const [messages, setMessages] = useState({
+    1: [
+      { id: 101, sender: 'vendor', text: 'Hi Karan, the venue setup details look complete. Please verify the food stalls arrangement.', time: '14:28' },
+      { id: 102, sender: 'client', text: 'Looks great! I checked the spreadsheet.', time: '14:30' },
+      { id: 103, sender: 'vendor', text: 'Awesome, menu verification sheet is locked.', time: '14:32' }
+    ],
+    2: [
+      { id: 201, sender: 'vendor', text: 'Do we have backup generator setup?', time: '11:10' },
+      { id: 202, sender: 'vendor', text: 'Is the outdoor audio console approved?', time: '11:15' }
+    ],
+    3: [
+      { id: 301, sender: 'system', text: 'Incident log dispute #701 initiated.', time: '09:00' },
+      { id: 302, sender: 'admin', text: 'We reviewed the cancellation logs and processed the full deposit back to your wallet.', time: '16:00' },
+      { id: 303, sender: 'system', text: 'Dispute resolved. Refund sent.', time: '16:05' }
+    ]
+  });
+  const [inputVal, setInputVal] = useState('');
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!inputVal.trim()) return;
+
+    const newMsg = {
+      id: Date.now(),
+      sender: 'client',
+      text: inputVal,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    setMessages(prev => ({
+      ...prev,
+      [activeConv.id]: [...(prev[activeConv.id] || []), newMsg]
+    }));
+
+    setConversations(conversations.map(c => 
+      c.id === activeConv.id ? { ...c, lastMessage: inputVal, time: 'Just Now' } : c
+    ));
+
+    setInputVal('');
+  };
+
+  return (
+    <div className="space-y-6 font-sans">
+      <div>
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Secure Collaboration</span>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Pinned Messages Hub</h1>
+      </div>
+
+      <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl overflow-hidden shadow-sm h-[500px] flex">
+        {/* Message Threads Sidebar */}
+        <div className="w-80 border-r border-white/30 flex flex-col">
+          <div className="p-4 border-b border-white/30">
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Active Channels</span>
+          </div>
+          <div className="flex-1 overflow-y-auto divide-y divide-white/20">
+            {conversations.map(c => {
+              const isSelected = c.id === activeConv.id;
+              return (
+                <div 
+                  key={c.id} 
+                  onClick={() => setActiveConv(c)}
+                  className={`p-4 cursor-pointer hover:bg-white/30 transition-all ${isSelected ? 'bg-white/60' : ''}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-white/70 shadow-sm flex items-center justify-center text-lg">{c.avatar}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-baseline">
+                        <h4 className="text-xs font-black text-slate-800 truncate">{c.name}</h4>
+                        <span className="text-[8px] text-slate-400 font-extrabold">{c.time}</span>
+                      </div>
+                      <p className="text-[10px] text-slate-505 truncate font-semibold mt-0.5">{c.lastMessage}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Chat Feed */}
+        <div className="flex-1 flex flex-col justify-between bg-white/10 relative">
+          {/* Chat Header */}
+          <div className="p-4 border-b border-white/30 bg-white/30 flex justify-between items-center backdrop-blur-sm">
+            <h4 className="text-xs font-black text-slate-800">{activeConv.name}</h4>
+            <span className="px-2 py-0.5 bg-blue-500/10 text-blue-700 border border-blue-500/25 rounded text-[8px] font-black uppercase tracking-wider">Escrow Secure Chat</span>
+          </div>
+
+          {/* Messages Scroll Area */}
+          <div className="flex-1 p-6 overflow-y-auto space-y-4 custom-scrollbar">
+            {(messages[activeConv.id] || []).map(m => {
+              const isClient = m.sender === 'client';
+              const isSystem = m.sender === 'system';
+
+              if (isSystem) {
+                return (
+                  <div key={m.id} className="flex justify-center">
+                    <span className="px-3 py-1 bg-slate-900/10 text-slate-650 text-[9px] font-black uppercase tracking-widest rounded-lg border border-slate-900/10">{m.text}</span>
+                  </div>
+                );
+              }
+
+              return (
+                <div key={m.id} className={`flex ${isClient ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[70%] rounded-2xl p-3.5 shadow-sm text-xs font-semibold ${
+                    isClient 
+                      ? 'bg-gradient-to-tr from-blue-600 to-indigo-650 text-white rounded-tr-none' 
+                      : 'bg-white border border-white/80 text-slate-800 rounded-tl-none'
+                  }`}>
+                    <p className="leading-relaxed">{m.text}</p>
+                    <span className={`block text-[7px] text-right mt-1.5 ${isClient ? 'text-blue-200' : 'text-slate-400'}`}>{m.time}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Input Form */}
+          <form onSubmit={handleSendMessage} className="p-4 bg-white/30 border-t border-white/30 flex gap-2 backdrop-blur-sm">
+            <input 
+              type="text" 
+              value={inputVal} 
+              onChange={e => setInputVal(e.target.value)} 
+              placeholder="Type your message securely..." 
+              className="flex-1 px-4 py-2.5 h-10 border border-white/40 focus:border-blue-500 rounded-xl text-xs font-semibold outline-none bg-white/40 focus:bg-white text-slate-800 transition-all"
+            />
+            <button type="submit" className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-655 text-white rounded-xl text-xs font-bold shadow-sm transition-all hover:scale-[1.01]">
+              Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* 6. DocumentVaultTab */
+export function DocumentVaultTab({ isDemoMode }) {
+  const [docs, setDocs] = useState([
+    { id: 1, name: 'Photographer_Contract_Vivid.pdf', size: '1.2 MB', date: '2026-06-15', category: 'CONTRACTS' },
+    { id: 2, name: 'Main_Hyatt_Banquet_Advance_Receipt.pdf', size: '840 KB', date: '2026-06-10', category: 'INVOICES' },
+    { id: 3, name: 'Sangeet_Guestlist_Sheet.xlsx', size: '320 KB', date: '2026-06-20', category: 'GUEST_LISTS' }
+  ]);
+  const [guests, setGuests] = useState([
+    { id: 1, name: 'Rohan Sharma', rsvp: 'CONFIRMED', table: 'Table 1', food: 'Veg' },
+    { id: 2, name: 'Sneha Patel', rsvp: 'CONFIRMED', table: 'Table 2', food: 'Non-Veg' },
+    { id: 3, name: 'Amit Verma', rsvp: 'PENDING', table: 'Table 1', food: 'Veg' }
+  ]);
+
+  const handleUpload = (e) => {
+    e.preventDefault();
+    const newDoc = {
+      id: Date.now(),
+      name: 'User_Uploaded_Invoice_' + Date.now().toString().slice(-4) + '.pdf',
+      size: '480 KB',
+      date: new Date().toISOString().substring(0, 10),
+      category: 'INVOICES'
+    };
+    setDocs([...docs, newDoc]);
+    toast.success("Document uploaded securely to platform vault.");
+  };
+
+  const handleRsvpChange = (id, newRsvp) => {
+    setGuests(guests.map(g => g.id === id ? { ...g, rsvp: newRsvp } : g));
+    toast.success("RSVP status updated.");
+  };
+
+  return (
+    <div className="space-y-6 font-sans">
+      <div>
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Document Secure Storage</span>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Asset Document Vault</h1>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {/* Document List */}
+        <div className="lg:col-span-2 bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm space-y-4">
+          <div className="flex justify-between items-center border-b border-white/30 pb-3">
+            <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest">Saved Attachments</h3>
+            <button onClick={handleUpload} className="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-xl text-[10px] font-bold shadow-sm">
+              + Upload Asset
+            </button>
+          </div>
+
+          <div className="space-y-2">
+            {docs.map(doc => (
+              <div key={doc.id} className="p-3.5 bg-white/30 hover:bg-white/50 border border-white/50 rounded-2xl flex justify-between items-center gap-3 transition-all">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-200/50 flex items-center justify-center text-xs text-blue-600">📁</span>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-extrabold text-slate-800 truncate" title={doc.name}>{doc.name}</h4>
+                    <span className="text-[9px] text-slate-400 font-bold block mt-0.5">{doc.size} • Uploaded {doc.date}</span>
+                  </div>
+                </div>
+                <button onClick={() => toast.success(`Downloading ${doc.name}...`)} className="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 rounded-xl text-[10px] font-bold shadow-sm whitespace-nowrap">
+                  Download
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Live Guest List Manager */}
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm space-y-4">
+          <h3 className="text-xs font-black text-slate-455 uppercase tracking-widest">RSVP Guest Tracker</h3>
+          <div className="space-y-3">
+            {guests.map(g => (
+              <div key={g.id} className="p-3 bg-white/20 border border-white/40 rounded-xl space-y-2 text-xs">
+                <div className="flex justify-between items-center">
+                  <strong className="text-slate-850 font-black">{g.name}</strong>
+                  <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase ${
+                    g.rsvp === 'CONFIRMED' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-705'
+                  }`}>{g.rsvp}</span>
+                </div>
+                <div className="flex justify-between items-center text-[10px] text-slate-450 font-bold">
+                  <span>Preference: <strong className="text-slate-700">{g.food}</strong></span>
+                  <span>{g.table}</span>
+                </div>
+                <div className="flex gap-1 pt-1.5 border-t border-white/10">
+                  <button onClick={() => handleRsvpChange(g.id, 'CONFIRMED')} className="px-2 py-1 bg-white border text-[8px] font-bold rounded-lg text-slate-800">Confirm</button>
+                  <button onClick={() => handleRsvpChange(g.id, 'PENDING')} className="px-2 py-1 bg-white border text-[8px] font-bold rounded-lg text-slate-855">Pending</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* 7. AnalyticsMinimalTab */
+export function AnalyticsMinimalTab({ isDemoMode }) {
+  return (
+    <div className="space-y-6 font-sans">
+      <div>
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Workspace Diagnostics</span>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Executive Decision Analytics</h1>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
+          <span className="text-[9px] font-black text-slate-450 uppercase tracking-widest block">Coordination Aura</span>
+          <div className="text-3xl font-black text-slate-800 tracking-tight mt-4">98%</div>
+          <span className="text-[8px] text-emerald-600 font-extrabold mt-1 block">Excellent status reliability</span>
+        </div>
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
+          <span className="text-[9px] font-black text-slate-450 uppercase tracking-widest block">Response Velocity</span>
+          <div className="text-3xl font-black text-slate-800 tracking-tight mt-4">8.5 min</div>
+          <span className="text-[8px] text-emerald-600 font-extrabold mt-1 block">Quick vendor turnaround</span>
+        </div>
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
+          <span className="text-[9px] font-black text-slate-455 uppercase tracking-widest block">Escrow Protected</span>
+          <div className="text-3xl font-black text-slate-800 tracking-tight mt-4">100%</div>
+          <span className="text-[8px] text-slate-400 font-bold mt-1 block">Security collateral secured</span>
+        </div>
+        <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
+          <span className="text-[9px] font-black text-slate-450 uppercase tracking-widest block">Task Velocity</span>
+          <div className="text-3xl font-black text-slate-800 tracking-tight mt-4">1.2 / day</div>
+          <span className="text-[8px] text-emerald-600 font-extrabold mt-1 block">Ahead of target timeline</span>
+        </div>
+      </div>
+
+      {/* Mini Diagnostic graph mockup */}
+      <div className="bg-white/40 backdrop-blur-md border border-white/60 rounded-3xl p-6 shadow-sm">
+        <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest mb-6">Readiness score trajectory</h3>
+        <div className="w-full h-32 relative bg-white/20 border border-white/40 rounded-2xl overflow-hidden flex items-end">
+          <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+            <path d="M 0 80 Q 25 70, 50 45 T 100 20" fill="none" stroke="rgba(37,99,235,0.7)" strokeWidth="2.5" />
+            <path d="M 0 80 Q 25 70, 50 45 T 100 20 L 100 100 L 0 100 Z" fill="rgba(37,99,235,0.06)" />
+          </svg>
+          <div className="absolute inset-x-0 bottom-2 px-4 flex justify-between text-[8px] font-black text-slate-400 uppercase tracking-widest">
+            <span>May 1</span>
+            <span>June 1</span>
+            <span>Today</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================================
+   EVENT OS TABS: CANCELLATION CENTER, NOTIFICATIONS, FLOATING AI COPILOT
+   ============================================================================ */
+
+/* 8. CancellationCenterTab */
+export function CancellationCenterTab({ isDemoMode }) {
+  const [incidents, setIncidents] = useState([
+    {
+      id: 'inc_101',
+      title: 'Sound System Provider Cancellation',
+      vendor: 'Shine & Sound DJs',
+      amount: 25000,
+      status: 'RECOVERY_IN_PROGRESS',
+      date: '2026-06-26',
+      refundStatus: 'REFUNDED_TO_ESCROW',
+      replacements: [
+        { id: 'rep_1', name: 'Bass Drop DJs', price: 23000, trust: 98, rating: 4.8 },
+        { id: 'rep_2', name: 'Sonic Blast AV', price: 26000, trust: 96, rating: 4.7 }
+      ]
+    }
+  ]);
+
+  const handleSimulateCancellation = () => {
+    const newIncident = {
+      id: 'inc_' + Date.now(),
+      title: 'Caterer Emergency Cancellation',
+      vendor: 'Gourmet Catering Services',
+      amount: 95000,
+      status: 'RECOVERY_IN_PROGRESS',
+      date: new Date().toISOString().substring(0, 10),
+      refundStatus: 'REFUNDED_TO_ESCROW',
+      replacements: [
+        { id: 'rep_3', name: 'Grand Feast Caterers', price: 90000, trust: 97, rating: 4.9 },
+        { id: 'rep_4', name: 'Royal Buffet Co.', price: 98000, trust: 95, rating: 4.6 }
+      ]
+    };
+    setIncidents([newIncident, ...incidents]);
+    toast.error("Emergency Simulated: Gourmet Catering has cancelled. Automated recovery initiated.");
+  };
+
+  const handleBookReplacement = (incidentId, rep) => {
+    setIncidents(incidents.map(inc => 
+      inc.id === incidentId 
+        ? { ...inc, status: 'RESOLVED', vendor: rep.name, amount: rep.price, replacements: [] }
+        : inc
+    ));
+    toast.success(`Successfully booked replacement: ${rep.name}! Funds transferred via Escrow Wallet.`);
+  };
+
+  return (
+    <div className="space-y-6 font-sans">
+      <div className="flex justify-between items-center">
+        <div>
+          <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest animate-pulse">PlanIt USP System</span>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Cancellation & Recovery Center</h1>
+        </div>
+        <button 
+          onClick={handleSimulateCancellation} 
+          className="px-4 py-2 bg-gradient-to-r from-rose-600 to-red-655 hover:from-rose-700 hover:to-red-750 text-white rounded-xl text-xs font-bold shadow-md shadow-rose-500/10 transition-all hover:scale-[1.01] active:scale-[0.99]"
+        >
+          Simulate Emergency Cancellation
+        </button>
+      </div>
+
+      <div className="space-y-6">
+        {incidents.length === 0 ? (
+          <div className="text-center py-16 bg-white/40 border border-white/60 rounded-3xl">
+            <ShieldAlert className="text-slate-350 mx-auto mb-3" size={40} />
+            <h3 className="text-base font-bold text-slate-700">All Operations Nominal</h3>
+            <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto font-semibold">No vendor cancellations or disputes logged in this event space.</p>
+          </div>
+        ) : (
+          incidents.map(inc => {
+            const isResolved = inc.status === 'RESOLVED';
+            return (
+              <div 
+                key={inc.id} 
+                className={`border rounded-3xl p-6 shadow-sm space-y-6 transition-all ${
+                  isResolved 
+                    ? 'bg-emerald-50/20 border-emerald-200/50' 
+                    : 'bg-white/40 backdrop-blur-md border-rose-200/60 shadow-[0_0_15px_rgba(239,68,68,0.05)]'
+                }`}
+              >
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/30 pb-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-0.5 border rounded text-[8px] font-black uppercase tracking-wider ${
+                        isResolved ? 'bg-emerald-50 text-emerald-705 border-emerald-250' : 'bg-red-50 text-red-750 border-red-250 animate-pulse'
+                      }`}>
+                        {inc.status.replace(/_/g, ' ')}
+                      </span>
+                      <span className="text-[10px] text-slate-455 font-bold uppercase">Incident ID: #{inc.id}</span>
+                    </div>
+                    <h3 className="text-base font-black text-slate-805 mt-2">{inc.title}</h3>
+                    <p className="text-xs text-slate-500 font-semibold mt-1">
+                      Cancelled Vendor: <strong className="text-slate-700">{inc.vendor}</strong> • Impact Estimate: ₹{inc.amount.toLocaleString('en-IN')}
+                    </p>
+                  </div>
+                  <div className="text-xs text-slate-450 font-bold uppercase tracking-wider text-right">
+                    Date: {inc.date}
+                  </div>
+                </div>
+
+                {/* Recover Details Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Left Column: Escrow Refund Status */}
+                  <div className="bg-white/30 border border-white/50 rounded-2xl p-4 space-y-3">
+                    <h4 className="text-[10px] font-black text-slate-450 uppercase tracking-widest">Escrow Safety Check</h4>
+                    <div className="space-y-2 text-xs font-semibold">
+                      <div className="flex justify-between">
+                        <span>Original Escrow Hold:</span>
+                        <strong className="text-slate-800">₹{inc.amount.toLocaleString('en-IN')}</strong>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span>Collateral Refund Status:</span>
+                        <span className="px-2 py-0.5 bg-emerald-50 text-emerald-750 rounded text-[9px] font-black border border-emerald-200">
+                          {inc.refundStatus.replace(/_/g, ' ')}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-450 leading-relaxed font-semibold pt-1 border-t">
+                        ✓ Collateral funds have been returned to your Escrow balance. No financial losses incurred.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Right Column: AI Auto Replacements */}
+                  <div className="space-y-3">
+                    <h4 className="text-[10px] font-black text-slate-450 uppercase tracking-widest">AI Matching Replacements</h4>
+                    {isResolved ? (
+                      <div className="p-4 bg-emerald-50/20 border border-emerald-200/50 rounded-2xl text-xs text-emerald-800 font-bold flex items-center gap-2">
+                        <span>✓ Incident Resolved. Replacement vendor locked.</span>
+                      </div>
+                    ) : inc.replacements.length === 0 ? (
+                      <p className="text-xs text-slate-455 italic">Searching database...</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {inc.replacements.map(rep => (
+                          <div key={rep.id} className="p-3 bg-white/50 border border-white/70 rounded-xl flex justify-between items-center gap-3 hover:bg-white/60 transition-all">
+                            <div>
+                              <h5 className="text-xs font-bold text-slate-800">{rep.name}</h5>
+                              <div className="flex gap-2.5 text-[9px] text-slate-400 mt-1 font-bold">
+                                <span>⭐ {rep.rating}</span>
+                                <span>Trust: {rep.trust}%</span>
+                                <span>Rate: ₹{rep.price.toLocaleString('en-IN')}</span>
+                              </div>
+                            </div>
+                            <button 
+                              onClick={() => handleBookReplacement(inc.id, rep)}
+                              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[10px] font-bold shadow-sm transition-all"
+                            >
+                              Instant Hire
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* 9. NotificationsInboxTab */
+export function NotificationsInboxTab({ isDemoMode }) {
+  const [activeSubTab, setActiveSubTab] = useState('ALL');
+  const [notifications, setNotifications] = useState([
+    { id: 1, title: 'Dispute Case #701 Closed', text: 'Admins resolved the dispute in your favor. Refund of ₹5,000 processed.', priority: 'URGENT', date: 'Just Now', read: false },
+    { id: 2, title: 'Gourmet Catering Menu due', text: 'Please review and select menu starters by tomorrow.', priority: 'IMPORTANT', date: '3 hours ago', read: false },
+    { id: 3, title: 'Invoice Uploaded', text: 'Royal Flower Decorators uploaded invoice #IV-992.', priority: 'GENERAL', date: '1 day ago', read: true }
+  ]);
+
+  const handleMarkRead = (id) => {
+    setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
+    toast.success("Notification marked as read.");
+  };
+
+  const handleClearAll = () => {
+    setNotifications([]);
+    toast.success("Inbox cleared.");
+  };
+
+  const filtered = notifications.filter(n => {
+    if (activeSubTab === 'ALL') return true;
+    if (activeSubTab === 'URGENT') return n.priority === 'URGENT';
+    return n.read === false;
+  });
+
+  return (
+    <div className="space-y-6 font-sans">
+      <div className="flex justify-between items-center">
+        <div>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Platform Mailbox</span>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight mt-0.5">Inbox Notifications</h1>
+        </div>
+        {notifications.length > 0 && (
+          <button onClick={handleClearAll} className="px-3.5 py-2 border border-white/60 bg-white/40 hover:bg-white/60 text-slate-700 rounded-xl text-xs font-bold transition-all">
+            Clear Inbox
+          </button>
+        )}
+      </div>
+
+      {/* Notion style pills */}
+      <div className="flex gap-1.5 bg-white/40 p-1 rounded-xl border border-white/60 w-fit">
+        {['ALL', 'URGENT', 'UNREAD'].map(tab => (
+          <button 
+            key={tab} 
+            onClick={() => setActiveSubTab(tab)}
+            className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase transition-all ${activeSubTab === tab ? 'bg-white text-blue-600 shadow-sm border border-white/10' : 'text-slate-500 hover:text-slate-800'}`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      <div className="space-y-2.5">
+        {filtered.length === 0 ? (
+          <p className="text-xs text-slate-455 italic py-10 text-center">Inbox is empty.</p>
+        ) : (
+          filtered.map(n => (
+            <div 
+              key={n.id} 
+              className={`p-4 border rounded-2xl flex justify-between items-start gap-4 transition-all ${
+                n.read 
+                  ? 'bg-white/10 border-white/20 opacity-60' 
+                  : 'bg-white/45 backdrop-blur-sm border-white/60 shadow-sm'
+              }`}
+            >
+              <div className="flex items-start gap-3 min-w-0">
+                <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+                  n.priority === 'URGENT' ? 'bg-red-500 animate-ping' :
+                  n.priority === 'IMPORTANT' ? 'bg-amber-500' : 'bg-blue-400'
+                }`} />
+                <div>
+                  <h4 className="text-xs font-black text-slate-805">{n.title}</h4>
+                  <p className="text-[10px] text-slate-505 mt-1 font-semibold leading-relaxed">{n.text}</p>
+                  <span className="text-[8px] text-slate-400 font-bold block mt-1.5">{n.date}</span>
+                </div>
+              </div>
+              {!n.read && (
+                <button onClick={() => handleMarkRead(n.id)} className="px-2.5 py-1 bg-white border border-slate-200 text-[8px] font-bold rounded-lg text-slate-800 whitespace-nowrap">
+                  Mark Read
+                </button>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* 10. FloatingAICopilot */
+export function FloatingAICopilot({ isDemoMode, workspaceMode }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [inputVal, setInputVal] = useState('');
+  
+  const welcomeText = useMemo(() => {
+    if (workspaceMode === 'vendor') {
+      return 'Hi! I am your AI Business Assistant. Ask me: "suggest pricing", "generate description", or "estimate monthly income" to optimize your workspace.';
+    }
+    return 'Hi! I am your Event OS Copilot. Type commands like: "add task Book Caterer" or "set budget 400000" to modify your plan.';
+  }, [workspaceMode]);
+
+  const [chatHistory, setChatHistory] = useState([
+    { sender: 'copilot', text: welcomeText }
+  ]);
+
+  useEffect(() => {
+    setChatHistory([{ sender: 'copilot', text: welcomeText }]);
+  }, [welcomeText]);
+
+  const handleCommandSubmit = (e) => {
+    e.preventDefault();
+    if (!inputVal.trim()) return;
+
+    const userCmd = inputVal.trim();
+    const newUserMsg = { sender: 'user', text: userCmd };
+    setChatHistory(prev => [...prev, newUserMsg]);
+    setInputVal('');
+
+    setTimeout(() => {
+      let responseText = "";
+      const lower = userCmd.toLowerCase();
+      
+      if (workspaceMode === 'vendor') {
+        if (lower.includes('suggest pricing') || lower.includes('pricing')) {
+          responseText = "💡 AI Price Optimizer:\nBased on current demand in Mumbai, we recommend raising 'Fairytale Canopy Flower Setup' price to ₹68,000 (+4.6%) due to peak booking trends for November. Would you like to lock this rate?";
+        } else if (lower.includes('description') || lower.includes('generate')) {
+          responseText = "✍️ AI Copywriter:\n'Elite drape structures combined with seasonal pastel orchids, custom LED warm spot fixtures, and custom glass stage setup. Ideal for luxury wedding mandates.' Description copied to draft.";
+        } else if (lower.includes('income') || lower.includes('estimate') || lower.includes('revenue')) {
+          responseText = "📊 Revenue Analytics:\nBased on 3 confirmed upcoming events and average spend of ₹67,000, your estimated payout settlements for next month is ₹201,000 (after Stripe processing fees).";
+        } else if (lower.includes('optimize') || lower.includes('calendar')) {
+          responseText = "📅 Calendar Optimizer:\nWe identified a 1-day conflict on Aug 15. Automatically applied preparation buffer slot and set concurrent bookings cap to 2 to prevent listing overbooking.";
+        } else {
+          responseText = "I can assist you with business actions. Type: 'suggest pricing', 'generate description', 'optimize calendar', or 'estimate monthly income'.";
+        }
+      } else {
+        responseText = "Sorry, I didn't recognize that command. Try typing 'add task [Name]' or 'set budget [Number]'.";
+        if (lower.startsWith('add task')) {
+          const taskName = userCmd.substring(8).trim();
+          if (taskName) {
+            const stored = localStorage.getItem('planit_tasks_101') || '[]';
+            let list = [];
+            try { list = JSON.parse(stored); } catch(e) {}
+            const newTask = {
+              id: 'copilot_' + Date.now(),
+              taskName,
+              taskDescription: 'Added via AI Copilot command action.',
+              dueDate: new Date().toISOString().substring(0,10),
+              priority: 'MEDIUM',
+              isCompleted: false,
+              isCustom: true
+            };
+            localStorage.setItem('planit_tasks_101', JSON.stringify([newTask, ...list]));
+            window.dispatchEvent(new Event('planit_storage_update'));
+            responseText = `✓ Task card added to your active event: "${taskName}"`;
+          }
+        } else if (lower.includes('budget')) {
+          const match = lower.match(/\d+/);
+          if (match) {
+            const number = parseFloat(match[0]);
+            localStorage.setItem('planit_budget_101', number);
+            window.dispatchEvent(new Event('planit_storage_update'));
+            responseText = `✓ Event budget limit updated to ₹${number.toLocaleString('en-IN')}`;
+          }
+        }
+      }
+
+      setChatHistory(prev => [...prev, { sender: 'copilot', text: responseText }]);
+    }, 450);
+  };
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50 font-sans">
+      {/* Floating Sparkle Pill */}
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-650 text-white rounded-full flex items-center gap-2 shadow-2xl hover:scale-105 active:scale-95 transition-all font-extrabold text-xs"
+      >
+        <Sparkles size={14} className="animate-pulse" />
+        {isOpen ? (workspaceMode === 'vendor' ? 'Close Assistant' : 'Close Copilot') : (workspaceMode === 'vendor' ? 'AI Assistant' : 'Ask Copilot')}
+      </button>
+
+      {/* Sliding Dialog Card */}
+      {isOpen && (
+        <div className="absolute bottom-14 right-0 w-80 bg-white rounded-3xl border border-gray-200 shadow-2xl p-4 flex flex-col justify-between gap-3 h-96">
+          <div className="flex justify-between items-center border-b pb-2">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
+              <Sparkles size={11} className="text-blue-500" /> {workspaceMode === 'vendor' ? 'Business AI Assistant' : 'Platform AI Copilot'}
+            </span>
+            <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-slate-700">
+              <X size={14} />
+            </button>
+          </div>
+
+          {/* Messages Scroll Area */}
+          <div className="flex-1 overflow-y-auto space-y-3.5 pr-1 text-xs font-semibold custom-scrollbar">
+            {chatHistory.map((msg, idx) => (
+              <div key={idx} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`p-3 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.01)] leading-relaxed max-w-[85%] whitespace-pre-line ${
+                  msg.sender === 'user' 
+                    ? 'bg-blue-600 text-white rounded-tr-none' 
+                    : 'bg-gray-50 border text-slate-700 rounded-tl-none'
+                }`}>
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Prompt Form */}
+          <form onSubmit={handleCommandSubmit} className="flex gap-1.5 border-t pt-2.5">
+            <input 
+              type="text" 
+              value={inputVal} 
+              onChange={e => setInputVal(e.target.value)} 
+              placeholder={workspaceMode === 'vendor' ? "Ask AI Assistant..." : "Command action details..."} 
+              className="flex-1 px-3 py-1.5 h-9 border border-gray-200 focus:border-blue-500 rounded-xl text-xs outline-none text-slate-800 bg-gray-50"
+            />
+            <button type="submit" className="px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all">
+              Send
+            </button>
+          </form>
         </div>
       )}
     </div>
