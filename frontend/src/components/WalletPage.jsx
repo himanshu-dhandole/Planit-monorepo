@@ -104,102 +104,86 @@ export default function WalletPage() {
 
   return (
     <CloudsBackground>
-      <div className="flex-1 pt-32 relative font-sans w-full min-h-screen py-12 px-4 sm:px-6 lg:px-8 z-10">
+      <div className="flex-1 pt-24 relative font-sans w-full min-h-screen py-10 px-4 sm:px-6 lg:px-8 z-10">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.75 }}
-          className="max-w-4xl mx-auto space-y-8"
+          transition={{ duration: 0.6 }}
+          className="max-w-3xl mx-auto space-y-6"
         >
           {/* Header Section */}
-          <div className="text-center pt-24 mb-12">
-            {/* <motion.div 
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="w-20 h-20 bg-white rounded-3xl shadow-xl flex items-center justify-center mx-auto mb-6 transform rotate-3"
-            >
-              <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center -rotate-3">
-                <WalletIcon size={32} className="text-indigo-600" />
-              </div>
-            </motion.div> */}
+          <div className="text-left pt-16 mb-8">
             <motion.h1
-              initial={{ y: 20, opacity: 0 }}
+              initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.1 }}
-              className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight"
+              transition={{ delay: 0.05 }}
+              className="text-3xl font-bold text-slate-900 tracking-tight"
             >
               Planit Wallet
             </motion.h1>
             <motion.p
-              initial={{ y: 20, opacity: 0 }}
+              initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="mt-4 text-lg text-slate-600 font-medium max-w-2xl mx-auto"
+              transition={{ delay: 0.1 }}
+              className="mt-1 text-sm text-slate-500 font-semibold"
             >
-              Manage your funds for seamless, instant bookings without reaching
-              for your card every time.
+              Store and top-up funds for secure, escrow-protected vendor bookings.
             </motion.p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
             {/* Balance Card */}
             <motion.div
-              initial={{ x: -20, opacity: 0 }}
+              initial={{ x: -10, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white relative overflow-hidden group"
+              transition={{ delay: 0.15 }}
+              className="md:col-span-3 bg-white/40 backdrop-blur-md p-6 rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.01)] border border-white/50 relative overflow-hidden group flex flex-col justify-between"
             >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full blur-3xl -mr-32 -mt-32 transition-transform group-hover:scale-125 duration-1000 -z-10" />
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    Current Balance
+                  </h3>
+                  <div className="flex items-center gap-1.5 px-2.5 py-0.5 bg-green-500/10 text-green-700 border border-green-500/20 rounded-full text-[9px] font-black uppercase tracking-wider">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> Active
+                  </div>
+                </div>
 
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-lg font-bold text-slate-700 flex items-center gap-2">
-                  <Activity size={20} className="text-indigo-500" /> Current
-                  Balance
-                </h3>
-                <div className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold tracking-wide uppercase">
-                  Active
+                <div className="mb-6">
+                  <div className="flex items-baseline text-slate-900">
+                    <span className="text-4xl font-black tracking-tight">
+                      ₹{wallet?.balance
+                        ? wallet.balance.toLocaleString("en-IN")
+                        : "0.00"}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 font-bold mt-1">
+                    Available for immediate hiring escrows
+                  </p>
                 </div>
               </div>
 
-              <div className="mb-8">
-                <div className="flex items-baseline text-slate-900">
-                  <IndianRupee
-                    size={36}
-                    strokeWidth={3}
-                    className="mr-1 text-slate-400"
-                  />
-                  <span className="text-6xl font-extrabold tracking-tight">
-                    {wallet?.balance
-                      ? wallet.balance.toLocaleString("en-IN")
-                      : "0.00"}
-                  </span>
-                </div>
-                <p className="text-sm text-slate-500 font-medium mt-2">
-                  Available for bookings
-                </p>
-              </div>
-
-              <div className="pt-6 border-t border-slate-100">
-                <div className="flex bg-slate-100/50 p-1.5 rounded-2xl mb-6 border border-slate-200/50">
+              <div className="pt-5 border-t border-slate-200/40">
+                <div className="flex bg-white/20 p-1 rounded-xl mb-4 border border-white/20">
                   <button
                     onClick={() => setActiveTab("deposit")}
-                    className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
+                    className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
                       activeTab === "deposit"
-                        ? "bg-white text-indigo-600 shadow-sm"
-                        : "text-slate-500 hover:text-slate-700 hover:bg-slate-50/50"
+                        ? "bg-white/80 backdrop-blur-md text-blue-600 shadow-sm border border-white/30"
+                        : "text-slate-500 hover:text-slate-800"
                     }`}
                   >
-                    Deposit Funds
+                    Deposit
                   </button>
                   <button
                     onClick={() => setActiveTab("withdraw")}
-                    className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
+                    className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
                       activeTab === "withdraw"
-                        ? "bg-white text-purple-600 shadow-sm"
-                        : "text-slate-500 hover:text-slate-700 hover:bg-slate-50/50"
+                        ? "bg-white/80 backdrop-blur-md text-blue-600 shadow-sm border border-white/30"
+                        : "text-slate-500 hover:text-slate-800"
                     }`}
                   >
-                    Withdraw Funds
+                    Withdraw
                   </button>
                 </div>
 
@@ -216,46 +200,42 @@ export default function WalletPage() {
 
             {/* Quick Actions & Info */}
             <motion.div
-              initial={{ x: 20, opacity: 0 }}
+              initial={{ x: 10, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="space-y-6"
+              transition={{ delay: 0.2 }}
+              className="md:col-span-2 space-y-4"
             >
-              <div className="bg-white/80 backdrop-blur-xl p-6 rounded-3xl shadow-sm border border-white">
-                <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                  <ArrowUpRight size={20} className="text-emerald-500" /> Quick
-                  Add
+              <div className="bg-white/40 backdrop-blur-md p-5 rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.01)] border border-white/50">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                  Top-up Info
                 </h3>
-                <p className="text-sm text-slate-600 mb-6">
-                  Need funds quickly? Use the quick add buttons in the deposit
-                  menu to top up your account instantly.
+                <p className="text-xs text-slate-650 leading-relaxed font-semibold mb-4">
+                  Top-up your balance to bypass card authorization checks during high-speed checkout milestones.
                 </p>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-                    <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-white/30 p-3.5 rounded-2xl border border-white/40 text-center">
+                    <p className="text-[8px] text-slate-400 font-bold uppercase tracking-wider">
                       Zero
                     </p>
-                    <p className="text-sm font-semibold text-slate-800">
-                      Hidden Fees
+                    <p className="text-xs font-bold text-slate-800 mt-0.5">
+                      Fees
                     </p>
                   </div>
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
-                    <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">
+                  <div className="bg-white/30 p-3.5 rounded-2xl border border-white/40 text-center">
+                    <p className="text-[8px] text-slate-400 font-bold uppercase tracking-wider">
                       Instant
                     </p>
-                    <p className="text-sm font-semibold text-slate-800">
-                      Transactions
+                    <p className="text-xs font-bold text-slate-800 mt-0.5">
+                      Credits
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-indigo-600 p-8 rounded-3xl shadow-lg text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-16 -mt-16" />
-                <h3 className="text-xl font-bold mb-2">Secure & Encrypted</h3>
-                <p className="text-indigo-100 text-sm leading-relaxed">
-                  Your funds are securely managed and transactions are processed
-                  using industry-standard encryption through Razorpay.
+              <div className="bg-blue-500/10 border border-blue-500/20 backdrop-blur-md p-5 rounded-3xl text-slate-800">
+                <h3 className="text-xs font-bold mb-1 text-blue-700">Razorpay Protected</h3>
+                <p className="text-blue-900/80 text-xs leading-relaxed font-semibold">
+                  All transaction layers are held securely in platform safekeeping until the event date.
                 </p>
               </div>
             </motion.div>

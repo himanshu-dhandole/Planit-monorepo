@@ -21,6 +21,7 @@ import {
   CalendarCheck,
   Menu,
   X,
+  Layers,
 } from "lucide-react";
 import {
   Drawer,
@@ -482,6 +483,17 @@ export default function Navbar() {
                 {/* Right Column (Secondary Links) */}
                 <div className="w-64 flex flex-col gap-1 pl-2">
                   <div className="px-3 mb-1 mt-1">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                      Showcase
+                    </p>
+                  </div>
+                  <DropdownItemSmall
+                    icon={<Layers size={14} />}
+                    title="Sandbox Showcase"
+                    to="/sandbox"
+                    onClick={() => setHoveredItem(null)}
+                  />
+                  <div className="px-3 mb-1 mt-2">
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
                       Developers
                     </p>

@@ -4,10 +4,13 @@
 
 @layer base {
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
   }
-  h1, h2, h3, .font-serif {
-    font-family: 'Playfair Display', serif;
+  h1,
+  h2,
+  h3,
+  .font-serif {
+    font-family: "Playfair Display", serif;
   }
 }
 
@@ -30,5 +33,14 @@
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(148, 163, 184, 0.5);
+  }
+  .diagonal-stripes-red {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      rgba(239, 68, 68, 0.12),
+      rgba(239, 68, 68, 0.12) 4px,
+      rgba(239, 68, 68, 0.22) 4px,
+      rgba(239, 68, 68, 0.22) 8px
+    );
   }
 }

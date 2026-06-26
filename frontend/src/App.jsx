@@ -52,7 +52,7 @@ function App() {
             <Route path="/vendor-bookings" element={<Protected><Layout><UnifiedDashboard /></Layout></Protected>} />
             <Route path="/disputes" element={<Protected><Layout><UnifiedDashboard /></Layout></Protected>} />
             <Route path="/admin" element={<Protected><Layout><UnifiedDashboard /></Layout></Protected>} />
-            <Route path="/sandbox" element={<Protected><Sandbox /></Protected>} />
+            <Route path="/sandbox" element={<Sandbox />} />
             
             <Route path="/chats" element={<Protected><Layout><ChatPage /></Layout></Protected>} />
             
