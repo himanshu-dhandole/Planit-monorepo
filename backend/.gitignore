@@ -38,3 +38,6 @@ build/
 mvnw
 mvnw.cmd
 mvnw
+.env
+**/.DS_Store
+.DS_Store

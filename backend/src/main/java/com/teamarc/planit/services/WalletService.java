@@ -127,9 +127,6 @@ public class WalletService{
             orderRequest.put("amount", amountInPaise);
             orderRequest.put("currency", "INR");
             orderRequest.put("receipt", "wallet_deposit_" + user.getId() + "_" + System.currentTimeMillis());
-
-            System.out.println("DEBUG RAZORPAY KEY ID: '" + keyId + "'");
-            System.out.println("DEBUG RAZORPAY KEY SECRET: '" + keySecret + "'");
             
             com.razorpay.Order razorpayOrder = razorpayClient.orders.create(orderRequest);
             String orderId = razorpayOrder.get("id");
