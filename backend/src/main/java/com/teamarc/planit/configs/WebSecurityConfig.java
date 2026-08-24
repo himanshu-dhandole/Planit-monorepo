@@ -42,7 +42,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.setAllowedOrigins(List.of(
-                "https://planit-app-one.vercel.app",
+                "https://plan-it-arc.vercel.app",
                 "http://localhost:5173",
                 "http://localhost:3000"
         ));
